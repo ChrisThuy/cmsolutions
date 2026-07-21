@@ -1,4 +1,4 @@
-# CM Solutions — Chris Thuy · Selected Work
+# CM Solutions — Portfolio
 
 Live at **https://cmsolutions.tech**
 
