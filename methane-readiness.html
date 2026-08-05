@@ -172,6 +172,42 @@
   .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
   .site-foot a { color: var(--ink-dim); text-decoration: none; }
 
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ── deadline calendar ──────────────────────────────── */
+  .timeline { margin-top: 1.6rem; }
+  .timeline[hidden] { display: none; }
+  .timeline figcaption { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1rem; }
+  .track { position: relative; height: 3px; background: var(--hairline); border-radius: 2px; margin: 0 0 0.2rem; }
+  .track .mark { position: absolute; top: 50%; width: 13px; height: 13px; border-radius: 50%; transform: translate(-50%, -50%); border: 2px solid var(--void); }
+  .track .mark--gap { background: var(--gap); }
+  .track .mark--unknown { background: var(--unsure); }
+  .track .mark--ready { background: var(--ready); }
+  .track .today { position: absolute; left: 0; top: 50%; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); transform: translate(-50%, -50%); }
+  .track-labels { position: relative; height: 9rem; }
+  .track-labels .lab { position: absolute; transform: translateX(-50%); text-align: center; width: 6.6rem; }
+  .track-labels .d { font-size: 0.76rem; color: var(--ink); }
+  .track-labels .h { font-size: 0.7rem; color: var(--ink-faint); }
+  .track-labels .n { font-size: 0.7rem; color: var(--ink-faint); }
+  @media (max-width: 640px) {
+    .track-labels { height: 9.5rem; }
+    .track-labels .lab { width: 5.4rem; }
+    .track-labels .d { font-size: 0.7rem; }
+  }
+
+  /* ── report by email ────────────────────────────────── */
+  .capture { margin-top: 1.8rem; border: 1px solid var(--hairline); border-left: 2px solid var(--accent); border-radius: 10px; padding: 1.1rem 1.2rem; }
+  .capture[hidden] { display: none; }
+  .capture h3 { font-family: var(--serif); font-weight: 400; font-size: 1.05rem; }
+  .capture p { font-size: 0.82rem; color: var(--ink-dim); margin-top: 0.5rem; max-width: 62ch; }
+  .capture-form { margin-top: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .capture-form input { flex: 1 1 200px; min-width: 0; background: rgba(232,230,223,0.04); border: 1px solid var(--hairline-strong); border-radius: 999px; padding: 0.6rem 1.1rem; color: var(--ink); font: inherit; font-size: 0.9rem; }
+  .capture-form button { padding: 0.6rem 1.3rem; border-radius: 999px; border: 1px solid var(--ink); background: var(--ink); color: var(--void); font: inherit; font-size: 0.88rem; cursor: pointer; }
+  .capture-form button[disabled] { opacity: 0.55; cursor: default; }
+  .capture-msg { margin-top: 0.7rem; font-size: 0.84rem; }
+  .capture-msg--ok { color: var(--ready); }
+  .capture-msg--error { color: var(--gap); }
+
   .print-head { display: none; }
 
   @media (max-width: 640px) {
@@ -181,7 +217,13 @@
 
   /* The report goes into board packs, so it has to print as a document. */
   @media print {
-    .site-head, .site-foot, .crumbs, .hero, form, .section, .cta, .no-print { display: none !important; }
+    .site-head, .site-foot, .crumbs, .hero, #form, .section, .cta, .no-print { display: none !important; }
+    .track { background: #ddd; }
+    .track .mark { border-color: #fff; }
+    .track .mark--gap { background: #a33; } .track .mark--unknown { background: #8a6a1f; } .track .mark--ready { background: #4a6b1f; }
+    .track .today { background: #111; }
+    .track-labels .d { color: #111; } .track-labels .h, .track-labels .n { color: #666; }
+    .timeline figcaption { color: #666; }
     html, body { background: #fff !important; color: #111 !important; }
     .wrap { width: 100%; }
     .print-head { display: block; margin-bottom: 1.2rem; }
@@ -384,7 +426,30 @@
             <p class="headline" id="headline"></p>
             <p class="tally" id="tally"></p>
           </div>
+          <figure class="timeline" id="timeline" hidden>
+            <figcaption>Your deadline calendar</figcaption>
+            <div class="track" id="track"></div>
+            <div class="track-labels" id="track-labels"></div>
+          </figure>
+
           <ul class="findings" id="findings"></ul>
+
+          <div class="capture no-print" id="capture">
+            <h3>Send this report to yourself</h3>
+            <p>
+              Optional. This is the one thing on this page that leaves your
+              browser: your email address and the report above. Your answers are
+              not stored anywhere else, and nothing is sent unless you press the
+              button.
+            </p>
+            <form class="capture-form" id="capture-form" novalidate>
+              <label class="sr-only" for="capture-email">Email address</label>
+              <input id="capture-email" type="email" inputmode="email" autocomplete="email"
+                     placeholder="you@company.com" />
+              <button type="submit" id="capture-send">Email me this</button>
+            </form>
+            <p class="capture-msg" id="capture-msg" role="status" aria-live="polite"></p>
+          </div>
           <p class="caveat">
             <b>What this is.</b> A readiness indicator against published
             obligations, generated from your own answers. It is not a compliance
@@ -463,7 +528,7 @@
 
 <script type="module">
   import { EU_RELATIONSHIPS, SEGMENTS, OGMP_LEVELS, ROLES } from "/lib/methane/framework.mjs";
-  import { assess } from "/lib/methane/assess.mjs";
+  import { assess, timeline } from "/lib/methane/assess.mjs";
 
   document.getElementById("year").textContent = new Date().getFullYear();
 
@@ -613,12 +678,157 @@
     document.getElementById("print-sub").textContent =
       `Assessed ${assessed} · framework reviewed ${result.frameworkReviewed} · prepared by CM Solutions`;
 
+    renderTimeline(result);
+    lastResult = result;
+    document.getElementById("capture").hidden = false;
+    document.getElementById("capture-msg").textContent = "";
+
     report.hidden = false;
     printButton.hidden = false;
     report.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  document.getElementById("assess").addEventListener("click", () => render(assess(readProfile())));
+  /*
+    The calendar.
+
+    Built from positions the assessment computed, so this stays a renderer and
+    the arithmetic stays testable. Every mark is a published date — there is
+    nothing on this picture that is not in the findings below it.
+  */
+  function renderTimeline(result) {
+    const figure = document.getElementById("timeline");
+    const track = document.getElementById("track");
+    const labels = document.getElementById("track-labels");
+    const data = timeline(result);
+
+    track.replaceChildren();
+    labels.replaceChildren();
+
+    if (!data) {
+      figure.hidden = true;
+      return;
+    }
+
+    const today = document.createElement("span");
+    today.className = "today";
+    today.title = "Today";
+    track.append(today);
+
+    /*
+      Clearance is the label's own width as a share of the track — measured,
+      not guessed. The first version used 22% while the labels were 24% wide,
+      which is precisely why they touched.
+    */
+    const trackWidth = labels.getBoundingClientRect().width || 1;
+    const CLEARANCE = ((6.6 * 16) / trackWidth) * 100;
+    const rowEnds = [-999, -999, -999];
+
+    for (const mark of data.marks) {
+      const dot = document.createElement("span");
+      dot.className = `mark mark--${mark.status}`;
+      dot.style.left = `${mark.position}%`;
+      track.append(dot);
+
+      const label = document.createElement("div");
+      label.className = "lab";
+      // Kept off the very edges so the text does not run outside the figure.
+      const left = Math.min(94, Math.max(6, mark.position));
+      label.style.left = `${left}%`;
+
+      /*
+        Deadlines cluster — September 2026 and January 2027 sit ten percent
+        apart on a four-year track, and the labels are wider than that.
+
+        Each row remembers how far along it was last used, and a label takes
+        the first row with room. Simply alternating was not enough: with three
+        dates close together it put the first and third back on the same row,
+        on top of each other.
+      */
+      const found = rowEnds.findIndex((end) => left - end >= CLEARANCE);
+      // When every row is occupied nearby, use the one with the most room
+      // rather than falling back to the first — which is what put a third
+      // label straight back on top of the first.
+      const chosen = found !== -1
+        ? found
+        : rowEnds.indexOf(Math.min(...rowEnds));
+      rowEnds[chosen] = left;
+      label.style.top = `${0.4 + chosen * 2.9}rem`;
+
+      // Two lines, not three. Height is what forces rows apart, and a third
+      // line bought nothing the tooltip and the findings below do not say.
+      const date = document.createElement("p");
+      date.className = "d";
+      date.textContent = new Date(`${mark.date}T00:00:00Z`).toLocaleDateString("en-GB",
+        { month: "short", year: "numeric" });
+
+      const note = document.createElement("p");
+      note.className = "n";
+      note.textContent = mark.open ? `${mark.open} open` : `${mark.count} in hand`;
+
+      label.title = `${mark.date} — ${mark.horizon}`;
+      label.append(date, note);
+      labels.append(label);
+    }
+
+    figure.hidden = false;
+  }
+
+  let lastResult = null;
+
+  document.getElementById("assess").addEventListener("click", () => {
+    const result = assess(readProfile());
+    render(result);
+  });
+
+  /*
+    Report by email.
+
+    The only thing on this page that leaves the browser, and it is opt-in and
+    said plainly above the field. Sending the report rather than the raw
+    answers is deliberate: the recipient gets what they saw, and we are not
+    collecting a questionnaire we said we would not collect.
+  */
+  const captureForm = document.getElementById("capture-form");
+  const captureMsg = document.getElementById("capture-msg");
+  const captureSend = document.getElementById("capture-send");
+
+  captureForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("capture-email").value.trim();
+
+    if (!email) {
+      captureMsg.textContent = "Enter an email address.";
+      captureMsg.className = "capture-msg capture-msg--error";
+      return;
+    }
+    if (!lastResult) return;
+
+    captureSend.disabled = true;
+    captureSend.textContent = "Sending…";
+    captureMsg.textContent = "";
+    captureMsg.className = "capture-msg";
+
+    try {
+      const response = await fetch("/api/methane-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, result: lastResult }),
+      });
+      const data = await response.json();
+
+      captureMsg.textContent = response.ok
+        ? data.message
+        : data.error ?? "That could not be sent.";
+      captureMsg.className = `capture-msg capture-msg--${response.ok ? "ok" : "error"}`;
+      if (response.ok) captureForm.reset();
+    } catch {
+      captureMsg.textContent = "We could not reach the server. The report is still on screen — print it instead.";
+      captureMsg.className = "capture-msg capture-msg--error";
+    } finally {
+      captureSend.disabled = false;
+      captureSend.textContent = "Email me this";
+    }
+  });
   printButton.addEventListener("click", () => window.print());
 </script>
 

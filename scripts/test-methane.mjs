@@ -14,7 +14,7 @@
   with the calendar.
 */
 
-import { assess, daysUntil, describeHorizon } from "../lib/methane/assess.mjs";
+import { assess, daysUntil, describeHorizon, timeline } from "../lib/methane/assess.mjs";
 import { applicableObligations, OBLIGATIONS, ROLES, SOURCES } from "../lib/methane/framework.mjs";
 
 let failures = 0;
@@ -233,6 +233,45 @@ console.log("\nEvery role has something to be told");
     const scoped = applicableObligations(profile({ role: role.value }));
     check(`${role.value} has obligations in scope`, scoped.length > 0, `${scoped.length}`);
   }
+}
+
+console.log("\nThe timeline is a picture of real dates, not decoration");
+{
+  const result = assess(profile(), TODAY);
+  const t = timeline(result, TODAY);
+
+  check("a timeline is produced", t !== null);
+  check("it starts today", t.from === "2026-08-05", t.from);
+  check("every mark sits within the track",
+    t.marks.every((m) => m.position >= 0 && m.position <= 100),
+    JSON.stringify(t.marks.map((m) => m.position)));
+  check("marks are ordered left to right",
+    t.marks.every((m, i) => i === 0 || t.marks[i - 1].position <= m.position));
+
+  // Several obligations fall on 2027-01-01; collapsing them is what stops the
+  // labels colliding.
+  const shared = t.marks.find((m) => m.date === "2027-01-01");
+  check("obligations sharing a date are grouped", shared && shared.count > 1,
+    JSON.stringify(shared));
+
+  check("a date with any open item is not shown as ready",
+    t.marks.every((m) => m.open === 0 || m.status !== "ready"));
+
+  const dates = result.findings.map((f) => f.date);
+  check("no date is invented for the picture",
+    t.marks.every((m) => dates.includes(m.date)), t.marks.map((m) => m.date).join(","));
+}
+
+console.log("\nThe timeline degrades safely");
+{
+  const empty = assess(profile({ euRelationship: "none", usOperations: "no" }), TODAY);
+  check("nothing in scope means no timeline", timeline(empty, TODAY) === null);
+
+  // A single near deadline must not collapse the track to a point.
+  const near = assess(profile({ role: "operator", euRelationship: "none", usOperations: "yes" }), TODAY);
+  const t = timeline(near, TODAY);
+  check("one deadline still produces a usable span", t && t.marks.length === 1);
+  check("and the span is at least a year", t && t.to >= "2027-08-05", t?.to);
 }
 
 console.log(
