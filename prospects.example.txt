@@ -1,0 +1,8 @@
+# One address per line. Blank lines and # comments are ignored.
+#
+#   npm run audit -- prospects.txt --reports ./reports
+#
+# Copy this to prospects.txt (gitignored) and put real names there — a list of
+# who you are approaching does not belong in a public repository.
+
+example.com

@@ -1,3 +1,7 @@
 .vercel
 node_modules
 .DS_Store
+
+# Batch audit output and prospect lists — never committed.
+reports/
+prospects.txt

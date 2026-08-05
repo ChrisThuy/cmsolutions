@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
-    "test": "node scripts/test-safe-fetch.mjs && node scripts/test-audit-checks.mjs && node scripts/test-crawl.mjs && node scripts/test-schema-builder.mjs"
+    "test": "node scripts/test-safe-fetch.mjs && node scripts/test-audit-checks.mjs && node scripts/test-crawl.mjs && node scripts/test-schema-builder.mjs",
+    "audit": "node scripts/audit-batch.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
