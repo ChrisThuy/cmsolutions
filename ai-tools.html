@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>AI Business Tools | CM Solutions</title>
-<meta name="description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals." />
+<meta name="description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
 <link rel="canonical" href="https://cmsolutions.tech/ai-tools" />
 
 <meta property="og:title" content="AI Business Tools | CM Solutions" />
-<meta property="og:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals." />
+<meta property="og:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://cmsolutions.tech/ai-tools" />
 <meta property="og:site_name" content="CM Solutions" />
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="AI Business Tools | CM Solutions" />
-<meta name="twitter:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI." />
+<meta name="twitter:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
 <meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
 <meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
 
@@ -303,7 +303,7 @@
     <section class="section" aria-labelledby="available">
       <div class="section-head">
         <h2 id="available">Available now</h2>
-        <p>One product is live today.</p>
+        <p>Two products are live today.</p>
       </div>
 
       <div class="tools">
@@ -332,6 +332,27 @@
           </div>
         </article>
         <!-- ── end product card ── -->
+
+        <article class="tool fade" style="--accent: var(--c-huddle)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/website-audit">Website Check</a></h3>
+          <p class="tool-for">For anyone with a business website</p>
+          <p class="tool-sub">
+            Most business sites are missing three or four small things that cost
+            them visitors, and none of them are visible when you look at the
+            page. Paste an address and get a plain-English list of what is
+            wrong, why it matters and what a fixed version would look like.
+          </p>
+          <ul>
+            <li>Titles and descriptions, including whether they will truncate</li>
+            <li>Link previews for Slack, WhatsApp and LinkedIn</li>
+            <li>Structured data, and whether it actually parses</li>
+            <li>Images with no alt text, plus HTTPS and security headers</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/website-audit">Check a website</a>
+          </div>
+        </article>
 
       </div>
     </section>
@@ -449,7 +470,7 @@
       "@id": "https://cmsolutions.tech/ai-tools#webpage",
       "url": "https://cmsolutions.tech/ai-tools",
       "name": "AI Business Tools | CM Solutions",
-      "description": "Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals.",
+      "description": "Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check.",
       "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
       "about": { "@id": "https://cmsolutions.tech/#organization" },
       "breadcrumb": { "@id": "https://cmsolutions.tech/ai-tools#breadcrumb" },
@@ -458,7 +479,7 @@
         "@type": "ItemList",
         "name": "CM Solutions AI business tools",
         "itemListOrder": "https://schema.org/ItemListOrderAscending",
-        "numberOfItems": 1,
+        "numberOfItems": 2,
         "itemListElement": [
           {
             "@type": "ListItem",
@@ -471,6 +492,21 @@
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web browser",
               "description": "Turns a short questionnaire about a project into a structured, editable client proposal with scope, timeline and a costed investment table, exportable as a branded PDF.",
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/website-audit#software",
+              "name": "CM Solutions Website Check",
+              "url": "https://cmsolutions.tech/website-audit",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Web browser",
+              "description": "Fetches a public web page and reports missing or misconfigured title tags, meta descriptions, canonical URLs, link preview tags, structured data, image alt text and security headers.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }
           }

@@ -2,10 +2,11 @@
   "name": "cmsolutions",
   "version": "1.0.0",
   "private": true,
-  "description": "CM Solutions — a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
+  "description": "CM Solutions \u2014 a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
   "scripts": {
     "dev": "npx serve .",
-    "start": "npx serve ."
+    "start": "npx serve .",
+    "test": "node scripts/test-safe-fetch.mjs && node scripts/test-audit-checks.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
