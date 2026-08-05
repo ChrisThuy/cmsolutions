@@ -824,6 +824,50 @@
     .hero-line > span { transform: none; }
     .hero-fade, .scroll-cue { opacity: 1; }
   }
+
+  /*
+    The tools section. It sits above Services deliberately: the projects
+    below are proof I shipped something once, and a tool a visitor can put
+    their own invoice through is proof today. Everything a prospect from a
+    freelance marketplace wants is in the first two screens.
+  */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 1.2rem;
+  }
+  .toolcard {
+    display: block;
+    border: 1px solid var(--line, rgba(232,230,223,0.14));
+    border-left: 2px solid var(--s-accent);
+    padding: 1.4rem 1.3rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+  }
+  .toolcard:hover, .toolcard:focus-visible {
+    background: rgba(232, 230, 223, 0.045);
+    transform: translateY(-2px);
+  }
+  .toolcard h3 {
+    font-family: var(--serif, Georgia, serif);
+    font-weight: 400;
+    font-size: 1.18rem;
+    margin-bottom: 0.55rem;
+  }
+  .toolcard p { font-size: 0.9rem; line-height: 1.6; opacity: 0.78; }
+  .toolcard-go {
+    display: inline-block;
+    margin-top: 0.9rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--s-accent);
+  }
+  .tools-more { margin-top: 2rem; font-size: 0.92rem; opacity: 0.72; max-width: 68ch; }
+  @media (max-width: 720px) {
+    .toolcard { min-height: 44px; }
+  }
 </style>
 </head>
 <body>
@@ -840,6 +884,7 @@
   <a href="#huddle" data-rail="huddle" aria-label="Huddle"></a>
   <a href="#fathersvoice" data-rail="fathersvoice" aria-label="Father's Voice UK"></a>
   <span class="rail-line"></span>
+  <a href="#tools" data-rail="tools" aria-label="Working tools"></a>
   <a href="#services" data-rail="services" aria-label="What I build"></a>
   <a href="#contact" data-rail="contact" aria-label="Contact"></a>
 </nav>
@@ -867,7 +912,7 @@
     </ul>
     <div class="hero-actions hero-fade">
       <a class="btn btn--solid" href="#contact">Start a project</a>
-      <a class="btn" href="#services">See what I build</a>
+      <a class="btn" href="#tools">Try the tools — no signup</a>
     </div>
     <div class="scroll-cue" aria-hidden="true">
       <span class="cue-line"></span>
@@ -1201,6 +1246,68 @@
   <!-- ══════════════════ KINETIC 5 → CONTACT ══════════════════ -->
   <section class="kinetic" data-theme="psychart" style="--k-accent: var(--c-psychart)">
     <p class="display" data-kinetic>From the sky, to the soil,<br />to the people we stand beside.<br /><em>Let's build the next one.</em></p>
+  </section>
+
+  <!-- ══════════════════ TOOLS ══════════════════ -->
+  <section class="services" id="tools" data-theme="psychart">
+    <div class="services-head">
+      <p class="kicker reveal">Working software, not screenshots</p>
+      <h2 class="reveal" style="--d: 0.08s">Six tools you can <em>use right now</em>.</h2>
+      <p class="reveal" style="--d: 0.16s">
+        Every one of these is live and free to try, with no signup and nothing
+        stored. They are here because a portfolio of finished projects proves I
+        shipped something once; a tool you can put your own invoice through
+        proves it today. Each is built on the same rule — it tells you what it
+        does not know rather than guessing.
+      </p>
+    </div>
+
+    <div class="tools-grid">
+      <a class="toolcard reveal" href="/ai-document-data-extraction" style="--s-accent: var(--c-psychart); --d: 0.06s">
+        <h3>Document Data Extraction</h3>
+        <p>Invoices, receipts, contracts and CVs into structured data. Every value quotes the text it came from, and a field that is not there comes back empty rather than invented.</p>
+        <span class="toolcard-go">Read a document →</span>
+      </a>
+
+      <a class="toolcard reveal" href="/ai-customer-service-software" style="--s-accent: var(--c-huddle); --d: 0.1s">
+        <h3>Customer Service Agent</h3>
+        <p>Answers only from your policy and quotes the passage it used. When your policy does not cover the question it says so and drafts the handover.</p>
+        <span class="toolcard-go">Try the agent →</span>
+      </a>
+
+      <a class="toolcard reveal" href="/ai-workflow-automation" style="--s-accent: var(--c-olive); --d: 0.14s">
+        <h3>Workflow Planner</h3>
+        <p>Describe something you do by hand. Get the steps, which to automate, which to keep human, and what breaks — with the hours worked out from your own figures.</p>
+        <span class="toolcard-go">Plan a process →</span>
+      </a>
+
+      <a class="toolcard reveal" href="/website-audit" style="--s-accent: var(--c-fathers); --d: 0.18s">
+        <h3>Website Check</h3>
+        <p>Crawls your site and reports what is actually wrong — titles, metadata, structured data, accessibility — with a concrete fix for every finding.</p>
+        <span class="toolcard-go">Check a site →</span>
+      </a>
+
+      <a class="toolcard reveal" href="/schema-generator" style="--s-accent: var(--c-agrimakis, var(--c-olive)); --d: 0.22s">
+        <h3>Schema Markup Generator</h3>
+        <p>Valid JSON-LD for your business, built in the browser. No ratings or review counts, because inventing those risks a penalty.</p>
+        <span class="toolcard-go">Generate markup →</span>
+      </a>
+
+      <a class="toolcard reveal" href="/ai-proposal-generator" style="--s-accent: var(--c-psychart); --d: 0.26s">
+        <h3>CM Proposal AI</h3>
+        <p>A questionnaire becomes a scoped, costed, branded client proposal as a PDF. The most complete of these — a product rather than a demonstration.</p>
+        <span class="toolcard-go">See the product →</span>
+      </a>
+    </div>
+
+    <p class="tools-more reveal" style="--d: 0.3s">
+      Two more are built for specific industries:
+      <a href="/methane-readiness">methane compliance readiness</a> and a
+      <a href="/fueleu-calculator">FuelEU Maritime calculator</a>, both cited to
+      the Official Journal. There is also the
+      <a href="/oil-gas">oil &amp; gas agent estate</a> and the
+      <a href="/agent-map">137-agent company map</a>.
+    </p>
   </section>
 
   <!-- ══════════════════ SERVICES ══════════════════ -->
