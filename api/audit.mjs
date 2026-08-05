@@ -1,5 +1,5 @@
-import { fetchPage, normaliseTarget, UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
-import { runChecks } from "../lib/audit/checks.mjs";
+import { normaliseTarget, UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
+import { crawlSite } from "../lib/audit/crawl.mjs";
 
 /*
   POST /api/audit  { "url": "example.com" }
@@ -31,7 +31,14 @@ import { runChecks } from "../lib/audit/checks.mjs";
   own stack before it gets its first user.
 */
 
-const SCANS_PER_IP_HOUR = 10;
+/*
+  Lower than it was, because a scan is no longer one request.
+
+  Each one now fetches up to six pages, so ten scans an hour would be sixty
+  outbound requests from one visitor. Five keeps the outbound volume roughly
+  where it was while the report gained a great deal.
+*/
+const SCANS_PER_IP_HOUR = 5;
 
 /** Same first-entry rule as the proposal app: a prepending proxy puts the real client first. */
 function clientIp(req) {
@@ -91,6 +98,13 @@ async function consumeAllowance(key) {
   }
 }
 
+/*
+  The crawl fetches several pages against a shared budget, so the function
+  needs to outlive a single request. maxDuration is set above CRAWL_BUDGET_MS
+  with room for the rate-limit round trip either side.
+*/
+export const config = { maxDuration: 60 };
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -145,8 +159,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const page = await fetchPage(target);
-    const report = runChecks(page);
+    const report = await crawlSite(target);
 
     // Nothing is stored. There is no reason to keep a record of which
     // stranger looked at which site, so there is no table for it.

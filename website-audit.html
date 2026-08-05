@@ -188,6 +188,13 @@
   }
   .result-fix b { font-weight: 500; color: var(--accent); }
 
+  .page-list { list-style: none; margin-top: 0.6rem; }
+  .page-list li {
+    font-size: 0.8rem; color: var(--ink-faint); word-break: break-all;
+    padding-left: 0.9rem; position: relative;
+  }
+  .page-list li::before { content: "·"; position: absolute; left: 0; }
+
   .print-head { display: none; }
 
   /*
@@ -218,6 +225,7 @@
     .result-finding { color: #333; }
     .result-why { color: #555; }
     .result-fix { color: #111; border-left-color: #999; }
+    .page-list li { color: #666; }
     .result-status--pass { color: #4a6b1f; }
     .result-status--warn { color: #8a6a1f; }
     .result-status--fail { color: #a33; }
@@ -298,7 +306,7 @@
     </nav>
 
     <div class="hero">
-      <p class="kicker">Free · no account · client-ready report</p>
+      <p class="kicker">Free · no account · up to six pages</p>
       <h1>A website report you can <em>put your name on</em>.</h1>
       <p class="lede">
         Most business sites are missing three or four small things that cost
@@ -323,8 +331,8 @@
         <button type="submit" id="submit">Check it</button>
       </form>
       <p class="form-note" id="form-note">
-        Checks one page — whichever address you give it. We fetch it the way a
-        search engine would; nothing is stored.
+        Checks your home page and follows its navigation, up to six pages. We
+        fetch them the way a search engine would; nothing is stored.
       </p>
 
       <p class="msg" id="msg" role="status" aria-live="polite"></p>
@@ -389,7 +397,7 @@
           <h3>Not in this free check</h3>
           <p>Where the real work is</p>
           <ul>
-            <li>Every page, rather than the one you paste</li>
+            <li>Every page, rather than the six we sample</li>
             <li>Watching for regressions when someone ships a change</li>
             <li>Rendered-page checks, for sites built in JavaScript</li>
             <li>Core Web Vitals from real visitors</li>
@@ -454,25 +462,35 @@
     ours, which is a strange way to repay a visitor for trying the tool.
   */
   function render(data) {
-    reportUrl.textContent = data.url;
+    reportUrl.textContent = data.site;
 
     tally.replaceChildren();
-    for (const [key, label] of [["fail", "to fix"], ["warn", "worth a look"], ["pass", "fine"], ["info", "notes"]]) {
-      const count = data.counts[key] ?? 0;
-      if (!count) continue;
+    const pill = (count, label, kind) => {
+      if (!count) return;
       const span = document.createElement("span");
       const dot = document.createElement("span");
-      dot.className = `dot dot--${key}`;
+      dot.className = `dot dot--${kind}`;
       const strong = document.createElement("b");
       strong.textContent = String(count);
       span.append(dot, strong, document.createTextNode(` ${label}`));
       tally.append(span);
-    }
+    };
+    pill(data.counts.fail, "to fix", "fail");
+    pill(data.counts.warn, "worth a look", "warn");
+    pill(data.counts.pages, data.counts.pages === 1 ? "page checked" : "pages checked", "info");
 
     results.replaceChildren();
-    const sorted = [...data.results].sort((a, b) => (ORDER[a.status] ?? 9) - (ORDER[b.status] ?? 9));
 
-    for (const item of sorted) {
+    if (data.issues.length === 0) {
+      const li = document.createElement("li");
+      const p = document.createElement("p");
+      p.className = "result-finding";
+      p.textContent = `Nothing to flag across ${data.counts.pages} page(s). That is unusual — most sites have at least three of these.`;
+      li.append(p);
+      results.append(li);
+    }
+
+    for (const item of data.issues) {
       const li = document.createElement("li");
 
       const head = document.createElement("div");
@@ -485,11 +503,25 @@
       status.textContent = item.status;
       head.append(label, status);
 
-      const finding = document.createElement("p");
-      finding.className = "result-finding";
-      finding.textContent = item.finding;
+      /*
+        The headline is how many pages share the issue. "Missing on 4 of 6
+        pages" is a template problem with one fix; the same finding printed
+        four times reads as four problems and gets triaged as none.
+      */
+      li.append(head);
 
-      li.append(head, finding);
+      /*
+        Only worth saying when there is more than one page. On a single-page
+        site "on every page checked (1)" is noise dressed as information.
+      */
+      if (data.counts.pages > 1) {
+        const scope = document.createElement("p");
+        scope.className = "result-finding";
+        scope.textContent = item.pages.length === data.counts.pages
+          ? `On all ${data.counts.pages} pages checked.`
+          : `On ${item.pages.length} of ${data.counts.pages} pages checked.`;
+        li.append(scope);
+      }
 
       if (item.why) {
         const why = document.createElement("p");
@@ -503,28 +535,69 @@
       if (item.fix) {
         const fix = document.createElement("p");
         fix.className = "result-fix";
-        const label = document.createElement("b");
-        label.textContent = "Fix: ";
-        fix.append(label, document.createTextNode(item.fix));
+        const strong = document.createElement("b");
+        strong.textContent = "Fix: ";
+        fix.append(strong, document.createTextNode(item.fix));
         li.append(fix);
+      }
+
+      // Naming the pages is what makes the finding actionable. With one page
+      // there is nothing to disambiguate, so the list is left off.
+      if (data.counts.pages > 1) {
+        const pageList = document.createElement("ul");
+        pageList.className = "page-list";
+        for (const url of item.pages) {
+          const entry = document.createElement("li");
+          entry.textContent = url;
+          pageList.append(entry);
+        }
+        li.append(pageList);
       }
 
       results.append(li);
     }
 
+    if (data.unreachable.length) {
+      const li = document.createElement("li");
+      const head = document.createElement("div");
+      head.className = "result-head";
+      const label = document.createElement("span");
+      label.className = "result-label";
+      label.textContent = "Links that did not resolve";
+      const status = document.createElement("span");
+      status.className = "result-status result-status--fail";
+      status.textContent = "fail";
+      head.append(label, status);
+
+      const why = document.createElement("p");
+      why.className = "result-why";
+      why.textContent = "Linked from the page we checked, but could not be reached. A broken link in a navigation is usually a redirect nobody updated.";
+
+      const list = document.createElement("ul");
+      list.className = "page-list";
+      for (const entry of data.unreachable) {
+        const item = document.createElement("li");
+        item.textContent = `${entry.url} — ${entry.reason}`;
+        list.append(item);
+      }
+
+      li.append(head, why, list);
+      results.append(li);
+    }
+
     report.hidden = false;
     document.getElementById("branding").hidden = false;
-    updatePrintHead(data.url);
+    updatePrintHead(data.site);
   }
 
   /*
     The header that only appears on paper.
 
     Built with textContent for the same reason the findings are: the client and
-    agency names are typed by a visitor, and the report URL comes from a page we
+    agency names are typed by a visitor, and the site URL comes from a page we
     do not control.
   */
-  function updatePrintHead(reportUrl) {
+  function updatePrintHead(siteUrl) {
     const head = document.getElementById("print-head");
     const forWhom = document.getElementById("prepared-for").value.trim();
     const byWhom = document.getElementById("prepared-by").value.trim();
@@ -545,7 +618,7 @@
 
     const when = document.createElement("p");
     when.className = "when";
-    when.textContent = `${reportUrl} · ${new Date().toLocaleDateString("en-GB", {
+    when.textContent = `${siteUrl} · ${new Date().toLocaleDateString("en-GB", {
       day: "numeric", month: "long", year: "numeric",
     })}`;
     head.append(when);
@@ -573,7 +646,7 @@
     button.textContent = "Checking…";
     report.hidden = true;
     document.getElementById("branding").hidden = true;
-    say("Fetching the page…", "working");
+    say("Checking the site — this takes a few seconds…", "working");
 
     try {
       const response = await fetch("/api/audit", {
