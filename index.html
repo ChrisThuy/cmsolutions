@@ -868,6 +868,15 @@
   @media (max-width: 720px) {
     .toolcard { min-height: 44px; }
   }
+
+  /* Keyboard users land on a long rail of anchor links before any content.
+     Standard on every other page here; it was missing from this one. */
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus {
+    left: 1rem; top: 1rem; position: fixed; z-index: 999;
+    background: var(--ink, #e8e6df); color: #07080c;
+    padding: 0.75rem 1rem; border-radius: 3px; font-size: 0.9rem;
+  }
 </style>
 </head>
 <body>
@@ -888,6 +897,8 @@
   <a href="#services" data-rail="services" aria-label="What I build"></a>
   <a href="#contact" data-rail="contact" aria-label="Contact"></a>
 </nav>
+
+<a class="skip" href="#top">Skip to content</a>
 
 <main>
 

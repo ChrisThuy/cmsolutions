@@ -540,14 +540,50 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "CM Document Data Extraction",
-  "url": "https://cmsolutions.tech/ai-document-data-extraction",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Any modern browser",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
-  "description": "Extracts structured fields from invoices, receipts, purchase orders, contracts and CVs. Every value quotes the source text it was read from, and fields absent from the document are returned empty rather than inferred.",
-  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "CM Document Data Extraction",
+      "url": "https://cmsolutions.tech/ai-document-data-extraction",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any modern browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+      },
+      "description": "Extracts structured fields from invoices, receipts, purchase orders, contracts and CVs. Every value quotes the source text it was read from, and fields absent from the document are returned empty rather than inferred.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CM Solutions",
+        "url": "https://cmsolutions.tech"
+      },
+      "@id": "https://cmsolutions.tech/ai-document-data-extraction#software"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-document-data-extraction#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cmsolutions.tech/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "AI Tools",
+          "item": "https://cmsolutions.tech/ai-tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Document Data Extraction"
+        }
+      ]
+    }
+  ]
 }
 </script>
 </body>

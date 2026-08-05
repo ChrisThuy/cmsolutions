@@ -518,14 +518,50 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "FuelEU Maritime & EU ETS Calculator",
-  "url": "https://cmsolutions.tech/fueleu-calculator",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Any modern browser",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
-  "description": "Calculates FuelEU Maritime GHG intensity, compliance balance and penalty, and EU ETS allowances, from a ship's own fuel mix. Every factor and formula cited to the Official Journal.",
-  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "FuelEU Maritime & EU ETS Calculator",
+      "url": "https://cmsolutions.tech/fueleu-calculator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any modern browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR"
+      },
+      "description": "Calculates FuelEU Maritime GHG intensity, compliance balance and penalty, and EU ETS allowances, from a ship's own fuel mix. Every factor and formula cited to the Official Journal.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CM Solutions",
+        "url": "https://cmsolutions.tech"
+      },
+      "@id": "https://cmsolutions.tech/fueleu-calculator#software"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/fueleu-calculator#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cmsolutions.tech/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "AI Tools",
+          "item": "https://cmsolutions.tech/ai-tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "FuelEU Calculator"
+        }
+      ]
+    }
+  ]
 }
 </script>
 </body>

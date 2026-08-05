@@ -136,6 +136,29 @@
     .crumbs a,.site-foot a{min-height:32px;display:inline-flex;align-items:center}
   }
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  .print-head,.print-foot{display:none}
+  @media print{
+    .site-head,.site-foot,.crumbs,.hero,#form,.section,.no-print{display:none!important}
+    html,body{background:#fff!important;color:#111!important}
+    .wrap{width:100%}
+    .print-head{display:block;margin-bottom:1.2rem}
+    .print-head .t{font-family:var(--serif);font-size:1.25rem}
+    .print-head .s{font-size:.82rem;color:#666;margin-top:.3rem}
+    .answer{border-top:0;padding-top:0}
+    .reply{color:#111}
+    .quotes li,.esc,.gaps li,.caveat{border-color:#ddd}
+    .quotes li,.gaps li,.esc .why,.caveat{color:#444}
+    .esc{border-left-color:#8a6a1f}
+    .esc pre{color:#111}
+    .v--complete{color:#4a6b1f}.v--partial{color:#8a6a1f}.v--none{color:#a33}
+    .verdict .dot{border:1px solid #666}
+    .answer[hidden]~.print-foot,.print-head:has(~.answer[hidden]){display:none}
+    .print-foot{display:block;margin-top:1.6rem;padding-top:.8rem;border-top:1px solid #ccc;font-size:.74rem;color:#555}
+    .print-foot b{color:#111}
+    .quotes li,.esc,.caveat{break-inside:avoid}
+    @page{margin:16mm 14mm}
+  }
 </style>
 </head>
 <body>
@@ -209,6 +232,11 @@
     </form>
 
     <div>
+      <div class="print-head" aria-hidden="true">
+        <p class="t">Customer service answer</p>
+        <p class="s" id="print-sub"></p>
+      </div>
+
       <section class="answer" id="answer" hidden aria-labelledby="reply">
         <p class="verdict" id="verdict"><span class="dot"></span><span id="verdict-text"></span></p>
         <p class="reply" id="reply"></p>
@@ -235,7 +263,14 @@
           backlog — written by customers, in the order they actually ask. That
           is usually worth more than the deflection rate.
         </p>
+
+        <button type="button" class="btn btn--small no-print" id="print" style="margin-top:1.2rem">Print or save as PDF</button>
       </section>
+
+      <div class="print-foot" aria-hidden="true">
+        <p><b>CM Solutions</b> — custom AI systems and internal tooling.</p>
+        <p>contact@cmsolutions.tech · cmsolutions.tech</p>
+      </div>
     </div>
   </div>
 
@@ -382,9 +417,16 @@
       say("Your text was longer than this demonstration reads, so it was trimmed.");
     }
 
+    $("print-sub").textContent =
+      `${VERDICTS[a.coverage] ?? a.coverage} · ` +
+      `${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })} · ` +
+      "prepared by CM Solutions";
+
     $("answer").hidden = false;
     $("answer").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
+  $("print").addEventListener("click", () => window.print());
 
   $("copy-esc").addEventListener("click", async (e) => {
     try {
@@ -401,14 +443,50 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "CM Customer Service Agent",
-  "url": "https://cmsolutions.tech/ai-customer-service-software",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Any modern browser",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
-  "description": "A customer service agent that answers only from supplied policy text, quotes the passage each answer rests on, verifies those quotations server-side, and escalates with a drafted handover when the policy does not cover the question.",
-  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "CM Customer Service Agent",
+      "url": "https://cmsolutions.tech/ai-customer-service-software",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any modern browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+      },
+      "description": "A customer service agent that answers only from supplied policy text, quotes the passage each answer rests on, verifies those quotations server-side, and escalates with a drafted handover when the policy does not cover the question.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CM Solutions",
+        "url": "https://cmsolutions.tech"
+      },
+      "@id": "https://cmsolutions.tech/ai-customer-service-software#software"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-customer-service-software#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cmsolutions.tech/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "AI Tools",
+          "item": "https://cmsolutions.tech/ai-tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Customer Service Agent"
+        }
+      ]
+    }
+  ]
 }
 </script>
 </body>

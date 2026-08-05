@@ -550,14 +550,50 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "CM Workflow Automation Planner",
-  "url": "https://cmsolutions.tech/ai-workflow-automation",
-  "applicationCategory": "BusinessApplication",
-  "operatingSystem": "Any modern browser",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
-  "description": "Turns a plain-English description of a manual business process into an automation plan: the steps as they happen, which to automate, assist or keep human, what breaks at each step, and hours saved computed from the user's own volume figures.",
-  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "CM Workflow Automation Planner",
+      "url": "https://cmsolutions.tech/ai-workflow-automation",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any modern browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "GBP"
+      },
+      "description": "Turns a plain-English description of a manual business process into an automation plan: the steps as they happen, which to automate, assist or keep human, what breaks at each step, and hours saved computed from the user's own volume figures.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "CM Solutions",
+        "url": "https://cmsolutions.tech"
+      },
+      "@id": "https://cmsolutions.tech/ai-workflow-automation#software"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-workflow-automation#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://cmsolutions.tech/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "AI Tools",
+          "item": "https://cmsolutions.tech/ai-tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Workflow Automation"
+        }
+      ]
+    }
+  ]
 }
 </script>
 </body>
