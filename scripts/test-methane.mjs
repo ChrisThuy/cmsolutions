@@ -55,6 +55,24 @@ console.log("\nEvery obligation is attributable");
   check("all have a source key", OBLIGATIONS.every((o) => o.source));
   check("every source key resolves", OBLIGATIONS.every((o) => SOURCES[o.source]));
   check("every source has a URL", Object.values(SOURCES).every((s) => /^https:\/\//.test(s.url)));
+
+  /*
+    Sources must be primary. This tool gets shown to people who have read the
+    regulation, and citing a trade newsletter for a date they know from the
+    Official Journal costs more credibility than the citation buys. An earlier
+    version did exactly that for two obligations, so the rule is a test now.
+  */
+  const PRIMARY = /(^|\.)(europa\.eu|unep\.org|epa\.gov|federalregister\.gov|congress\.gov|ecfr\.gov|govinfo\.gov|iea\.org)$/;
+  for (const [key, src] of Object.entries(SOURCES)) {
+    check(`${key} cites a primary source`, PRIMARY.test(new URL(src.url).hostname), src.url);
+  }
+
+  // An unused source is an unreviewed source: it survives edits nobody checks
+  // and then gets cited by a later obligation on the assumption it was vetted.
+  const used = new Set(OBLIGATIONS.map((o) => o.source));
+  check("no source is defined but never cited",
+    Object.keys(SOURCES).every((k) => used.has(k)),
+    Object.keys(SOURCES).filter((k) => !used.has(k)).join(","));
   check("every obligation has a date", OBLIGATIONS.every((o) => /^\d{4}-\d{2}-\d{2}$/.test(o.date)));
   check("every obligation explains what to do when it is open",
     OBLIGATIONS.every((o) => o.ifGap && o.ifGap.length > 40));

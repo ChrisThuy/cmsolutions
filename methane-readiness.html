@@ -208,7 +208,7 @@
   .capture-msg--ok { color: var(--ready); }
   .capture-msg--error { color: var(--gap); }
 
-  .print-head { display: none; }
+  .print-head, .print-foot { display: none; }
 
   @media (max-width: 640px) {
     .wrap { width: min(1080px, 100% - 2.5rem); }
@@ -239,6 +239,35 @@
     .dot--gap { background: #a33; } .dot--unknown { background: #8a6a1f; } .dot--ready { background: #4a6b1f; }
     .caveat { color: #444; border-color: #ccc; border-left-color: #8a6a1f; }
     .caveat b { color: #111; }
+
+    /*
+      A printed page is a leave-behind. Someone runs this at a stand, takes
+      the paper away, and reads it on a plane a week later — so the paper has
+      to carry what the screen carried for free: who produced it, how to get
+      back to it, and where each claim came from.
+    */
+    .print-foot {
+      display: block; margin-top: 1.6rem; padding-top: 0.8rem;
+      border-top: 1px solid #ccc; font-size: 0.74rem; line-height: 1.5; color: #555;
+    }
+    .print-foot b { color: #111; }
+    .print-foot .re { margin-top: 0.35rem; color: #777; }
+
+    /* Hyperlinks are invisible on paper. Every obligation cites a regulation
+       and the citation is the whole point, so the URL is printed out. */
+    .f-source a::after { content: " (" attr(href) ")"; word-break: break-all; font-size: 0.9em; }
+
+    /* A finding split across a page break loses the action from the gap it
+       belongs to, which is the pairing the reader is there for. */
+    .findings > li, .timeline, .caveat { break-inside: avoid; page-break-inside: avoid; }
+    .report-head { break-after: avoid; }
+
+    /* Printing before running the assessment should not produce a letterhead
+       wrapped around nothing. */
+    .report[hidden] ~ .print-foot,
+    .print-head:has(~ .report[hidden]) { display: none; }
+
+    @page { margin: 16mm 14mm; }
   }
 
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: 0.01ms !important; } }
@@ -460,6 +489,12 @@
             the detail that applies to your asset class with your own advisers.
           </p>
         </section>
+
+        <div class="print-foot" aria-hidden="true">
+          <p><b>CM Solutions</b> — custom AI systems and internal tooling for energy and commodities.</p>
+          <p>contact@cmsolutions.tech · cmsolutions.tech</p>
+          <p class="re">Re-run this against different answers: cmsolutions.tech/methane-readiness</p>
+        </div>
       </div>
     </div>
 
