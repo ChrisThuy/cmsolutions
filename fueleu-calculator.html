@@ -150,8 +150,16 @@
   @media (max-width: 720px) {
     .wrap { width: min(1180px, 100% - 2.5rem); }
     .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
-    .site-head nav a { min-height: 44px; display: inline-flex; align-items: center; }
+    .site-head nav a, .wordmark { min-height: 44px; display: inline-flex; align-items: center; }
     .crumbs a, .site-foot a { min-height: 32px; display: inline-flex; align-items: center; }
+
+    /*
+      The source citations are a standalone list of links, not links inline in
+      a sentence, so WCAG 2.2's inline exemption does not cover them. A
+      single-line citation measured 16px — below even the 24px floor — and
+      these are the links a sceptical reader most wants to tap.
+    */
+    .sources a { display: flex; align-items: center; min-height: 44px; }
   }
 
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

@@ -13,7 +13,9 @@
     "og": "node scripts/make-og.mjs",
     "agent-index": "node scripts/build-agent-index.mjs",
     "agent-index:check": "node scripts/build-agent-index.mjs --check",
-    "maritime:test": "node scripts/test-maritime.mjs"
+    "maritime:test": "node scripts/test-maritime.mjs",
+    "maritime:verify": "node scripts/verify-maritime.mjs",
+    "verify": "node scripts/verify-methane.mjs; node scripts/verify-maritime.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"

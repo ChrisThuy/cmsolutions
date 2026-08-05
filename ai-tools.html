@@ -293,7 +293,7 @@
     <a class="wordmark" href="/">CM Solutions</a>
     <nav aria-label="Primary">
       <a href="/ai-tools" aria-current="page">AI Tools</a>
-      <a href="/agent-map">Agent Map</a>
+      <a href="/oil-gas">Oil &amp; Gas</a>
       <a href="/#services">What I build</a>
       <a href="/#contact">Contact</a>
     </nav>
@@ -408,9 +408,10 @@
           <h3><a href="/methane-readiness">Methane Compliance Readiness</a></h3>
           <p class="tool-for">For oil &amp; gas operators, importers and exporters</p>
           <p class="tool-sub">
-            The EU Methane Transparency Database opens in September 2026, and
-            from 2027 new import contracts must show measurement and
-            verification equivalent to EU producer standards. Most operators
+            Article 30 required the EU Methane Transparency Database to be
+            running by 5 February 2026; it was not, and launch has been reported
+            for September. From 2027 new import contracts must show measurement
+            and verification equivalent to EU producer standards. Most operators
             can describe their programme; far fewer can evidence it against each
             obligation with a date attached. Eight questions gives you the list.
           </p>
@@ -422,6 +423,50 @@
           </ul>
           <div class="tool-actions">
             <a class="btn btn--primary" href="/methane-readiness">Check readiness</a>
+          </div>
+        </article>
+
+        <article class="tool fade" style="--accent: var(--c-olive)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/fueleu-calculator">FuelEU Maritime &amp; EU ETS Calculator</a></h3>
+          <p class="tool-for">For shipowners, charterers and bunker buyers</p>
+          <p class="tool-sub">
+            LNG in a medium-speed Otto engine clears the 2025 GHG intensity
+            limit by 0.13 gCO2eq/MJ and misses 2030 by 3.51 — because Annex I
+            counts fuel that leaves the engine unburned as methane, at 25 times
+            the weight of CO2. Put your own fuel mix in and get the penalty from
+            the regulation's own formula rather than from a model.
+          </p>
+          <ul>
+            <li>GHG intensity, compliance balance and the Annex IV penalty in euros</li>
+            <li>EU ETS allowances alongside it, on the same voyages</li>
+            <li>Every factor cited to the Official Journal, including the chain to RED II</li>
+            <li>No invented allowance price and no invented biofuel factors</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/fueleu-calculator">Calculate exposure</a>
+          </div>
+        </article>
+
+        <article class="tool fade" style="--accent: var(--c-fathers)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/oil-gas">Petro Agent OS</a></h3>
+          <p class="tool-for">For oil &amp; gas operators</p>
+          <p class="tool-sub">
+            135 agents mapped onto the oil and gas value chain — drilling,
+            production, subsurface, reliability, HSE, regulatory, emissions,
+            supply chain and commercial. Each one is a job a competent person
+            does today, opened with the runnable skill, the hours it gives back
+            and the KPI it moves.
+          </p>
+          <ul>
+            <li>Nine functions across 41 job trees, around one operator knowledge base</li>
+            <li>Every agent states what it replaces, in hours or in a role</li>
+            <li>A build ladder, so it is a sequence rather than a wish list</li>
+            <li>The full list is in the page itself, not only behind the map</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/oil-gas">Open the estate</a>
           </div>
         </article>
 
@@ -607,6 +652,36 @@
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web browser",
               "description": "Assesses an oil and gas operation against published methane obligations under the EU Methane Regulation, OGMP 2.0 and the US Greenhouse Gas Reporting Program.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/fueleu-calculator#software",
+              "name": "FuelEU Maritime & EU ETS Calculator",
+              "url": "https://cmsolutions.tech/fueleu-calculator",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "Calculates FuelEU Maritime GHG intensity, compliance balance and penalty, and EU ETS allowances, from a ship's own fuel mix, with every factor and formula cited to the Official Journal.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/oil-gas#software",
+              "name": "Petro Agent OS",
+              "url": "https://cmsolutions.tech/oil-gas",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "An estate of 135 AI agents mapped onto the oil and gas value chain, each stating what it replaces, what it needs to run and the KPI it moves.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }
