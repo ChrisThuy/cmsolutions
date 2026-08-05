@@ -188,6 +188,31 @@
   }
   .result-fix b { font-weight: 500; color: var(--accent); }
 
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .watch {
+    margin-top: 1.6rem; border: 1px solid var(--hairline);
+    border-left: 2px solid var(--accent); border-radius: 12px; padding: 1.1rem 1.2rem;
+  }
+  .watch[hidden] { display: none; }
+  .watch h3 { font-family: var(--serif); font-weight: 400; font-size: 1.15rem; }
+  .watch-note { margin-top: 0.5rem; font-size: 0.86rem; color: var(--ink-dim); max-width: 60ch; }
+  .watch-form { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .watch-form input {
+    flex: 1 1 220px; min-width: 0; background: rgba(232, 230, 223, 0.04);
+    border: 1px solid var(--hairline-strong); border-radius: 999px;
+    padding: 0.62rem 1.1rem; color: var(--ink); font: inherit; font-size: 0.9rem;
+  }
+  .watch-form input::placeholder { color: var(--ink-faint); }
+  .watch-form button {
+    padding: 0.62rem 1.3rem; border-radius: 999px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--void); font: inherit; font-size: 0.88rem; cursor: pointer;
+  }
+  .watch-form button[disabled] { opacity: 0.55; cursor: default; }
+  .watch-msg { margin-top: 0.8rem; font-size: 0.86rem; }
+  .watch-msg--ok { color: var(--c-olive); }
+  .watch-msg--error { color: #e08a7a; }
+
   .page-list { list-style: none; margin-top: 0.6rem; }
   .page-list li {
     font-size: 0.8rem; color: var(--ink-faint); word-break: break-all;
@@ -205,7 +230,7 @@
     no form, and findings that never break across a page boundary mid-thought.
   */
   @media print {
-    .no-print, .site-head, .site-foot, .crumbs, .hero, .checker form,
+    .watch, .no-print, .site-head, .site-foot, .crumbs, .hero, .checker form,
     .form-note, .msg, .section, .cta { display: none !important; }
 
     html, body { background: #fff !important; color: #111 !important; }
@@ -338,6 +363,28 @@
       <p class="msg" id="msg" role="status" aria-live="polite"></p>
 
       <section class="report" id="report" hidden aria-labelledby="report-url">
+        <!--
+          The upgrade from a one-off check to something that keeps working.
+          Shown only after a report exists, because the offer only makes sense
+          once someone has seen what it would be watching for.
+        -->
+        <div class="watch no-print" id="watch" hidden>
+          <h3>Tell me when this changes</h3>
+          <p class="watch-note">
+            We will check this site every week and email you only when something
+            changes — a new problem, or an old one fixed. A quiet week means no
+            email, because a report that always says the same thing is one
+            nobody reads. One click to stop, no account.
+          </p>
+          <form class="watch-form" id="watch-form" novalidate>
+            <label class="sr-only" for="watch-email">Email address</label>
+            <input id="watch-email" type="email" inputmode="email" autocomplete="email"
+                   placeholder="you@yourcompany.com" />
+            <button type="submit" id="watch-submit">Watch this site</button>
+          </form>
+          <p class="watch-msg" id="watch-msg" role="status" aria-live="polite"></p>
+        </div>
+
         <div class="print-head" id="print-head" aria-hidden="true"></div>
 
         <div class="report-head">
@@ -587,6 +634,12 @@
 
     report.hidden = false;
     document.getElementById("branding").hidden = false;
+
+    // The monitoring offer only makes sense once there is a report to point at.
+    lastCheckedSite = data.site;
+    document.getElementById("watch").hidden = false;
+    watchMsg.textContent = "";
+    watchMsg.className = "watch-msg";
     updatePrintHead(data.site);
   }
 
@@ -632,6 +685,50 @@
 
   document.getElementById("print").addEventListener("click", () => window.print());
 
+  // ── weekly monitoring ────────────────────────────────────────────────
+  const watchForm = document.getElementById("watch-form");
+  const watchMsg = document.getElementById("watch-msg");
+  const watchSubmit = document.getElementById("watch-submit");
+  let lastCheckedSite = null;
+
+  watchForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = document.getElementById("watch-email").value.trim();
+
+    if (!email) {
+      watchMsg.textContent = "Enter an email address.";
+      watchMsg.className = "watch-msg watch-msg--error";
+      return;
+    }
+
+    watchSubmit.disabled = true;
+    watchSubmit.textContent = "Setting up…";
+    watchMsg.textContent = "";
+    watchMsg.className = "watch-msg";
+
+    try {
+      const response = await fetch("/api/watch", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: lastCheckedSite, email }),
+      });
+      const data = await response.json();
+
+      watchMsg.textContent = response.ok
+        ? data.message
+        : data.error ?? "That could not be set up.";
+      watchMsg.className = `watch-msg watch-msg--${response.ok ? "ok" : "error"}`;
+
+      if (response.ok) watchForm.reset();
+    } catch {
+      watchMsg.textContent = "We could not reach the server. Please try again in a moment.";
+      watchMsg.className = "watch-msg watch-msg--error";
+    } finally {
+      watchSubmit.disabled = false;
+      watchSubmit.textContent = "Watch this site";
+    }
+  });
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -646,6 +743,7 @@
     button.textContent = "Checking…";
     report.hidden = true;
     document.getElementById("branding").hidden = true;
+    document.getElementById("watch").hidden = true;
     say("Checking the site — this takes a few seconds…", "working");
 
     try {

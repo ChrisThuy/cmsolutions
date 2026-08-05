@@ -19,5 +19,11 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/audit-cron",
+      "schedule": "17 8 * * 1"
+    }
   ]
 }
