@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>FuelEU Maritime &amp; EU ETS Calculator | CM Solutions</title>
+<meta name="description" content="Your FuelEU Maritime penalty and EU ETS allowances, from your own fuel mix. Every factor cited to the Official Journal. Nothing leaves your browser." />
+<link rel="canonical" href="https://cmsolutions.tech/fueleu-calculator" />
+
+<meta property="og:title" content="FuelEU Maritime &amp; EU ETS Calculator | CM Solutions" />
+<meta property="og:description" content="Your fuel mix, the regulation's own formula, the penalty in euros. Cited to the Official Journal. Nothing you enter leaves your browser." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/fueleu-calculator" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og-fueleu.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og-fueleu.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="LNG in a medium-speed Otto engine clears the 2025 FuelEU limit by 0.13 gCO2eq/MJ and misses 2030 by 3.51." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="FuelEU Maritime &amp; EU ETS Calculator | CM Solutions" />
+<meta name="twitter:description" content="Your fuel mix, the regulation's own formula, the penalty in euros. Cited to the Official Journal." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og-fueleu.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --ink: #e8e6df; --ink-dim: #a09d93; --ink-faint: #6b6960;
+    --void: #07080c;
+    --hairline: rgba(232,230,223,0.12);
+    --deficit: #d98b6a; --surplus: #a8b878; --warn: #d4af6a; --accent: #7ab8d4;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--void); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  .wrap { width: min(1180px, 100% - 3rem); margin-inline: auto; }
+  a { color: var(--accent); }
+
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 1rem; top: 1rem; position: fixed; background: var(--ink); color: var(--void); padding: 0.75rem 1rem; z-index: 99; }
+
+  .site-head { border-bottom: 1px solid var(--hairline); padding-block: 1.1rem; }
+  .site-head .wrap { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+  .wordmark { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); text-decoration: none; }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: 0.9rem; flex-wrap: wrap; }
+  .site-head nav a { color: var(--ink-dim); text-decoration: none; }
+  .site-head nav a:hover { color: var(--ink); }
+
+  .crumbs { padding-top: 2.2rem; font-size: 0.8rem; color: var(--ink-faint); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .crumbs li + li::before { content: "/"; margin-right: 0.5rem; }
+
+  .hero { padding-block: 3rem 2rem; }
+  .kicker { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1.4rem; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.12; letter-spacing: -0.02em; max-width: 22ch; }
+  h1 em { font-style: italic; color: var(--warn); }
+  .lede { margin-top: 1.5rem; max-width: 66ch; font-size: clamp(1rem, 2.2vw, 1.1rem); color: var(--ink-dim); }
+  .lede + .lede { margin-top: 0.9rem; }
+  .lede b { color: var(--ink); font-weight: 400; }
+
+  .tool { display: grid; gap: 2.4rem; align-items: start; padding-bottom: 3rem; }
+  .tool > * { min-width: 0; }
+  @media (min-width: 1000px) { .tool { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); } }
+
+  fieldset { border: 0; margin-bottom: 1.8rem; }
+  legend { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1rem; }
+  .field { margin-bottom: 1.2rem; }
+  .field label { display: block; font-size: 0.92rem; margin-bottom: 0.3rem; }
+  .field .hint { display: block; font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 0.45rem; }
+  select, input[type="number"] {
+    width: 100%; background: rgba(232,230,223,0.04); color: var(--ink);
+    border: 1px solid var(--hairline); border-radius: 3px; padding: 0.6rem 0.7rem;
+    font-family: var(--sans); font-size: 0.92rem; min-height: 44px;
+  }
+  select:focus, input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .mix-row { display: grid; grid-template-columns: 1fr 8rem auto; gap: 0.6rem; margin-bottom: 0.6rem; align-items: center; }
+  @media (max-width: 560px) { .mix-row { grid-template-columns: 1fr 6.5rem auto; } }
+  .btn {
+    background: rgba(232,230,223,0.06); color: var(--ink); border: 1px solid var(--hairline);
+    border-radius: 3px; padding: 0.6rem 1.1rem; font-family: var(--sans); font-size: 0.9rem;
+    cursor: pointer; min-height: 44px;
+  }
+  .btn:hover { background: rgba(232,230,223,0.12); }
+  .btn--primary { background: var(--ink); color: var(--void); border-color: var(--ink); font-weight: 500; width: 100%; margin-top: 0.5rem; }
+  .btn--drop { min-width: 44px; padding-inline: 0.8rem; color: var(--ink-faint); }
+
+  .report { border-top: 1px solid var(--hairline); padding-top: 1.8rem; }
+  .headline { font-family: var(--serif); font-size: clamp(1.15rem, 2.6vw, 1.5rem); line-height: 1.35; font-weight: 300; }
+  .meta { margin-top: 0.8rem; font-size: 0.78rem; color: var(--ink-faint); }
+
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--hairline); border: 1px solid var(--hairline); margin-top: 1.8rem; }
+  .fig { background: var(--void); padding: 1.1rem; }
+  .fig .k { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
+  .fig .v { font-family: var(--mono); font-size: 1.35rem; margin-top: 0.4rem; letter-spacing: -0.02em; }
+  .fig .u { font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.2rem; }
+  .v--deficit { color: var(--deficit); } .v--surplus { color: var(--surplus); }
+
+  .gauge { margin-top: 1.8rem; }
+  .gauge .bar { position: relative; height: 10px; border-radius: 5px; background: rgba(232,230,223,0.1); }
+  .gauge .fill { position: absolute; inset: 0 auto 0 0; border-radius: 5px; }
+  .gauge .limit { position: absolute; top: -6px; bottom: -6px; width: 2px; background: var(--ink); }
+  .gauge .legend { display: flex; justify-content: space-between; font-size: 0.74rem; color: var(--ink-faint); margin-top: 0.6rem; gap: 1rem; flex-wrap: wrap; }
+
+  h2 { font-family: var(--serif); font-weight: 400; font-size: 1.35rem; margin-bottom: 0.9rem; }
+  h3 { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin: 2rem 0 0.8rem; }
+
+  .notes { list-style: none; margin-top: 0.6rem; }
+  .notes li { font-size: 0.88rem; color: var(--ink-dim); padding: 0.7rem 0 0.7rem 0.9rem; border-left: 1px solid var(--hairline); margin-bottom: 0.5rem; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  th, td { text-align: left; padding: 0.6rem 0.5rem; border-bottom: 1px solid var(--hairline); }
+  th { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-weight: 400; }
+  td.num { font-family: var(--mono); text-align: right; }
+  .tag { font-size: 0.72rem; padding: 0.1rem 0.45rem; border-radius: 2px; }
+  .tag--ok { color: var(--surplus); } .tag--no { color: var(--deficit); }
+  .scroller { overflow-x: auto; }
+
+  .sources { margin-top: 1.2rem; font-size: 0.82rem; color: var(--ink-faint); }
+  .sources li { list-style: none; padding: 0.35rem 0; }
+  .sources a { color: var(--ink-dim); }
+
+  .caveat { margin-top: 2rem; padding: 1rem 1.1rem; border: 1px solid var(--hairline); border-left: 2px solid var(--warn); font-size: 0.86rem; color: var(--ink-dim); }
+  .caveat b { color: var(--ink); font-weight: 400; }
+
+  .section { border-top: 1px solid var(--hairline); padding-block: 3rem; }
+  .privacy { font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.6rem; }
+
+  .site-foot { border-top: 1px solid var(--hairline); padding-block: 2rem; margin-top: 2rem; font-size: 0.82rem; color: var(--ink-faint); }
+  .site-foot .wrap { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+
+  [hidden] { display: none !important; }
+
+  /*
+    Tap targets on a phone. WCAG 2.2 puts the floor at 24x24 for anything not
+    inline in a sentence; 44px is what a thumb wants, and this gets opened
+    from a QR code by someone standing at a stand.
+  */
+  @media (max-width: 720px) {
+    .wrap { width: min(1180px, 100% - 2.5rem); }
+    .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+    .site-head nav a { min-height: 44px; display: inline-flex; align-items: center; }
+    .crumbs a, .site-foot a { min-height: 32px; display: inline-flex; align-items: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  /* The result goes into a board pack, so it prints as a document. */
+  .print-head, .print-foot { display: none; }
+  @media print {
+    .site-head, .site-foot, .crumbs, .hero, #form, .section, .no-print { display: none !important; }
+    html, body { background: #fff !important; color: #111 !important; }
+    .wrap { width: 100%; }
+    .print-head { display: block; margin-bottom: 1.2rem; }
+    .print-head .t { font-family: var(--serif); font-size: 1.25rem; }
+    .print-head .s { font-size: 0.82rem; color: #666; margin-top: 0.3rem; }
+    .report { border-top: 0; padding-top: 0; }
+    .headline, .fig .v { color: #111; }
+    .figures, .fig, .caveat, table { border-color: #ddd; }
+    .fig { background: #fff; }
+    .figures { background: #ddd; }
+    .fig .k, .fig .u, .meta, th { color: #666; }
+    .notes li { color: #444; border-color: #ddd; }
+    .caveat { color: #444; border-color: #ccc; border-left-color: #8a6a1f; }
+    .v--deficit { color: #a33 !important; } .v--surplus { color: #4a6b1f !important; }
+    .sources a::after { content: " (" attr(href) ")"; word-break: break-all; font-size: 0.9em; }
+    .sources, .sources a { color: #666; }
+    .print-foot { display: block; margin-top: 1.6rem; padding-top: 0.8rem; border-top: 1px solid #ccc; font-size: 0.74rem; color: #555; }
+    .print-foot b { color: #111; }
+    .report[hidden] ~ .print-foot, .print-head:has(~ .report[hidden]) { display: none; }
+    .figures, .caveat, .gauge { break-inside: avoid; }
+    @page { margin: 16mm 14mm; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/methane-readiness">Methane</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs wrap" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    <li><a href="/ai-tools">AI Tools</a></li>
+    <li aria-current="page">FuelEU calculator</li>
+  </ol>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <p class="kicker">FuelEU Maritime · EU ETS</p>
+    <h1>LNG in a medium-speed Otto engine clears the 2025 limit by 0.13 — and <em>misses 2030 by 3.51</em>.</h1>
+    <p class="lede">
+      Both numbers are gCO2eq/MJ, and both fall out of the regulation's own
+      factors rather than anyone's model. Methane slip is the reason: Annex I
+      counts fuel that leaves the engine unburned as methane, at
+      <b>25 times the weight of CO2</b>, so a 3.1&nbsp;% slip gives back most
+      of what the molecule saved.
+    </p>
+    <p class="lede">
+      Put your own fuel mix in below. You get the GHG intensity, the compliance
+      balance, the FuelEU penalty from the Annex&nbsp;IV formula and the EU ETS
+      allowances you must surrender — each traceable to the article it comes from.
+    </p>
+  </section>
+
+  <div class="wrap tool">
+    <form id="form" aria-labelledby="form-h">
+      <h2 id="form-h">Your fuel</h2>
+      <p class="privacy">
+        This runs entirely in your browser. Nothing you type is sent anywhere,
+        stored, or logged — there is no server behind this page.
+      </p>
+
+      <fieldset>
+        <legend>Fuel mix</legend>
+        <div class="field">
+          <span class="hint">Tonnes bunkered for the year, per fuel and engine. Add as many rows as you need.</span>
+          <div id="mix"></div>
+          <button type="button" class="btn" id="add-row">Add a fuel</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Scope and year</legend>
+        <div class="field">
+          <label for="year">Reporting year</label>
+          <select id="year"></select>
+        </div>
+        <div class="field">
+          <label for="crossBorder">Share of energy on voyages with one end outside the EU</label>
+          <span class="hint">Article 2 counts these at half. Intra-EU voyages and time at berth count in full.</span>
+          <input type="number" id="crossBorder" min="0" max="100" step="1" value="50" />
+        </div>
+        <div class="field">
+          <label for="consecutive">Consecutive years in deficit, including this one</label>
+          <span class="hint">Article 23(2) multiplies the penalty by 1 + (n−1)/10.</span>
+          <input type="number" id="consecutive" min="1" max="20" step="1" value="1" />
+        </div>
+        <div class="field">
+          <label for="eua">EU allowance price, € per tonne (optional)</label>
+          <span class="hint">Left blank, allowances are counted but not priced. The count is law; the price is a market.</span>
+          <input type="number" id="eua" min="0" step="0.01" placeholder="e.g. 75" />
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn--primary" id="run">Calculate</button>
+    </form>
+
+    <div>
+      <div class="print-head" aria-hidden="true">
+        <p class="t">FuelEU Maritime &amp; EU ETS exposure</p>
+        <p class="s" id="print-sub"></p>
+      </div>
+
+      <section class="report" id="report" hidden aria-labelledby="headline" aria-live="polite">
+        <p class="headline" id="headline"></p>
+        <p class="meta" id="meta"></p>
+
+        <div class="gauge" id="gauge"></div>
+        <div class="figures" id="figures"></div>
+
+        <h3>What this does not cover</h3>
+        <ul class="notes" id="notes"></ul>
+
+        <h3>Where each number comes from</h3>
+        <ul class="sources" id="sources"></ul>
+
+        <p class="caveat">
+          <b>What this is.</b> A planning estimate built from the Annex II
+          default emission factors and the figures you entered. It is not a
+          compliance submission and not legal advice. Verified compliance uses
+          your actual bunker delivery notes, an accredited verifier and the
+          FuelEU database, and the number will move. Every factor and formula
+          above is cited so your own people can check it.
+        </p>
+
+        <button type="button" class="btn no-print" id="print" style="margin-top:1.4rem">Print or save as PDF</button>
+      </section>
+
+      <div class="print-foot" aria-hidden="true">
+        <p><b>CM Solutions</b> — custom AI systems and internal tooling for energy, shipping and commodities.</p>
+        <p>contact@cmsolutions.tech · cmsolutions.tech</p>
+        <p>Re-run it against a different mix: cmsolutions.tech/fueleu-calculator</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="compare-h">
+    <div class="wrap">
+      <h2 id="compare-h">Every fuel against the limit</h2>
+      <p class="lede" style="margin-top:0">
+        Well-to-wake intensity from the Annex II defaults, against the limit for
+        the year selected above. Biofuels are deliberately absent: Annex II sends
+        them to certified production pathways under the Renewable Energy
+        Directive, so there is no honest single number to put in a table.
+      </p>
+      <div class="scroller" style="margin-top:1.5rem">
+        <table id="compare">
+          <thead>
+            <tr>
+              <th scope="col">Fuel and engine</th>
+              <th scope="col" style="text-align:right">gCO2eq/MJ</th>
+              <th scope="col" style="text-align:right">Margin</th>
+              <th scope="col">Against the limit</th>
+            </tr>
+          </thead>
+          <tbody id="compare-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year-now">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { assess, fuelComparison } from "/lib/maritime/calculate.mjs";
+  import { FUELS, LAST_REVIEWED, limitForYear } from "/lib/maritime/framework.mjs";
+
+  const $ = (id) => document.getElementById(id);
+  $("year-now").textContent = new Date().getFullYear();
+
+  // ── year picker ─────────────────────────────────────────────────────────
+  const thisYear = new Date().getUTCFullYear();
+  const years = [];
+  for (let y = 2025; y <= 2050; y += y >= 2030 ? 5 : 1) years.push(y);
+  if (!years.includes(thisYear) && thisYear >= 2025) years.push(thisYear);
+  years.sort((a, b) => a - b);
+  $("year").innerHTML = years
+    .map((y) => `<option value="${y}"${y === Math.max(2025, thisYear) ? " selected" : ""}>${y}</option>`)
+    .join("");
+
+  // ── fuel mix rows ───────────────────────────────────────────────────────
+  const mix = $("mix");
+  function addRow(fuelId = "hfo", tonnes = "") {
+    const row = document.createElement("div");
+    row.className = "mix-row";
+    row.innerHTML = `
+      <select aria-label="Fuel and engine">
+        ${FUELS.map((f) => `<option value="${f.id}"${f.id === fuelId ? " selected" : ""}>${f.name}</option>`).join("")}
+      </select>
+      <input type="number" min="0" step="1" placeholder="tonnes" aria-label="Tonnes per year" value="${tonnes}" />
+      <button type="button" class="btn btn--drop" aria-label="Remove this fuel">×</button>`;
+    row.querySelector(".btn--drop").addEventListener("click", () => {
+      if (mix.children.length > 1) row.remove();
+    });
+    mix.append(row);
+  }
+  addRow("hfo", 8000);
+  $("add-row").addEventListener("click", () => addRow());
+
+  function readMix() {
+    return [...mix.querySelectorAll(".mix-row")].map((row) => ({
+      fuelId: row.querySelector("select").value,
+      tonnes: Number(row.querySelector("input").value),
+    }));
+  }
+
+  const fmt = (n, dp = 0) =>
+    n.toLocaleString("en-GB", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  // ── the comparison table, which also reacts to the year ─────────────────
+  function drawCompare(year) {
+    $("compare-body").innerHTML = fuelComparison(year)
+      .map((f) => `
+        <tr>
+          <td>${f.name}${f.detail ? `<br><span style="color:var(--ink-faint);font-size:0.78rem">${f.detail}</span>` : ""}</td>
+          <td class="num">${f.intensity}</td>
+          <td class="num">${f.margin === null ? "—" : (f.margin > 0 ? "+" : "") + f.margin}</td>
+          <td><span class="tag ${f.compliant ? "tag--ok" : "tag--no"}">${
+            f.limit === null ? "no limit yet" : f.compliant ? "within" : "over"
+          }</span></td>
+        </tr>`)
+      .join("");
+  }
+  drawCompare(Number($("year").value));
+  $("year").addEventListener("change", () => drawCompare(Number($("year").value)));
+
+  // ── run ─────────────────────────────────────────────────────────────────
+  $("form").addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const result = assess({
+      year: Number($("year").value),
+      mix: readMix(),
+      crossBorderShare: Number($("crossBorder").value),
+      consecutiveDeficit: Number($("consecutive").value),
+      euaPrice: $("eua").value === "" ? undefined : Number($("eua").value),
+    });
+
+    const report = $("report");
+    if (!result.inScope || !result.lines.length) {
+      report.hidden = false;
+      $("headline").textContent = result.lines?.length
+        ? result.headline
+        : "Enter at least one fuel and a tonnage to calculate.";
+      $("meta").textContent = "";
+      $("gauge").innerHTML = "";
+      $("figures").innerHTML = "";
+      $("notes").innerHTML = "";
+      $("sources").innerHTML = "";
+      return;
+    }
+
+    $("headline").textContent = result.headline;
+    $("meta").textContent =
+      `Calculated ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}` +
+      ` · framework reviewed ${result.reviewed} · Annex II default factors`;
+    $("print-sub").textContent =
+      `${result.year} · ${fmt(result.totalEnergyMJ / 1e6)} TJ of fuel energy · prepared by CM Solutions`;
+
+    // Gauge: actual against the limit, scaled to the untouched reference so
+    // the bar means the same thing whichever year is picked.
+    const scale = result.referenceIntensity * 1.15;
+    const pctActual = Math.min(100, (result.actualIntensity / scale) * 100);
+    const pctLimit = Math.min(100, (result.limit / scale) * 100);
+    $("gauge").innerHTML = `
+      <div class="bar">
+        <div class="fill" style="width:${pctActual}%;background:${result.status === "deficit" ? "var(--deficit)" : "var(--surplus)"}"></div>
+        <div class="limit" style="left:${pctLimit}%" title="${result.year} limit"></div>
+      </div>
+      <div class="legend">
+        <span>Your mix — ${result.actualIntensity} gCO2eq/MJ</span>
+        <span>${result.year} limit — ${result.limit}</span>
+      </div>`;
+
+    const figures = [
+      { k: "GHG intensity", v: result.actualIntensity, u: `gCO2eq/MJ · limit ${result.limit}` },
+      {
+        k: "Compliance balance",
+        // The balance is in grams of CO2 equivalent (Annex IV Part A), so a
+        // tonne is 1e6 — not 1e9, which showed a 585-tonne deficit as 0.6.
+        v: fmt(result.complianceBalance / 1e6, 1),
+        u: "tonnes CO2eq · " + (result.status === "deficit" ? "deficit" : "surplus"),
+        cls: result.status === "deficit" ? "v--deficit" : "v--surplus",
+      },
+    ];
+
+    if (result.penalty) {
+      figures.push({
+        k: "FuelEU penalty",
+        v: "€" + fmt(result.penalty.total),
+        u: result.penalty.multiplier > 1
+          ? `includes the ×${result.penalty.multiplier} repeat-deficit multiplier`
+          : "Annex IV Part B",
+        cls: "v--deficit",
+      });
+    }
+
+    figures.push({
+      k: "EU ETS allowances",
+      v: fmt(result.ets.allowances),
+      u: `${result.ets.share} % of ${fmt(result.ets.co2Tonnes)} t CO2 for ${result.year}`,
+    });
+
+    if (result.ets.cost !== null) {
+      figures.push({
+        k: "Allowance cost",
+        v: "€" + fmt(result.ets.cost),
+        u: `at €${result.ets.euaPrice} per allowance, your figure`,
+        cls: "v--deficit",
+      });
+    }
+
+    $("figures").innerHTML = figures
+      .map((f) => `<div class="fig"><p class="k">${f.k}</p><p class="v ${f.cls ?? ""}">${f.v}</p><p class="u">${f.u}</p></div>`)
+      .join("");
+
+    $("notes").innerHTML = result.notes.map((n) => `<li>${n}</li>`).join("");
+
+    $("sources").innerHTML = Object.values(result.sources)
+      .map((s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${s.label}</a></li>`)
+      .join("");
+
+    report.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  $("print").addEventListener("click", () => window.print());
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "FuelEU Maritime & EU ETS Calculator",
+  "url": "https://cmsolutions.tech/fueleu-calculator",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any modern browser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "description": "Calculates FuelEU Maritime GHG intensity, compliance balance and penalty, and EU ETS allowances, from a ship's own fuel mix. Every factor and formula cited to the Official Journal.",
+  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+}
+</script>
+</body>
+</html>

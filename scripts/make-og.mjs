@@ -27,6 +27,7 @@ const CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
    existing site card uses, so the pair stay consistent. */
 const CARDS = [
   { source: "scripts/og-methane.html", output: "og-methane.png", width: 2400, height: 1260 },
+  { source: "scripts/og-fueleu.html", output: "og-fueleu.png", width: 2400, height: 1260 },
 ];
 
 async function render({ source, output, width, height }) {
