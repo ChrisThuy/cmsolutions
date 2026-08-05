@@ -165,6 +165,69 @@
   .result-finding { color: var(--ink-dim); font-size: 0.92rem; margin-top: 0.4rem; word-break: break-word; }
   .result-why { color: var(--ink-faint); font-size: 0.88rem; margin-top: 0.5rem; max-width: 70ch; }
 
+  /* ── branding, and the fix line ─────────────────────── */
+  .branding { margin-top: 1.6rem; border: 1px solid var(--hairline); border-radius: 12px; padding: 1rem 1.1rem; }
+  .branding[hidden] { display: none; }
+  .branding-hint { font-size: 0.82rem; color: var(--ink-faint); margin-bottom: 0.8rem; }
+  .branding-row { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); align-items: end; }
+  .branding label { display: block; font-size: 0.8rem; color: var(--ink-dim); margin-bottom: 0.35rem; }
+  .branding input {
+    width: 100%; background: rgba(232, 230, 223, 0.04);
+    border: 1px solid var(--hairline-strong); border-radius: 10px;
+    padding: 0.55rem 0.8rem; color: var(--ink); font: inherit; font-size: 0.9rem;
+  }
+  .print-btn {
+    padding: 0.6rem 1.2rem; border-radius: 999px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--void); font: inherit; font-size: 0.85rem; cursor: pointer;
+  }
+  .print-btn:hover { opacity: 0.9; }
+
+  .result-fix {
+    margin-top: 0.6rem; font-size: 0.88rem; color: var(--ink);
+    padding-left: 0.8rem; border-left: 2px solid var(--accent);
+  }
+  .result-fix b { font-weight: 500; color: var(--accent); }
+
+  .print-head { display: none; }
+
+  /*
+    Print styles.
+
+    The report is the deliverable, so printing has to produce a document rather
+    than a screenshot of a web page: white background, black text, no navigation,
+    no form, and findings that never break across a page boundary mid-thought.
+  */
+  @media print {
+    .no-print, .site-head, .site-foot, .crumbs, .hero, .checker form,
+    .form-note, .msg, .section, .cta { display: none !important; }
+
+    html, body { background: #fff !important; color: #111 !important; }
+    .wrap { width: 100%; }
+    .report { margin: 0; }
+    .report-head { border-top: 0; padding-top: 0; }
+
+    .print-head { display: block; margin-bottom: 1.2rem; }
+    .print-head .for { font-size: 1.15rem; font-family: var(--serif); }
+    .print-head .by { font-size: 0.85rem; color: #555; margin-top: 0.2rem; }
+    .print-head .when { font-size: 0.8rem; color: #777; margin-top: 0.4rem; }
+
+    .report-url { display: none; }   /* already in the print header */
+    .tally span, .tally b { color: #111; }
+    .results li { border-color: #ddd; break-inside: avoid; page-break-inside: avoid; }
+    .result-label { color: #111; }
+    .result-finding { color: #333; }
+    .result-why { color: #555; }
+    .result-fix { color: #111; border-left-color: #999; }
+    .result-status--pass { color: #4a6b1f; }
+    .result-status--warn { color: #8a6a1f; }
+    .result-status--fail { color: #a33; }
+    .result-status--info { color: #666; }
+    .dot--pass { background: #4a6b1f; }
+    .dot--warn { background: #8a6a1f; }
+    .dot--fail { background: #a33; }
+    .dot--info { background: #666; }
+  }
+
   /* ── sections ───────────────────────────────────────── */
   .section { padding-bottom: 4rem; }
   .section-head { border-top: 1px solid var(--hairline); padding-top: 2.4rem; margin-bottom: 2.2rem; }
@@ -235,13 +298,18 @@
     </nav>
 
     <div class="hero">
-      <p class="kicker">Free · no account · runs in about a second</p>
-      <h1>Find out what your website is <em>quietly missing</em>.</h1>
+      <p class="kicker">Free · no account · client-ready report</p>
+      <h1>A website report you can <em>put your name on</em>.</h1>
       <p class="lede">
         Most business sites are missing three or four small things that cost
-        them visitors — a description that search engines have to invent, a link
-        that previews as a bare URL in WhatsApp, images a screen reader cannot
-        describe. None of them are visible when you look at the page.
+        them visitors — a description search engines have to invent, a link that
+        previews as a bare URL in WhatsApp, images a screen reader cannot
+        describe. None are visible when you look at the page.
+      </p>
+      <p class="lede">
+        Every finding here says what it costs <em>and how to fix it</em>, so the
+        result is something you can hand to a client or straight to a developer.
+        Agencies: add your own name to it and print it.
       </p>
     </div>
 
@@ -262,10 +330,34 @@
       <p class="msg" id="msg" role="status" aria-live="polite"></p>
 
       <section class="report" id="report" hidden aria-labelledby="report-url">
+        <div class="print-head" id="print-head" aria-hidden="true"></div>
+
         <div class="report-head">
           <p class="report-url" id="report-url"></p>
           <p class="tally" id="tally"></p>
         </div>
+
+        <!--
+          Branding fields, shown only once there is something to brand. They are
+          what turns a checker into a deliverable: an agency runs this against a
+          prospect's site and hands over the result under their own name.
+          Nothing is stored — these exist for the printed page only.
+        -->
+        <div class="branding no-print" id="branding" hidden>
+          <p class="branding-hint">Add your details, then print or save as PDF.</p>
+          <div class="branding-row">
+            <div>
+              <label for="prepared-for">Prepared for</label>
+              <input id="prepared-for" placeholder="Client name" />
+            </div>
+            <div>
+              <label for="prepared-by">Prepared by</label>
+              <input id="prepared-by" placeholder="Your agency" />
+            </div>
+            <button type="button" class="print-btn" id="print">Print / save as PDF</button>
+          </div>
+        </div>
+
         <ul class="results" id="results"></ul>
       </section>
     </div>
@@ -406,11 +498,66 @@
         li.append(why);
       }
 
+      // The instruction is what makes this a deliverable rather than a
+      // complaint, so it is rendered last and given the most weight.
+      if (item.fix) {
+        const fix = document.createElement("p");
+        fix.className = "result-fix";
+        const label = document.createElement("b");
+        label.textContent = "Fix: ";
+        fix.append(label, document.createTextNode(item.fix));
+        li.append(fix);
+      }
+
       results.append(li);
     }
 
     report.hidden = false;
+    document.getElementById("branding").hidden = false;
+    updatePrintHead(data.url);
   }
+
+  /*
+    The header that only appears on paper.
+
+    Built with textContent for the same reason the findings are: the client and
+    agency names are typed by a visitor, and the report URL comes from a page we
+    do not control.
+  */
+  function updatePrintHead(reportUrl) {
+    const head = document.getElementById("print-head");
+    const forWhom = document.getElementById("prepared-for").value.trim();
+    const byWhom = document.getElementById("prepared-by").value.trim();
+
+    head.replaceChildren();
+
+    const title = document.createElement("p");
+    title.className = "for";
+    title.textContent = forWhom ? `Website report — ${forWhom}` : "Website report";
+    head.append(title);
+
+    if (byWhom) {
+      const by = document.createElement("p");
+      by.className = "by";
+      by.textContent = `Prepared by ${byWhom}`;
+      head.append(by);
+    }
+
+    const when = document.createElement("p");
+    when.className = "when";
+    when.textContent = `${reportUrl} · ${new Date().toLocaleDateString("en-GB", {
+      day: "numeric", month: "long", year: "numeric",
+    })}`;
+    head.append(when);
+  }
+
+  for (const id of ["prepared-for", "prepared-by"]) {
+    document.getElementById(id).addEventListener("input", () =>
+      updatePrintHead(document.getElementById("report-url").textContent),
+    );
+  }
+
+  document.getElementById("print").addEventListener("click", () => window.print());
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -425,6 +572,7 @@
     button.disabled = true;
     button.textContent = "Checking…";
     report.hidden = true;
+    document.getElementById("branding").hidden = true;
     say("Fetching the page…", "working");
 
     try {

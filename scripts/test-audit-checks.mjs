@@ -171,6 +171,32 @@ console.log("\nReport shape");
   check("no overall score is invented", !("score" in report));
 }
 
+console.log("\nEvery actionable finding says what to do");
+{
+  // A report that only diagnoses gets filed. Anything a reader is expected to
+  // act on has to end with an instruction, or the report is just a complaint.
+  const pages = [
+    page("<html><body><p>hi</p></body></html>"),
+    page("<html><head><title>x</title></head><body></body></html>"),
+    page('<html><head><meta property="og:title" content="X"></head><body><img src="a.jpg"></body></html>'),
+    { ...page("<html></html>"), url: "http://insecure.example/" },
+    page('<html><head><script type="application/ld+json">{bad}</script></head></html>'),
+  ];
+
+  let missing = [];
+  for (const p of pages) {
+    for (const r of runChecks(p).results) {
+      if (r.status === "fail" || r.status === "warn") {
+        if (!r.fix) missing.push(`${r.id}:${r.status}`);
+      }
+    }
+  }
+  check("no fail or warn is left without a fix", missing.length === 0, [...new Set(missing)].join(", "));
+
+  const good = runChecks(page(GOOD));
+  check("passing findings carry no fix", good.results.filter((r) => r.status === "pass").every((r) => r.fix === null));
+}
+
 console.log("\nMalformed input must not throw");
 for (const [name, html] of [
   ["empty string", ""],
