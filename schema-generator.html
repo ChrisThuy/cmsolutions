@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Free Schema Markup Generator (JSON-LD) | CM Solutions</title>
+<meta name="description" content="Generate valid schema.org JSON-LD for your business — local business, services, opening hours and FAQs. Runs entirely in your browser; nothing is sent anywhere." />
+<link rel="canonical" href="https://cmsolutions.tech/schema-generator" />
+
+<meta property="og:title" content="Free Schema Markup Generator | CM Solutions" />
+<meta property="og:description" content="Generate valid schema.org JSON-LD for your business. Runs in your browser; nothing is sent anywhere. No invented ratings or reviews." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/schema-generator" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Free Schema Markup Generator | CM Solutions" />
+<meta name="twitter:description" content="Generate valid schema.org JSON-LD. Runs in your browser; nothing is sent anywhere." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+<meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  SCHEMA MARKUP GENERATOR
+
+  Entirely client-side. There is no endpoint, no request and no server: the
+  builder in /lib/schema/build.mjs runs in the visitor's browser, so business
+  details never leave the machine. That is worth saying on the page, because
+  every competing tool posts the same details to somebody's server.
+
+  It will not generate aggregateRating or review. Fabricated review data is a
+  manual-action risk for the site that publishes it, and in the UK inventing
+  customer reviews is a consumer protection matter rather than an SEO one. The
+  refusal is stated in the interface rather than hidden as a missing field.
+
+  The builder is shared with scripts/test-schema-builder.mjs, which is why it
+  is a module served from /lib rather than inlined here. One file, two
+  consumers, no drift.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  :root {
+    --ink:        #e8e6df;
+    --ink-dim:    #a09d93;
+    --ink-faint:  #6b6960;
+    --void:       #07080c;
+    --hairline:   rgba(232, 230, 223, 0.12);
+    --hairline-strong: rgba(232, 230, 223, 0.25);
+
+    --c-psychart: #d4af6a;
+    --c-olive:    #a8b878;
+    --c-huddle:   #7ab8d4;
+    --c-fathers:  #d49a7a;
+
+    --accent: var(--c-olive);
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+
+  body {
+    background: var(--void); color: var(--ink);
+    font-family: var(--sans); font-weight: 300; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  ::selection { background: rgba(168, 184, 120, 0.25); }
+
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--ink); color: var(--void); padding: 0.75rem 1.25rem; z-index: 10; }
+  .skip:focus { left: 0; }
+
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  .site-head { border-bottom: 1px solid var(--hairline); }
+  .site-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.4rem; }
+  .wordmark { font-family: var(--serif); font-size: 1.05rem; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: 0.9rem; }
+  .site-head nav a { color: var(--ink-dim); text-decoration: none; white-space: nowrap; transition: color 0.3s var(--ease-out); }
+  .site-head nav a:hover { color: var(--ink); }
+
+  .crumbs { padding-top: 2.2rem; font-size: 0.8rem; color: var(--ink-faint); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .crumbs a:hover { color: var(--ink); }
+  .crumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--ink-faint); }
+
+  .hero { padding-block: 3rem 2.2rem; }
+  .kicker { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1.4rem; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.2rem, 5.4vw, 3.4rem); line-height: 1.08; letter-spacing: -0.02em; max-width: 20ch; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { margin-top: 1.6rem; max-width: 62ch; font-size: clamp(1rem, 2.2vw, 1.12rem); color: var(--ink-dim); }
+
+  /* ── layout ─────────────────────────────────────────── */
+  .tool { display: grid; gap: 2.4rem; align-items: start; padding-bottom: 4rem; }
+  /*
+    Grid items default to min-width:auto, so a child never shrinks below its
+    own min-content width. The generated JSON-LD has long unbroken lines, which
+    pushed the whole column — and the page — wider than the viewport. Setting
+    min-width:0 lets the column shrink and hands the scrolling to the <pre>,
+    which already has overflow-x:auto for exactly that.
+  */
+  .tool > * { min-width: 0; }
+  @media (min-width: 960px) { .tool { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (min-width: 960px) { .output-col { position: sticky; top: 1.5rem; } }
+
+  fieldset { border: 0; margin-bottom: 1.8rem; }
+  legend { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1rem; }
+
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 0.85rem; margin-bottom: 0.4rem; }
+  .field .hint { font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 0.45rem; }
+  input, select, textarea {
+    width: 100%; background: rgba(232, 230, 223, 0.04);
+    border: 1px solid var(--hairline-strong); border-radius: 10px;
+    padding: 0.62rem 0.85rem; color: var(--ink); font: inherit; font-size: 0.92rem;
+  }
+  textarea { resize: vertical; min-height: 4.5rem; }
+  input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+  select option { background: #14161c; }
+
+  .row { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+  .hours-row { display: grid; grid-template-columns: 4.2rem 1fr 1fr; gap: 0.5rem; align-items: center; margin-bottom: 0.45rem; }
+  .hours-row span { font-size: 0.82rem; color: var(--ink-dim); }
+
+  .repeat-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+  .repeat-row input { flex: 1; }
+  .mini {
+    flex-shrink: 0; width: 2.35rem; border-radius: 10px;
+    border: 1px solid var(--hairline); background: transparent; color: var(--ink-faint);
+    font: inherit; cursor: pointer; transition: color 0.3s var(--ease-out), border-color 0.3s var(--ease-out);
+  }
+  .mini:hover { color: var(--c-fathers); border-color: var(--c-fathers); }
+  .add {
+    margin-top: 0.3rem; padding: 0.45rem 1rem; border-radius: 999px;
+    border: 1px solid var(--hairline-strong); background: transparent; color: var(--ink);
+    font: inherit; font-size: 0.85rem; cursor: pointer;
+  }
+  .add:hover { border-color: var(--accent); }
+
+  .faq-block { border: 1px solid var(--hairline); border-radius: 12px; padding: 0.9rem; margin-bottom: 0.7rem; }
+  .faq-block .repeat-row { margin-bottom: 0; }
+
+  /* ── the refusal, stated rather than hidden ──────────── */
+  .principle {
+    border: 1px solid var(--hairline); border-left: 2px solid var(--accent);
+    border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1.8rem;
+  }
+  .principle h3 { font-family: var(--serif); font-weight: 400; font-size: 1rem; margin-bottom: 0.4rem; }
+  .principle p { font-size: 0.86rem; color: var(--ink-dim); }
+
+  /* ── output ─────────────────────────────────────────── */
+  .output-head { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: baseline; justify-content: space-between; margin-bottom: 0.9rem; }
+  .output-head h2 { font-family: var(--serif); font-weight: 400; font-size: 1.3rem; }
+  .copy {
+    padding: 0.5rem 1.1rem; border-radius: 999px; border: 1px solid var(--ink);
+    background: var(--ink); color: var(--void); font: inherit; font-size: 0.85rem; cursor: pointer;
+  }
+  .copy:hover { opacity: 0.9; }
+  .copy[disabled] { opacity: 0.4; cursor: default; }
+
+  pre {
+    background: rgba(232, 230, 223, 0.03); border: 1px solid var(--hairline);
+    border-radius: 12px; padding: 1rem; overflow-x: auto;
+    font-size: 0.78rem; line-height: 1.55; max-height: 26rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink-dim);
+  }
+
+  .issues { margin-top: 1rem; display: grid; gap: 0.5rem; }
+  .issue { font-size: 0.86rem; padding-left: 1.2rem; position: relative; }
+  .issue::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; }
+  .issue--error { color: #e08a7a; }
+  .issue--error::before { background: #e08a7a; }
+  .issue--warn { color: var(--ink-dim); }
+  .issue--warn::before { background: var(--c-psychart); }
+
+  .where { margin-top: 1.2rem; font-size: 0.82rem; color: var(--ink-faint); }
+
+  /* ── sections ───────────────────────────────────────── */
+  .section { padding-bottom: 4rem; }
+  .section-head { border-top: 1px solid var(--hairline); padding-top: 2.4rem; margin-bottom: 2.2rem; }
+  .section-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.5rem, 3.5vw, 2rem); letter-spacing: -0.01em; }
+  .section-head p { color: var(--ink-dim); margin-top: 0.7rem; max-width: 60ch; }
+  .faq-list details { border-top: 1px solid var(--hairline); padding-block: 1.1rem; }
+  .faq-list details:last-child { border-bottom: 1px solid var(--hairline); }
+  .faq-list summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+  .faq-list summary::-webkit-details-marker { display: none; }
+  .faq-list summary::after { content: "+"; color: var(--accent); }
+  .faq-list details[open] summary::after { content: "–"; }
+  .faq-list p { color: var(--ink-dim); font-size: 0.92rem; margin-top: 0.7rem; max-width: 70ch; }
+
+  .cta { border-top: 1px solid var(--hairline); padding-block: 3rem 4rem; }
+  .cta h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.6rem, 4vw, 2.2rem); max-width: 22ch; }
+  .cta p { color: var(--ink-dim); margin-top: 1rem; max-width: 58ch; }
+  .cta-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.7rem 1.4rem; border-radius: 999px; font-size: 0.9rem; text-decoration: none; border: 1px solid var(--hairline-strong); transition: border-color 0.3s var(--ease-out), opacity 0.3s var(--ease-out); }
+  .btn:hover { border-color: var(--accent); }
+  .btn--primary { background: var(--ink); color: var(--void); border-color: var(--ink); }
+
+  .site-foot { border-top: 1px solid var(--hairline); padding-block: 2rem 3rem; font-size: 0.85rem; color: var(--ink-faint); }
+  .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .wrap { width: min(1080px, 100% - 2.5rem); }
+    .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/website-audit">Website Check</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/ai-tools">AI Tools</a></li>
+        <li aria-current="page">Schema Generator</li>
+      </ol>
+    </nav>
+
+    <div class="hero">
+      <p class="kicker">Free · nothing leaves your browser</p>
+      <h1>Tell search engines <em>what you actually are</em>.</h1>
+      <p class="lede">
+        Structured data is how a search engine — and increasingly an AI
+        assistant — knows you are an accountancy practice in Bristol that opens
+        at nine, rather than guessing from your page text. Without it they
+        infer, and inference is where the wrong answer comes from.
+      </p>
+      <p class="lede">
+        Fill this in and copy the result into your site's
+        <code>&lt;head&gt;</code>. It is generated in your browser: no account,
+        no request, nothing sent anywhere.
+      </p>
+    </div>
+
+    <div class="tool">
+      <!-- ── form ─────────────────────────────────────── -->
+      <form id="form" novalidate>
+        <div class="principle">
+          <h3>No ratings, no review counts</h3>
+          <p>
+            This tool will not generate <code>aggregateRating</code> or
+            <code>review</code>, and there is no field for them. Typing numbers
+            into those is fabricated review data in machine-readable form — a
+            manual-action risk for your site, and in the UK a consumer
+            protection matter rather than an SEO one. Real reviews belong in a
+            review platform's own markup.
+          </p>
+        </div>
+
+        <fieldset>
+          <legend>The business</legend>
+
+          <div class="field">
+            <label for="name">Business name</label>
+            <input id="name" name="name" placeholder="Harbour &amp; Co" />
+          </div>
+
+          <div class="field">
+            <label for="businessType">What kind of business</label>
+            <select id="businessType" name="businessType"></select>
+          </div>
+
+          <div class="field">
+            <label for="url">Website address</label>
+            <input id="url" name="url" inputmode="url" placeholder="example.com" />
+          </div>
+
+          <div class="field">
+            <label for="description">Description</label>
+            <p class="hint">One or two sentences, in your own words.</p>
+            <textarea id="description" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="phone">Telephone</label>
+              <input id="phone" name="phone" inputmode="tel" />
+            </div>
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" name="email" inputmode="email" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Where you are</legend>
+          <div class="field">
+            <label for="street">Street address</label>
+            <input id="street" name="street" />
+          </div>
+          <div class="row">
+            <div class="field"><label for="city">Town or city</label><input id="city" name="city" /></div>
+            <div class="field"><label for="region">County</label><input id="region" name="region" /></div>
+            <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" /></div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="country">Country code</label>
+              <input id="country" name="country" value="GB" maxlength="2" />
+            </div>
+            <div class="field">
+              <label for="areaServed">Area served</label>
+              <input id="areaServed" name="areaServed" placeholder="South West England" />
+            </div>
+            <div class="field">
+              <label for="priceRange">Price range</label>
+              <input id="priceRange" name="priceRange" placeholder="££" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset id="hours-set">
+          <legend>Opening hours</legend>
+          <div id="hours"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Services</legend>
+          <div id="services"></div>
+          <button type="button" class="add" data-add="service">Add a service</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>Profiles elsewhere</legend>
+          <p class="hint" style="margin-bottom:0.6rem">
+            LinkedIn, Companies House, a professional register — anything that
+            confirms this is the same organisation.
+          </p>
+          <div id="sameAs"></div>
+          <button type="button" class="add" data-add="sameAs">Add a profile</button>
+        </fieldset>
+
+        <fieldset>
+          <legend>FAQ</legend>
+          <p class="hint" style="margin-bottom:0.6rem">
+            Only add these if the same questions and answers are visible on the
+            page. Structured data that disagrees with the page is a
+            manual-action risk.
+          </p>
+          <div id="faq"></div>
+          <button type="button" class="add" data-add="faq">Add a question</button>
+        </fieldset>
+      </form>
+
+      <!-- ── output ───────────────────────────────────── -->
+      <div class="output-col">
+        <div class="output-head">
+          <h2>Your markup</h2>
+          <button type="button" class="copy" id="copy" disabled>Copy</button>
+        </div>
+        <pre id="output" aria-live="polite" aria-label="Generated JSON-LD">Fill in the business name and website address to begin.</pre>
+        <div class="issues" id="issues"></div>
+        <p class="where">
+          Paste it inside <code>&lt;head&gt;</code> on the page it describes —
+          usually your home page. Then run it through
+          <a href="/website-audit">the website check</a> to confirm it is being
+          served and parses.
+        </p>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="faq-heading">
+      <div class="section-head">
+        <h2 id="faq-heading">Questions worth asking</h2>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>Will this make me rank higher?</summary>
+          <p>
+            Not on its own, and anyone promising that is selling something.
+            Structured data does not raise rankings directly. What it does is
+            make you eligible for richer results, and give search engines and AI
+            assistants unambiguous facts instead of inferences drawn from your
+            page text. The gain is in being described correctly.
+          </p>
+        </details>
+        <details>
+          <summary>Why is there no field for star ratings?</summary>
+          <p>
+            Because filling it in would mean publishing review data you made up.
+            That breaches Google's structured data policies and risks a manual
+            action against your site, and inventing customer reviews is a
+            consumer protection matter in the UK. If you have genuine reviews,
+            they should carry the markup of the platform that collected them.
+          </p>
+        </details>
+        <details>
+          <summary>Where exactly does it go?</summary>
+          <p>
+            Inside the <code>&lt;head&gt;</code> of the page it describes,
+            usually your home page. It can also sit at the end of
+            <code>&lt;body&gt;</code>; both are read. What matters is that it
+            appears in the HTML the server sends, rather than being added later
+            by JavaScript, which is not always executed before the page is
+            assessed.
+          </p>
+        </details>
+        <details>
+          <summary>Is my information sent to you?</summary>
+          <p>
+            No. The generator runs entirely in your browser — there is no
+            request and no server involved, so nothing you type here reaches us
+            or anyone else. You can confirm that in your browser's network tab,
+            or by disconnecting from the internet and watching it carry on
+            working.
+          </p>
+        </details>
+        <details>
+          <summary>What if my details change?</summary>
+          <p>
+            Come back and regenerate it. Markup that contradicts the visible
+            page is worse than none, so opening hours or an address that has
+            moved on should be corrected in both places.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="cta" aria-labelledby="cta-heading">
+    <div class="wrap">
+      <h2 id="cta-heading">Markup is the easy part.</h2>
+      <p>
+        Getting found involves rather more than one tag — but this one is
+        genuinely worth doing, it takes five minutes, and most sites are missing
+        it. If you want the rest handled properly, that is what CM Solutions is
+        for.
+      </p>
+      <div class="cta-actions">
+        <a class="btn btn--primary" href="/#contact">Talk about your site</a>
+        <a class="btn" href="/website-audit">Check your website</a>
+        <a class="btn" href="/ai-tools">All AI tools</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { BUSINESS_TYPES, DAYS, buildGraph, toScriptTag, validate }
+    from "/lib/schema/build.mjs";
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const form = document.getElementById("form");
+  const output = document.getElementById("output");
+  const issues = document.getElementById("issues");
+  const copyButton = document.getElementById("copy");
+
+  // ── populate the parts that come from the module ──────────────────────
+  const typeSelect = document.getElementById("businessType");
+  for (const type of BUSINESS_TYPES) {
+    const option = document.createElement("option");
+    option.value = type.value;
+    option.textContent = type.label;
+    typeSelect.append(option);
+  }
+
+  const hoursHost = document.getElementById("hours");
+  for (const day of DAYS) {
+    const row = document.createElement("div");
+    row.className = "hours-row";
+    const label = document.createElement("span");
+    label.textContent = day.short;
+    const open = document.createElement("input");
+    open.type = "time"; open.dataset.day = day.value; open.dataset.part = "open";
+    open.setAttribute("aria-label", `${day.value} opening time`);
+    const close = document.createElement("input");
+    close.type = "time"; close.dataset.day = day.value; close.dataset.part = "close";
+    close.setAttribute("aria-label", `${day.value} closing time`);
+    row.append(label, open, close);
+    hoursHost.append(row);
+  }
+
+  // ── repeatable rows ───────────────────────────────────────────────────
+  function addRepeat(kind) {
+    const host = document.getElementById(kind === "faq" ? "faq" : kind === "service" ? "services" : "sameAs");
+
+    if (kind === "faq") {
+      const block = document.createElement("div");
+      block.className = "faq-block";
+      const q = document.createElement("input");
+      q.placeholder = "Question"; q.dataset.faq = "question";
+      q.setAttribute("aria-label", "FAQ question");
+      const a = document.createElement("input");
+      a.placeholder = "Answer"; a.dataset.faq = "answer";
+      a.setAttribute("aria-label", "FAQ answer");
+      const remove = document.createElement("button");
+      remove.type = "button"; remove.className = "mini"; remove.textContent = "×";
+      remove.setAttribute("aria-label", "Remove this question");
+      remove.addEventListener("click", () => { block.remove(); update(); });
+      const rowA = document.createElement("div"); rowA.className = "repeat-row"; rowA.append(q);
+      const rowB = document.createElement("div"); rowB.className = "repeat-row"; rowB.style.marginTop = "0.5rem"; rowB.append(a, remove);
+      block.append(rowA, rowB);
+      host.append(block);
+      q.focus();
+      return;
+    }
+
+    const row = document.createElement("div");
+    row.className = "repeat-row";
+    const input = document.createElement("input");
+    input.dataset.repeat = kind;
+    input.placeholder = kind === "service" ? "Year-end accounts" : "linkedin.com/company/…";
+    input.setAttribute("aria-label", kind === "service" ? "Service name" : "Profile URL");
+    const remove = document.createElement("button");
+    remove.type = "button"; remove.className = "mini"; remove.textContent = "×";
+    remove.setAttribute("aria-label", "Remove this row");
+    remove.addEventListener("click", () => { row.remove(); update(); });
+    row.append(input, remove);
+    host.append(row);
+    input.focus();
+  }
+
+  for (const button of document.querySelectorAll("[data-add]")) {
+    button.addEventListener("click", () => addRepeat(button.dataset.add));
+  }
+  addRepeat("service");
+  addRepeat("sameAs");
+
+  // ── read the form ─────────────────────────────────────────────────────
+  const value = (id) => document.getElementById(id)?.value ?? "";
+
+  function readForm() {
+    return {
+      name: value("name"),
+      businessType: value("businessType"),
+      url: value("url"),
+      description: value("description"),
+      phone: value("phone"),
+      email: value("email"),
+      street: value("street"),
+      city: value("city"),
+      region: value("region"),
+      postcode: value("postcode"),
+      country: value("country"),
+      areaServed: value("areaServed"),
+      priceRange: value("priceRange"),
+      hours: DAYS.map((day) => ({
+        day: day.value,
+        open: document.querySelector(`[data-day="${day.value}"][data-part="open"]`)?.value ?? "",
+        close: document.querySelector(`[data-day="${day.value}"][data-part="close"]`)?.value ?? "",
+      })),
+      services: [...document.querySelectorAll('[data-repeat="service"]')].map((i) => i.value),
+      sameAs: [...document.querySelectorAll('[data-repeat="sameAs"]')].map((i) => i.value),
+      faq: [...document.querySelectorAll(".faq-block")].map((block) => ({
+        question: block.querySelector('[data-faq="question"]')?.value ?? "",
+        answer: block.querySelector('[data-faq="answer"]')?.value ?? "",
+      })),
+    };
+  }
+
+  // ── render ────────────────────────────────────────────────────────────
+  function update() {
+    const input = readForm();
+    const document_ = buildGraph(input);
+    const result = validate(input, document_);
+
+    issues.replaceChildren();
+    for (const [list, kind] of [[result.errors, "error"], [result.warnings, "warn"]]) {
+      for (const text of list) {
+        const p = document.createElement("p");
+        p.className = `issue issue--${kind}`;
+        p.textContent = text;
+        issues.append(p);
+      }
+    }
+
+    // Hiding the output until it is valid would mean typing into a void. It is
+    // shown as it builds; the errors say what still has to be true before it
+    // should go on a live site.
+    const hasContent = document_["@graph"].length > 0;
+    output.textContent = hasContent
+      ? toScriptTag(document_)
+      : "Fill in the business name and website address to begin.";
+
+    copyButton.disabled = !result.valid || !hasContent;
+    copyButton.textContent = "Copy";
+  }
+
+  form.addEventListener("input", update);
+  form.addEventListener("change", update);
+  form.addEventListener("submit", (e) => e.preventDefault());
+
+  copyButton.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(output.textContent);
+      copyButton.textContent = "Copied";
+      setTimeout(() => { copyButton.textContent = "Copy"; }, 2000);
+    } catch {
+      // Clipboard access can be refused. Selecting the text is a real
+      // fallback rather than an error message with no way forward.
+      const range = document.createRange();
+      range.selectNodeContents(output);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      copyButton.textContent = "Selected — press Cmd/Ctrl+C";
+    }
+  });
+
+  update();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cmsolutions.tech/#organization",
+      "name": "CM Solutions",
+      "url": "https://cmsolutions.tech/",
+      "email": "contact@cmsolutions.tech",
+      "description": "AI systems and product engineering — AI agents, workflow automation and full digital products."
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://cmsolutions.tech/schema-generator#software",
+      "name": "CM Solutions Schema Markup Generator",
+      "url": "https://cmsolutions.tech/schema-generator",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Web browser",
+      "description": "Generates valid schema.org JSON-LD for a business — type, address, opening hours, services and FAQs — entirely in the browser, with no ratings or review data.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+      "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://cmsolutions.tech/schema-generator#webpage",
+      "url": "https://cmsolutions.tech/schema-generator",
+      "name": "Free Schema Markup Generator (JSON-LD) | CM Solutions",
+      "description": "Generate valid schema.org JSON-LD for your business — local business, services, opening hours and FAQs. Runs entirely in your browser.",
+      "about": { "@id": "https://cmsolutions.tech/schema-generator#software" },
+      "breadcrumb": { "@id": "https://cmsolutions.tech/schema-generator#breadcrumb" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/schema-generator#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Tools", "item": "https://cmsolutions.tech/ai-tools" },
+        { "@type": "ListItem", "position": 3, "name": "Schema Generator" }
+      ]
+    }
+  ]
+}
+</script>
+
+</body>
+</html>

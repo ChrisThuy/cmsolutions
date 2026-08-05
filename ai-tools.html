@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>AI Business Tools | CM Solutions</title>
-<meta name="description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
+<meta name="description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, a free Website Check and a Schema Generator." />
 <link rel="canonical" href="https://cmsolutions.tech/ai-tools" />
 
 <meta property="og:title" content="AI Business Tools | CM Solutions" />
-<meta property="og:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
+<meta property="og:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, a free Website Check and a Schema Generator." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://cmsolutions.tech/ai-tools" />
 <meta property="og:site_name" content="CM Solutions" />
@@ -22,7 +22,7 @@
 <meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="AI Business Tools | CM Solutions" />
-<meta name="twitter:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check." />
+<meta name="twitter:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, a free Website Check and a Schema Generator." />
 <meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
 <meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
 
@@ -303,7 +303,7 @@
     <section class="section" aria-labelledby="available">
       <div class="section-head">
         <h2 id="available">Available now</h2>
-        <p>Two products are live today.</p>
+        <p>Three products are live today.</p>
       </div>
 
       <div class="tools">
@@ -351,6 +351,28 @@
           </ul>
           <div class="tool-actions">
             <a class="btn btn--primary" href="/website-audit">Check a website</a>
+          </div>
+        </article>
+
+
+        <article class="tool fade" style="--accent: var(--c-olive)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/schema-generator">Schema Generator</a></h3>
+          <p class="tool-for">For any business with a website</p>
+          <p class="tool-sub">
+            Structured data is how a search engine — and increasingly an AI
+            assistant — knows what your business actually is, rather than
+            inferring it from your page text. This builds valid JSON-LD from a
+            short form, in your browser, and nothing you type is sent anywhere.
+          </p>
+          <ul>
+            <li>Business type, address, opening hours and services</li>
+            <li>FAQ markup, with a warning to keep it matching the page</li>
+            <li>Validated as you type, with errors separated from suggestions</li>
+            <li>No ratings or review counts — inventing those risks a penalty</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/schema-generator">Generate markup</a>
           </div>
         </article>
 
@@ -470,7 +492,7 @@
       "@id": "https://cmsolutions.tech/ai-tools#webpage",
       "url": "https://cmsolutions.tech/ai-tools",
       "name": "AI Business Tools | CM Solutions",
-      "description": "Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI and a free Website Check.",
+      "description": "Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, a free Website Check and a Schema Generator.",
       "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
       "about": { "@id": "https://cmsolutions.tech/#organization" },
       "breadcrumb": { "@id": "https://cmsolutions.tech/ai-tools#breadcrumb" },
@@ -479,7 +501,7 @@
         "@type": "ItemList",
         "name": "CM Solutions AI business tools",
         "itemListOrder": "https://schema.org/ItemListOrderAscending",
-        "numberOfItems": 2,
+        "numberOfItems": 3,
         "itemListElement": [
           {
             "@type": "ListItem",
@@ -506,6 +528,21 @@
               "applicationCategory": "DeveloperApplication",
               "operatingSystem": "Web browser",
               "description": "Fetches a public web page and reports missing or misconfigured title tags, meta descriptions, canonical URLs, link preview tags, structured data, image alt text and security headers.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/schema-generator#software",
+              "name": "CM Solutions Schema Markup Generator",
+              "url": "https://cmsolutions.tech/schema-generator",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Web browser",
+              "description": "Generates valid schema.org JSON-LD for a business — type, address, opening hours, services and FAQs — entirely in the browser, with no ratings or review data.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }
