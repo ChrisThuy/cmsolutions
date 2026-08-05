@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>AI Business Tools | CM Solutions</title>
+<meta name="description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-tools" />
+
+<meta property="og:title" content="AI Business Tools | CM Solutions" />
+<meta property="og:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-tools" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Business Tools | CM Solutions" />
+<meta name="twitter:description" content="Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+<meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  HOW TO ADD A PRODUCT TO THIS DIRECTORY
+
+  This page is the central directory for CM Solutions AI products. Adding one
+  means editing FOUR places. Miss any and the page is inconsistent:
+
+    1. Duplicate the `<article class="tool">` block below and fill it in.
+       Set `--accent` to one of the brand accents (--c-psychart / --c-olive /
+       --c-huddle / --c-fathers) so products stay visually distinguishable.
+    2. Add a matching entry to the ItemList in the JSON-LD at the bottom, and
+       bump `numberOfItems`. Position order must match the visual order.
+    3. Add the product's public page to /sitemap.xml — but ONLY once that page
+       actually returns 200. A sitemap entry that 404s trains crawlers to
+       distrust the file.
+    4. Update the meta description and og:description if the one-line summary
+       of what is available has changed.
+
+  RULES, which are not negotiable:
+    - Never list a product that does not exist. No "coming soon" placeholders,
+      no invented launch dates, no empty pages created purely to rank.
+    - No metrics, customer names or testimonials that cannot be substantiated.
+    - Status labels must be true. "Live" means a person can use it today.
+  ═══════════════════════════════════════════════════════════════════════════
+
+  This page is intentionally self-contained. The home page animates content in
+  with an IntersectionObserver, so its `.reveal` class starts at opacity:0.
+  Reusing that here would hide the entire page from anyone without JS, and this
+  is an indexable acquisition surface. All text and links render without
+  JavaScript; the entrance animation is progressive enhancement only.
+-->
+<style>
+  :root {
+    --ink:        #e8e6df;
+    --ink-dim:    #a09d93;
+    --ink-faint:  #6b6960;
+    --void:       #07080c;
+    --hairline:   rgba(232, 230, 223, 0.12);
+    --hairline-strong: rgba(232, 230, 223, 0.25);
+
+    --c-psychart: #d4af6a;
+    --c-olive:    #a8b878;
+    --c-huddle:   #7ab8d4;
+    --c-fathers:  #d49a7a;
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--c-psychart);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection { background: rgba(212, 175, 106, 0.25); }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--ink); color: var(--void);
+    padding: 0.75rem 1.25rem; z-index: 10;
+  }
+  .skip:focus { left: 0; }
+
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  /* ── header ─────────────────────────────────────────── */
+  .site-head { border-bottom: 1px solid var(--hairline); }
+  .site-head .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; padding-block: 1.4rem;
+  }
+  .wordmark {
+    font-family: var(--serif); font-size: 1.05rem; letter-spacing: -0.01em;
+    text-decoration: none; white-space: nowrap;
+  }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: 0.9rem; }
+  /* nowrap: at 375px these broke mid-phrase into "AI / Tools", "What I / build" */
+  .site-head nav a {
+    color: var(--ink-dim); text-decoration: none; white-space: nowrap;
+    transition: color 0.3s var(--ease-out);
+  }
+  .site-head nav a:hover { color: var(--ink); }
+  .site-head nav a[aria-current="page"] { color: var(--c-psychart); }
+
+  /* ── breadcrumb ─────────────────────────────────────── */
+  .crumbs { padding-top: 2.2rem; font-size: 0.8rem; color: var(--ink-faint); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .crumbs a:hover { color: var(--ink); }
+  .crumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--ink-faint); }
+
+  /* ── hero ───────────────────────────────────────────── */
+  .hero { padding-block: 3rem 4rem; }
+  .kicker {
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 1.4rem;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(2.3rem, 5.6vw, 3.8rem); line-height: 1.08;
+    letter-spacing: -0.02em; max-width: 19ch;
+  }
+  h1 em { font-style: italic; color: var(--c-psychart); }
+  .lede {
+    margin-top: 1.6rem; max-width: 62ch;
+    font-size: clamp(1rem, 2.2vw, 1.15rem); color: var(--ink-dim);
+  }
+  .lede + .lede { margin-top: 1rem; }
+
+  /* ── sections ───────────────────────────────────────── */
+  .section { padding-bottom: 4rem; }
+  .section-head {
+    border-top: 1px solid var(--hairline);
+    padding-top: 2.4rem; margin-bottom: 2.2rem;
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.5rem, 3.5vw, 2rem); letter-spacing: -0.01em;
+  }
+  .section-head p { color: var(--ink-dim); margin-top: 0.7rem; max-width: 60ch; }
+
+  /* ── product card (repeat this block per product) ───── */
+  .tools { display: grid; gap: 1.4rem; }
+  .tool {
+    --accent: var(--c-psychart);
+    border: 1px solid var(--hairline); border-radius: 14px;
+    padding: clamp(1.5rem, 4vw, 2.4rem);
+    transition: border-color 0.4s var(--ease-out);
+  }
+  .tool:hover { border-color: var(--hairline-strong); }
+  .tool-status {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .tool-status::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+  }
+  .tool h3 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.4rem, 3vw, 1.85rem); letter-spacing: -0.01em;
+    margin-top: 0.7rem;
+  }
+  .tool h3 a { text-decoration: none; transition: color 0.3s var(--ease-out); }
+  .tool h3 a:hover { color: var(--accent); }
+  .tool-for {
+    font-size: 0.82rem; color: var(--ink-faint); margin-top: 0.5rem;
+  }
+  .tool-sub { color: var(--ink-dim); margin-top: 0.9rem; max-width: 62ch; }
+  .tool ul { list-style: none; margin-top: 1.4rem; display: grid; gap: 0.55rem; }
+  .tool li { position: relative; padding-left: 1.3rem; font-size: 0.94rem; color: var(--ink-dim); }
+  .tool li::before {
+    content: ""; position: absolute; left: 0; top: 0.62em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  }
+  .tool-actions { margin-top: 1.8rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.4rem; border-radius: 999px;
+    font-size: 0.9rem; text-decoration: none;
+    border: 1px solid var(--hairline-strong);
+    transition: border-color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn--primary { background: var(--ink); color: var(--void); border-color: var(--ink); }
+  .btn--primary:hover { opacity: 0.9; border-color: var(--ink); }
+
+  /* ── principles ─────────────────────────────────────── */
+  .principles { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .principle h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .principle p { color: var(--ink-dim); font-size: 0.94rem; }
+
+  /* ── footer ─────────────────────────────────────────── */
+  .site-foot {
+    border-top: 1px solid var(--hairline);
+    padding-block: 2rem 3rem; font-size: 0.85rem; color: var(--ink-faint);
+  }
+  .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+  .site-foot a:hover { color: var(--ink); }
+
+  /* ── entrance animation: enhancement only ───────────── */
+  .js .fade { opacity: 0; transform: translateY(14px); }
+  .js .fade.is-in {
+    opacity: 1; transform: none;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    transition-delay: var(--d, 0s);
+  }
+
+  /* Below ~640px the wordmark and nav cannot share a row without cramping. */
+  @media (max-width: 640px) {
+    .wrap { width: min(1080px, 100% - 2.5rem); }
+    .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+    .site-head nav { gap: 1.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .fade, .js .fade.is-in { opacity: 1; transform: none; transition: none; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools" aria-current="page">AI Tools</a>
+      <a href="/agent-map">Agent Map</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li aria-current="page">AI Tools</li>
+      </ol>
+    </nav>
+
+    <div class="hero">
+      <p class="kicker fade">AI business tools</p>
+      <h1 class="fade" style="--d: 0.06s">Tools that finish the job, not <em>demonstrate it</em>.</h1>
+      <p class="lede fade" style="--d: 0.12s">
+        Most AI products hand you a prompt box and leave the actual work where it
+        was. These are built the other way round: each one takes a specific job a
+        business already has to do, and carries it through to something you can
+        send, file or sign.
+      </p>
+      <p class="lede fade" style="--d: 0.16s">
+        Everything here is designed, engineered and supported by CM Solutions.
+        The list is short on purpose — a tool appears once it is genuinely usable,
+        and not before.
+      </p>
+    </div>
+
+    <section class="section" aria-labelledby="available">
+      <div class="section-head">
+        <h2 id="available">Available now</h2>
+        <p>One product is live today.</p>
+      </div>
+
+      <div class="tools">
+
+        <!-- ── PRODUCT CARD — duplicate this block to add a product ── -->
+        <article class="tool fade" style="--accent: var(--c-psychart)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/ai-proposal-generator">CM Proposal AI</a></h3>
+          <p class="tool-for">For agencies, consultants and freelancers</p>
+          <p class="tool-sub">
+            Writing a proposal is mostly re-typing what you already know, then
+            arguing with a blank page about the wording. CM Proposal AI takes a
+            short questionnaire about the project and returns a structured
+            proposal — scope, timeline, costed investment table — that you edit
+            section by section and export as a branded PDF.
+          </p>
+          <ul>
+            <li>A four-step questionnaire instead of an empty document</li>
+            <li>Every section editable, because a draft is a starting point</li>
+            <li>An investment table whose line items have to add up</li>
+            <li>Branded PDF export using your logo, colour and payment terms</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/ai-proposal-generator">About CM Proposal AI</a>
+            <a class="btn" href="https://proposal.cmsolutions.tech">Open the app</a>
+          </div>
+        </article>
+        <!-- ── end product card ── -->
+
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="approach">
+      <div class="section-head">
+        <h2 id="approach">How these tools are built</h2>
+        <p>
+          The same three constraints apply to everything in this directory, and
+          they are the reason the list grows slowly.
+        </p>
+      </div>
+
+      <div class="principles">
+        <div class="principle fade">
+          <h3>One job, end to end</h3>
+          <p>
+            Each tool solves a single business job completely rather than being a
+            general assistant pointed at your work. Narrow scope is what makes the
+            output good enough to send to a client.
+          </p>
+        </div>
+        <div class="principle fade" style="--d: 0.06s">
+          <h3>Structured, checkable output</h3>
+          <p>
+            Output comes back as real structure — sections, tables, figures — not
+            a paragraph that mentions them. Numbers that should reconcile are
+            checked before you ever see them.
+          </p>
+        </div>
+        <div class="principle fade" style="--d: 0.12s">
+          <h3>Yours to edit</h3>
+          <p>
+            Nothing is generated and locked. You rewrite any part of it, because
+            you are the one whose name goes on the document.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="more">
+      <div class="section-head">
+        <h2 id="more">Need something that isn't here?</h2>
+        <p>
+          Alongside these products, CM Solutions builds AI agents, workflow
+          automation and full platforms for specific businesses. If the job you
+          have in mind is not on this page, that work is described on the
+          <a href="/#services">main CM Solutions site</a>.
+        </p>
+      </div>
+      <div class="tool-actions">
+        <a class="btn" href="/#services">See CM Solutions services</a>
+        <a class="btn" href="/#contact">Start a conversation</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>CM Solutions — AI systems &amp; product engineering.</span>
+    <span>
+      <a href="/">CM Solutions portfolio</a> ·
+      <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+  // Enhancement only. The class is added here, so a visitor without JavaScript
+  // gets fully visible content rather than an empty page.
+  document.documentElement.classList.add("js");
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const items = document.querySelectorAll(".fade");
+
+  if (reduced || !("IntersectionObserver" in window)) {
+    items.forEach((el) => el.classList.add("is-in"));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -10% 0px" });
+    items.forEach((el) => io.observe(el));
+  }
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cmsolutions.tech/#organization",
+      "name": "CM Solutions",
+      "url": "https://cmsolutions.tech/",
+      "email": "contact@cmsolutions.tech",
+      "description": "AI systems and product engineering — AI agents, workflow automation and full digital products."
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://cmsolutions.tech/#website",
+      "url": "https://cmsolutions.tech/",
+      "name": "CM Solutions",
+      "publisher": { "@id": "https://cmsolutions.tech/#organization" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://cmsolutions.tech/ai-tools#webpage",
+      "url": "https://cmsolutions.tech/ai-tools",
+      "name": "AI Business Tools | CM Solutions",
+      "description": "Practical AI tools from CM Solutions, built to finish a real business job end to end. Available now: CM Proposal AI, for client proposals.",
+      "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
+      "about": { "@id": "https://cmsolutions.tech/#organization" },
+      "breadcrumb": { "@id": "https://cmsolutions.tech/ai-tools#breadcrumb" },
+      "inLanguage": "en-GB",
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "CM Solutions AI business tools",
+        "itemListOrder": "https://schema.org/ItemListOrderAscending",
+        "numberOfItems": 1,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "SoftwareApplication",
+              "@id": "https://cmsolutions.tech/ai-proposal-generator#software",
+              "name": "CM Proposal AI",
+              "url": "https://cmsolutions.tech/ai-proposal-generator",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "Turns a short questionnaire about a project into a structured, editable client proposal with scope, timeline and a costed investment table, exportable as a branded PDF.",
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-tools#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Tools" }
+      ]
+    }
+  ]
+}
+</script>
+
+</body>
+</html>

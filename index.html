@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>CM Solutions — Portfolio</title>
-<meta name="description" content="CM Solutions — a portfolio of selected work: Psychart, Agrimakis Estate, Huddle, Father's Voice UK. From the sky, to the soil, to the people we stand beside." />
+<title>CM Solutions — AI Systems &amp; Product Engineering</title>
+<meta name="description" content="CM Solutions builds AI agents, workflow automation and full digital products — end to end, from concept to production. Selected work: Psychart, Agrimakis Estate, Huddle, Father's Voice UK." />
 <link rel="canonical" href="https://cmsolutions.tech/" />
-<meta property="og:title" content="CM Solutions — Portfolio" />
-<meta property="og:description" content="Four projects, one thread: things built with care. Psychart · Agrimakis Estate · Huddle · Father's Voice UK." />
+<meta property="og:title" content="CM Solutions — AI Systems &amp; Product Engineering" />
+<meta property="og:description" content="AI agents, workflow automation and full product builds — designed and engineered end to end. Selected work: Psychart · Agrimakis Estate · Huddle · Father's Voice UK." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://cmsolutions.tech/" />
 <meta property="og:site_name" content="CM Solutions" />
@@ -19,8 +19,8 @@
 <meta property="og:image:alt" content="CM Solutions — AI Architect &amp; Product Builder. Selected work: Psychart, Agrimakis Estate, Huddle, Father's Voice UK." />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
-<meta name="twitter:title" content="CM Solutions — Portfolio" />
-<meta name="twitter:description" content="Four projects, one thread: things built with care. Psychart · Agrimakis Estate · Huddle · Father's Voice UK." />
+<meta name="twitter:title" content="CM Solutions — AI Systems &amp; Product Engineering" />
+<meta name="twitter:description" content="AI agents, workflow automation and full product builds — designed and engineered end to end. Selected work: Psychart · Agrimakis Estate · Huddle · Father's Voice UK." />
 <link rel="icon" href="/favicon.ico" sizes="any" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
@@ -183,9 +183,67 @@
 
   .hero-sub {
     margin-top: 2.4rem;
-    max-width: 44ch;
+    max-width: 46ch;
     font-size: clamp(1rem, 1.4vw, 1.2rem);
     color: var(--ink-dim);
+  }
+  .hero-sub strong { color: var(--ink); font-weight: 400; }
+
+  .hero-do {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.8rem;
+    list-style: none;
+    max-width: 52ch;
+  }
+  .hero-do li {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 0.42rem 0.9rem;
+  }
+
+  /* shared button */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    padding: 0.95rem 1.7rem;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    transition: border-color 0.35s, background 0.35s, color 0.35s, transform 0.35s var(--ease-out);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--c-psychart);
+    color: var(--c-psychart);
+  }
+  .btn--solid {
+    background: var(--c-psychart);
+    border-color: var(--c-psychart);
+    color: #10100c;
+  }
+  .btn--solid:hover {
+    background: #e2c384;
+    border-color: #e2c384;
+    color: #10100c;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2.2rem;
   }
 
   .hero-line {
@@ -207,7 +265,8 @@
   .scroll-cue {
     position: absolute;
     bottom: 3rem;
-    left: clamp(1.5rem, 7vw, 8rem);
+    /* moved to the right edge so it can't collide with the hero CTAs */
+    right: clamp(1.5rem, 7vw, 8rem);
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -431,6 +490,157 @@
   .reveal.is-in { opacity: 1; transform: none; }
 
   /* ============================================================
+     PROJECT ROLE META
+     ============================================================ */
+  .chapter-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.6rem 1.4rem;
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--hairline);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+  .chapter-meta b {
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-size: 0.66rem;
+    color: var(--ink-faint);
+  }
+  .chapter-meta span { color: var(--ink-dim); }
+
+  /* ============================================================
+     SERVICES
+     ============================================================ */
+  .services {
+    padding: clamp(5rem, 12vh, 9rem) clamp(1.5rem, 7vw, 8rem);
+    max-width: 1500px;
+    margin: 0 auto;
+  }
+  .services-head { text-align: center; margin-bottom: clamp(3rem, 7vh, 5rem); }
+  .services-head h2 {
+    font-size: clamp(2.3rem, 5.6vw, 4.6rem);
+    margin: 1.2rem auto 1.4rem;
+    max-width: 18ch;
+  }
+  .services-head h2 em { font-style: italic; color: var(--c-psychart); }
+  .services-head p {
+    color: var(--ink-dim);
+    max-width: 54ch;
+    margin: 0 auto;
+    font-size: clamp(1rem, 1.3vw, 1.12rem);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1.4rem;
+  }
+  .service {
+    position: relative;
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    background: rgba(232, 230, 223, 0.03);
+    padding: 2.2rem 2rem 2.4rem;
+    transition: border-color 0.4s, background 0.4s, transform 0.4s var(--ease-out);
+  }
+  .service:hover {
+    transform: translateY(-4px);
+    border-color: color-mix(in srgb, var(--s-accent, var(--c-psychart)) 45%, transparent);
+    background: rgba(232, 230, 223, 0.055);
+  }
+  .service-num {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.92rem;
+    color: var(--s-accent, var(--c-psychart));
+  }
+  .service h3 {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(1.45rem, 2.1vw, 1.85rem);
+    line-height: 1.15;
+    margin: 0.7rem 0 1rem;
+    letter-spacing: -0.01em;
+  }
+  .service p {
+    color: var(--ink-dim);
+    font-size: 0.96rem;
+    line-height: 1.62;
+  }
+  .service ul {
+    list-style: none;
+    margin-top: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .service ul li {
+    position: relative;
+    padding-left: 1.2rem;
+    font-size: 0.86rem;
+    color: var(--ink-faint);
+  }
+  .service ul li::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0.62em;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--s-accent, var(--c-psychart));
+    opacity: 0.65;
+  }
+
+  /* engagement bands */
+  .bands {
+    margin-top: clamp(3.5rem, 8vh, 5.5rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 1.2rem;
+  }
+  .band {
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    padding: 1.9rem 1.8rem;
+    background: rgba(232, 230, 223, 0.02);
+  }
+  .band-name {
+    font-size: 0.68rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .band-price {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    font-weight: 300;
+    color: var(--ink);
+    margin: 0.7rem 0 0.2rem;
+    letter-spacing: -0.01em;
+  }
+  .band-price small {
+    font-family: var(--sans);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+  }
+  .band p {
+    color: var(--ink-dim);
+    font-size: 0.9rem;
+    margin-top: 0.8rem;
+    line-height: 1.6;
+  }
+  .bands-note {
+    margin-top: 1.6rem;
+    text-align: center;
+    font-size: 0.84rem;
+    color: var(--ink-faint);
+  }
+
+  /* ============================================================
      CONTACT
      ============================================================ */
   .contact {
@@ -496,6 +706,37 @@
   .contact-card.line:hover { border-color: #06c755; }
   .contact-card.line     .contact-icon { color: #06c755; }
 
+  /* primary channels — email + booking, given visual weight */
+  .contact-card--primary {
+    border-color: var(--hairline-strong);
+    background: rgba(212, 175, 106, 0.05);
+  }
+  .contact-card--primary:hover { border-color: var(--c-psychart); }
+  .contact-card--primary .contact-icon {
+    color: var(--c-psychart);
+    border-color: color-mix(in srgb, var(--c-psychart) 55%, transparent);
+  }
+
+  /* secondary messenger row — quieter than the primary channels */
+  .contact-divider {
+    margin: 3rem auto 0;
+    font-size: 0.68rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .contact-cards--secondary { margin-top: 1.4rem; gap: 1rem; }
+  .contact-cards--secondary .contact-card {
+    min-width: 0;
+    padding: 0.95rem 1.4rem;
+    gap: 0.85rem;
+    border-radius: 14px;
+  }
+  .contact-cards--secondary .contact-icon { width: 34px; height: 34px; }
+  .contact-cards--secondary .contact-icon svg { width: 17px; height: 17px; }
+  .contact-cards--secondary .contact-value { font-size: 0.9rem; }
+  .contact-cards--secondary .contact-hint  { font-size: 0.72rem; }
+
   .contact-qr {
     margin: 2.8rem auto 0;
     display: flex;
@@ -559,6 +800,11 @@
   /* ============================================================
      RESPONSIVE + MOTION PREFERENCES
      ============================================================ */
+  /* the hero is content-dense now — drop the cue where it would crowd the CTAs */
+  @media (max-height: 780px), (max-width: 700px) {
+    .scroll-cue { display: none; }
+  }
+
   @media (max-width: 900px) {
     .chapter-grid { grid-template-columns: 1fr; }
     .chapter--flip .chapter-grid { direction: ltr; }
@@ -594,6 +840,7 @@
   <a href="#huddle" data-rail="huddle" aria-label="Huddle"></a>
   <a href="#fathersvoice" data-rail="fathersvoice" aria-label="Father's Voice UK"></a>
   <span class="rail-line"></span>
+  <a href="#services" data-rail="services" aria-label="What I build"></a>
   <a href="#contact" data-rail="contact" aria-label="Contact"></a>
 </nav>
 
@@ -601,16 +848,27 @@
 
   <!-- ══════════════════════ HERO ══════════════════════ -->
   <header class="hero" id="top" data-theme="psychart">
-    <p class="kicker hero-fade">CM Solutions — Portfolio · Selected Work</p>
+    <p class="kicker hero-fade">CM Solutions — AI Architect &amp; Product Builder</p>
     <h1 aria-label="I build things people can feel.">
       <span class="hero-line" aria-hidden="true"><span>I build things</span></span>
       <span class="hero-line" aria-hidden="true"><span>people can <em>feel</em>.</span></span>
     </h1>
     <p class="hero-sub hero-fade">
-      Four projects. Four different worlds — the night sky, an olive grove,
-      a team around a table, a father's voice. One thread runs through them all:
-      built with care, down to the smallest detail.
+      I'm Chris. I design and build <strong>AI systems, workflow automation and
+      full digital products</strong> — concept to production, end to end. If there's
+      something in your business that should exist and doesn't, or something
+      manual that shouldn't be, that's the work.
     </p>
+    <ul class="hero-do hero-fade" aria-label="What I build">
+      <li>AI Agents &amp; Assistants</li>
+      <li>Workflow Automation</li>
+      <li>Product &amp; Platform Builds</li>
+      <li>AI Integration</li>
+    </ul>
+    <div class="hero-actions hero-fade">
+      <a class="btn btn--solid" href="#contact">Start a project</a>
+      <a class="btn" href="#services">See what I build</a>
+    </div>
     <div class="scroll-cue" aria-hidden="true">
       <span class="cue-line"></span>
       <span>Scroll</span>
@@ -657,6 +915,9 @@
             Visit Psychart
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
+          <p class="chapter-meta reveal" style="--d: 0.42s">
+            <b>Role</b><span>Concept, design, engineering &amp; 3D — solo build, end to end</span>
+          </p>
         </div>
         <div class="chapter-visual reveal" style="--d: 0.2s" data-parallax="0.06" aria-hidden="true">
           <div class="visual-halo"></div>
@@ -743,6 +1004,9 @@
             Visit Agrimakis Estate
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
+          <p class="chapter-meta reveal" style="--d: 0.42s">
+            <b>Role</b><span>Brand, story &amp; web experience — client project</span>
+          </p>
         </div>
         <div class="chapter-visual reveal" style="--d: 0.2s" data-parallax="0.06" aria-hidden="true">
           <div class="visual-halo"></div>
@@ -820,6 +1084,9 @@
             Visit Huddle
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
+          <p class="chapter-meta reveal" style="--d: 0.42s">
+            <b>Role</b><span>Concept, product design &amp; engineering — built from the ground up</span>
+          </p>
         </div>
         <div class="chapter-visual reveal" style="--d: 0.2s" data-parallax="0.06" aria-hidden="true">
           <div class="visual-halo"></div>
@@ -899,6 +1166,9 @@
             Visit Father's Voice UK
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.3"/></svg>
           </a>
+          <p class="chapter-meta reveal" style="--d: 0.42s">
+            <b>Role</b><span>Platform design &amp; build — concept to launch</span>
+          </p>
         </div>
         <div class="chapter-visual reveal" style="--d: 0.2s" data-parallax="0.06" aria-hidden="true">
           <div class="visual-halo"></div>
@@ -933,15 +1203,147 @@
     <p class="display" data-kinetic>From the sky, to the soil,<br />to the people we stand beside.<br /><em>Let's build the next one.</em></p>
   </section>
 
+  <!-- ══════════════════ SERVICES ══════════════════ -->
+  <section class="services" id="services" data-theme="psychart">
+    <div class="services-head">
+      <p class="kicker reveal">What I build</p>
+      <h2 class="reveal" style="--d: 0.08s">Four ways I can <em>help you</em>.</h2>
+      <p class="reveal" style="--d: 0.16s">
+        Most of it comes down to two things: building the thing that should exist
+        and doesn't, or removing the manual work that shouldn't be manual. Everything
+        below is designed, engineered and shipped by me — not handed off.
+      </p>
+    </div>
+
+    <div class="services-grid">
+      <article class="service reveal" style="--s-accent: var(--c-psychart); --d: 0.06s">
+        <span class="service-num">01</span>
+        <h3>AI Agents &amp; Assistants</h3>
+        <p>
+          Software that does the work rather than describing it — trained on your
+          documents, wired into your tools, and honest when it doesn't know.
+        </p>
+        <ul>
+          <li>Support agents that resolve, not deflect</li>
+          <li>Internal assistants that answer from your own knowledge</li>
+          <li>Research agents that read what nobody has time to</li>
+        </ul>
+      </article>
+
+      <article class="service reveal" style="--s-accent: var(--c-olive); --d: 0.12s">
+        <span class="service-num">02</span>
+        <h3>Workflow Automation</h3>
+        <p>
+          The hours nobody puts on a timesheet: data copied between systems by hand,
+          the report rebuilt every Monday, the inbox triaged one message at a time.
+          I find them, then remove them.
+        </p>
+        <ul>
+          <li>Document and invoice processing</li>
+          <li>CRM, spreadsheet and system syncing</li>
+          <li>Reporting that builds itself</li>
+        </ul>
+      </article>
+
+      <article class="service reveal" style="--s-accent: var(--c-huddle); --d: 0.18s">
+        <span class="service-num">03</span>
+        <h3>Product &amp; Platform Builds</h3>
+        <p>
+          A complete product, end to end — concept, design, engineering, launch.
+          Every project above was built this way, by one pair of hands.
+        </p>
+        <ul>
+          <li>Web platforms and internal tools</li>
+          <li>Marketing sites that carry a brand properly</li>
+          <li>MVPs taken from idea to live</li>
+        </ul>
+      </article>
+
+      <article class="service reveal" style="--s-accent: var(--c-fathers); --d: 0.24s">
+        <span class="service-num">04</span>
+        <h3>AI Integration &amp; Advisory</h3>
+        <p>
+          You already have a product. It needs to get smarter without becoming
+          unpredictable — the right model, sensible running costs, proper guardrails,
+          and a straight answer about what AI can't do here.
+        </p>
+        <ul>
+          <li>Model selection and cost control</li>
+          <li>Guardrails, evaluation and testing</li>
+          <li>Architecture review before you commit</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="bands">
+      <div class="band reveal" style="--d: 0.06s">
+        <span class="band-name">Discovery</span>
+        <p class="band-price">from £1,500 <small>/ one week</small></p>
+        <p>
+          We find the highest-value thing to build. You get a written plan, a scope
+          and a fixed price — yours to keep, whether or not you build it with me.
+        </p>
+      </div>
+      <div class="band reveal" style="--d: 0.12s">
+        <span class="band-name">Build</span>
+        <p class="band-price">from £6,000 <small>/ project</small></p>
+        <p>
+          Three to six weeks, typically. Designed, engineered, tested and running in
+          production — with the handover written down so you're never locked in.
+        </p>
+      </div>
+      <div class="band reveal" style="--d: 0.18s">
+        <span class="band-name">Partner</span>
+        <p class="band-price">from £3,000 <small>/ month</small></p>
+        <p>
+          A standing arrangement for teams who keep shipping. Ongoing build,
+          iteration and support, with a set amount of my week reserved for you.
+        </p>
+      </div>
+    </div>
+    <p class="bands-note reveal">
+      Indicative ranges — the shape of the work decides the number. Ask and I'll tell you straight.
+    </p>
+  </section>
+
   <section class="contact" id="contact" data-theme="psychart">
     <p class="kicker reveal">Get in touch</p>
     <h2 class="reveal" style="--d: 0.08s">Tell me what <em>you're</em> building.</h2>
     <p class="contact-sub reveal" style="--d: 0.16s">
-      I'm always glad to hear from people making something they care about.
-      Reach me directly — LINE, WhatsApp or WeChat, whichever is home for you.
+      Tell me what's slow, broken or missing. I'll give you a straight answer on
+      whether I'm the right person to fix it, what it would take, and what it would
+      cost — before you commit to anything.
     </p>
 
     <div class="contact-cards">
+      <a class="contact-card contact-card--primary reveal" style="--d: 0.22s"
+         href="mailto:contact@cmsolutions.tech?subject=Project%20enquiry%20—%20CM%20Solutions">
+        <span class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 6.5 9 6.5 9-6.5"/></svg>
+        </span>
+        <span>
+          <span class="contact-label">Email</span>
+          <span class="contact-value">contact@cmsolutions.tech</span>
+          <span class="contact-hint">Best for briefs and detail</span>
+        </span>
+      </a>
+
+      <a class="contact-card contact-card--primary reveal" style="--d: 0.28s"
+         href="https://cal.com/chrismav/intro" target="_blank" rel="noopener">
+        <span class="contact-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        </span>
+        <span>
+          <span class="contact-label">Book a call</span>
+          <span class="contact-value">30 minutes, free</span>
+          <span class="contact-hint">Pick a time that suits you</span>
+        </span>
+      </a>
+    </div>
+
+    <p class="contact-divider reveal" style="--d: 0.34s">Or message me directly</p>
+
+    <div class="contact-cards contact-cards--secondary">
       <a class="contact-card line reveal" style="--d: 0.22s"
          href="https://line.me/ti/p/jcEqaHECwc"
          target="_blank" rel="noopener">
@@ -996,6 +1398,10 @@
     <a href="#agrimakis">Agrimakis Estate</a>
     <a href="#huddle">Huddle</a>
     <a href="#fathersvoice">Father's Voice UK</a>
+    <a href="#services">What I build</a>
+    <a href="/ai-tools">AI Tools</a>
+    <a href="/agent-map">Agent Map</a>
+    <a href="mailto:contact@cmsolutions.tech">Email</a>
   </nav>
 </footer>
 

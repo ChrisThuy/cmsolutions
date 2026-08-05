@@ -1,0 +1,10 @@
+# cmsolutions.tech — public marketing surface.
+#
+# Everything here is meant to be found. The authenticated application lives on
+# proposal.cmsolutions.tech, which is a separate origin with its own robots
+# rules and a permanent noindex; nothing on this host needs to block it.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://cmsolutions.tech/sitemap.xml

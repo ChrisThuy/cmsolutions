@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>The 137-Agent Company | CM Solutions</title>
+<meta name="description" content="A live map of 137 AI agents across 7 departments, built around one shared company knowledge base. Every agent opens with a runnable skill, what it replaces, and where it sits on the autonomy ladder." />
+<link rel="canonical" href="https://cmsolutions.tech/agent-map" />
+
+<meta property="og:title" content="The 137-Agent Company | CM Solutions" />
+<meta property="og:description" content="7 departments. 137 agents. One company brain. Click any node and run the skill yourself." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/agent-map" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="The 137-Agent Company | CM Solutions" />
+<meta name="twitter:description" content="7 departments. 137 agents. One company brain. Click any node and run the skill yourself." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  THE 137-AGENT COMPANY
+
+  All content lives in /agents-data.js. This file renders it. If you are
+  adding or changing an agent, edit that file — never hardcode an agent here,
+  and never hardcode the number 137 in copy that the data could contradict.
+
+  The map is SVG, laid out in polar coordinates from a single centre:
+    ring 0  the brain            r = 0
+    ring 1  departments          r = 170
+    ring 2  branches             r = 285
+    ring 3  agents               r = 400
+  Each department owns an angular arc sized by its agent count, so the ring
+  stays evenly spaced regardless of how the 137 are distributed.
+
+  ACCESSIBILITY NOTE: the map is decorative-plus-interactive, but it is not
+  the only way to reach an agent. The Ladder view is a real, keyboard-native
+  list of all 137 and works with no pointer and no SVG. Any change to the map
+  must keep the Ladder view complete, or the page becomes inaccessible.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+<style>
+  :root {
+    --ink:        #e8e6df;
+    --ink-dim:    #a09d93;
+    --ink-faint:  #6b6960;
+    --void:       #07080c;
+    --panel:      #0c0e14;
+    --raised:     #11141c;
+    --hairline:   rgba(232, 230, 223, 0.12);
+    --hairline-strong: rgba(232, 230, 223, 0.25);
+    --gold:       #d4af6a;
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { overflow-x: clip; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+  ::selection { background: rgba(212, 175, 106, 0.25); }
+
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--ink); color: var(--void); padding: .75rem 1.25rem; z-index: 100; }
+  .skip:focus { left: 0; }
+
+  .wrap { width: min(1400px, 100% - 3rem); margin-inline: auto; }
+
+  /* ── header ─────────────────────────────────────────── */
+  .site-head { border-bottom: 1px solid var(--hairline); }
+  .site-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.4rem; }
+  .wordmark { font-family: var(--serif); font-size: 1.05rem; letter-spacing: -.01em; text-decoration: none; white-space: nowrap; }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: .9rem; }
+  .site-head nav a { color: var(--ink-dim); text-decoration: none; white-space: nowrap; transition: color .3s var(--ease-out); }
+  .site-head nav a:hover { color: var(--ink); }
+  .site-head nav a[aria-current="page"] { color: var(--gold); }
+
+  /* ── hero ───────────────────────────────────────────── */
+  .hero { padding-block: 3.5rem 2rem; }
+  .eyebrow { font-family: var(--mono); font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 1.2rem; }
+  .hero h1 { font-family: var(--serif); font-weight: 300; font-size: clamp(2.1rem, 5.5vw, 3.6rem); line-height: 1.05; letter-spacing: -.02em; max-width: 20ch; }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero p.lede { margin-top: 1.4rem; max-width: 62ch; color: var(--ink-dim); font-size: 1.02rem; }
+
+  .stats { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.2rem; padding-top: 1.6rem; border-top: 1px solid var(--hairline); }
+  .stat b { display: block; font-family: var(--serif); font-size: 1.9rem; font-weight: 400; line-height: 1; }
+  .stat span { font-family: var(--mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+
+  /* ── toolbar ────────────────────────────────────────── */
+  .toolbar { position: sticky; top: 0; z-index: 30; background: rgba(7,8,12,.88); backdrop-filter: blur(12px); border-block: 1px solid var(--hairline); margin-top: 2.5rem; }
+  .toolbar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; padding-block: .8rem; }
+
+  .search { flex: 1 1 220px; min-width: 180px; position: relative; }
+  .search input { width: 100%; background: var(--raised); border: 1px solid var(--hairline); border-radius: 999px; padding: .5rem 1rem .5rem 2.2rem; color: var(--ink); font-size: .88rem; }
+  .search input::placeholder { color: var(--ink-faint); }
+  .search svg { position: absolute; left: .8rem; top: 50%; transform: translateY(-50%); width: 14px; height: 14px; stroke: var(--ink-faint); fill: none; stroke-width: 2; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .chip {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase;
+    padding: .38rem .7rem; border: 1px solid var(--hairline); border-radius: 999px;
+    color: var(--ink-dim); transition: all .25s var(--ease-out); white-space: nowrap;
+    display: inline-flex; align-items: center; gap: .4rem;
+  }
+  .chip:hover { border-color: var(--hairline-strong); color: var(--ink); }
+  .chip[aria-pressed="true"] { color: var(--void); background: var(--c, var(--ink)); border-color: var(--c, var(--ink)); font-weight: 500; }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c, var(--ink)); }
+  .chip[aria-pressed="true"] .dot { background: rgba(7,8,12,.5); }
+
+  .seg { display: flex; border: 1px solid var(--hairline); border-radius: 999px; overflow: hidden; }
+  .seg button { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; padding: .42rem .85rem; color: var(--ink-dim); transition: all .25s var(--ease-out); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--void); font-weight: 500; }
+
+  .count-live { font-family: var(--mono); font-size: .7rem; color: var(--ink-faint); margin-left: auto; white-space: nowrap; }
+
+  /* ── stage ──────────────────────────────────────────── */
+  .stage { position: relative; }
+  .view { display: none; }
+  .view.on { display: block; }
+
+  /* map */
+  .map-shell { position: relative; height: min(86vh, 940px); min-height: 520px; overflow: hidden; touch-action: none; cursor: grab; }
+  .map-shell.dragging { cursor: grabbing; }
+  .map-shell svg { display: block; width: 100%; height: 100%; }
+
+  /* sits over the outer ring, so it needs its own backdrop or the agent
+     labels underneath turn it into noise */
+  .map-hint {
+    position: absolute; left: 1.2rem; bottom: 1.2rem; font-family: var(--mono); font-size: .66rem;
+    color: var(--ink-faint); letter-spacing: .06em; pointer-events: none;
+    background: rgba(7,8,12,.82); backdrop-filter: blur(4px);
+    padding: .35rem .7rem; border-radius: 999px; border: 1px solid var(--hairline);
+  }
+  .zoombar { position: absolute; right: 1.2rem; bottom: 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+  .zoombar button { width: 30px; height: 30px; border: 1px solid var(--hairline); border-radius: 6px; background: var(--panel); color: var(--ink-dim); font-size: .95rem; line-height: 1; display: grid; place-items: center; }
+  .zoombar button:hover { color: var(--ink); border-color: var(--hairline-strong); }
+
+  /* svg node styling */
+  .link { stroke: var(--hairline); stroke-width: .7; fill: none; transition: stroke .25s, stroke-width .25s, opacity .25s; }
+  .link.hot { stroke-width: 1.6; opacity: 1; }
+  .node { cursor: pointer; transition: opacity .25s var(--ease-out); }
+  .node circle { transition: r .25s var(--ease-out), fill-opacity .25s, stroke-width .25s; }
+  .node text { font-family: var(--sans); fill: var(--ink-dim); pointer-events: none; transition: fill .25s; }
+  .node:hover text, .node.sel text { fill: var(--ink); }
+  .node.dim { opacity: .12; }
+  .node.built circle { stroke-dasharray: none; }
+
+  .brain-label { font-family: var(--serif); font-size: 15px; fill: var(--ink); text-anchor: middle; pointer-events: none; }
+  .brain-sub { font-family: var(--mono); font-size: 7.5px; letter-spacing: .18em; fill: var(--ink-faint); text-anchor: middle; pointer-events: none; text-transform: uppercase; }
+  .dept-label { font-family: var(--serif); font-size: 13px; font-weight: 400; }
+  .branch-label { font-family: var(--sans); font-size: 8.5px; letter-spacing: .02em; }
+  .agent-label { font-family: var(--sans); font-size: 6.4px; }
+
+  @keyframes pulse { 0%,100% { opacity:.5; r:64 } 50% { opacity:.14; r:78 } }
+  .brain-halo { animation: pulse 5.5s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { .brain-halo { animation: none; } * { transition-duration: .01ms !important; } }
+
+  /* ── ladder view ────────────────────────────────────── */
+  .ladder { padding-block: 2rem 4rem; }
+  .phase-block { margin-bottom: 3rem; }
+  .phase-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; padding-bottom: .8rem; border-bottom: 1px solid var(--hairline); margin-bottom: 1.2rem; }
+  .phase-head h3 { font-family: var(--serif); font-size: 1.5rem; font-weight: 400; }
+  .phase-head .when { font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
+  .phase-head .note { color: var(--ink-faint); font-size: .85rem; flex: 1 1 100%; max-width: 70ch; }
+
+  .rows { display: grid; gap: .3rem; }
+  .row {
+    display: grid; grid-template-columns: 28px 1.4fr 1fr 1fr 92px; gap: 1rem; align-items: center;
+    padding: .7rem .9rem; border: 1px solid transparent; border-radius: 8px; text-align: left; width: 100%;
+    transition: background .2s, border-color .2s;
+  }
+  .row:hover { background: var(--raised); border-color: var(--hairline); }
+  .row .idx { font-family: var(--mono); font-size: .66rem; color: var(--ink-faint); }
+  .row .nm { font-size: .95rem; }
+  .row .nm small { display: block; font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; margin-top: .15rem; }
+  .row .rep, .row .out { font-size: .8rem; color: var(--ink-faint); }
+  .row .tier { font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; text-align: right; }
+  .ladder-empty { color: var(--ink-faint); padding: 3rem 0; text-align: center; }
+  /* Phase 1 is mostly hand-written documents, not agents — this card stops
+     the phase reading as thin when it is actually the most important one. */
+  .brain-card { border-color: rgba(212,175,106,.35) !important; background: rgba(212,175,106,.04); margin-bottom: .6rem; }
+  .brain-card:hover { border-color: var(--gold) !important; background: rgba(212,175,106,.08); }
+
+  /* ── detail panel ───────────────────────────────────── */
+  .panel {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw);
+    background: var(--panel); border-left: 1px solid var(--hairline-strong);
+    transform: translateX(100%); transition: transform .45s var(--ease-out);
+    z-index: 60; display: flex; flex-direction: column; box-shadow: -30px 0 60px rgba(0,0,0,.5);
+  }
+  .panel.open { transform: none; }
+  .panel-head { padding: 1.5rem 1.6rem 1.2rem; border-bottom: 1px solid var(--hairline); position: relative; flex-shrink: 0; }
+  .panel-close { position: absolute; top: 1.1rem; right: 1.1rem; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--hairline); color: var(--ink-dim); display: grid; place-items: center; font-size: 1rem; }
+  .panel-close:hover { color: var(--ink); border-color: var(--hairline-strong); }
+  .panel-path { font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .6rem; }
+  .panel-path b { font-weight: 500; }
+  .panel h2 { font-family: var(--serif); font-size: 1.65rem; font-weight: 400; line-height: 1.15; letter-spacing: -.01em; padding-right: 2.5rem; }
+  .badges { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .9rem; }
+  .badge { font-family: var(--mono); font-size: .62rem; letter-spacing: .09em; text-transform: uppercase; padding: .25rem .6rem; border-radius: 999px; border: 1px solid var(--hairline); color: var(--ink-dim); }
+  .badge.solid { color: var(--void); font-weight: 500; }
+
+  .panel-body { overflow-y: auto; padding: 1.4rem 1.6rem 3rem; flex: 1; }
+  .field { margin-bottom: 1.5rem; }
+  .field h4 { font-family: var(--mono); font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: .45rem; }
+  .field p { font-size: .92rem; color: var(--ink); }
+  .field .io { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .kb-links { display: flex; flex-wrap: wrap; gap: .35rem; }
+  .kb-link { font-family: var(--mono); font-size: .64rem; letter-spacing: .06em; padding: .3rem .6rem; border: 1px solid var(--hairline); border-radius: 5px; color: var(--ink-dim); transition: all .2s; }
+  .kb-link:hover { border-color: var(--gold); color: var(--gold); }
+
+  .vars { display: grid; gap: .6rem; margin-bottom: 1rem; }
+  .var label { display: block; font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; color: var(--gold); margin-bottom: .25rem; }
+  .var textarea {
+    width: 100%; background: var(--void); border: 1px solid var(--hairline); border-radius: 6px;
+    padding: .5rem .7rem; color: var(--ink); font-family: var(--sans); font-size: .84rem; resize: vertical; min-height: 2.4rem;
+  }
+  .var textarea::placeholder { color: var(--ink-faint); }
+
+  .skill-box { background: var(--void); border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden; }
+  .skill-bar { display: flex; align-items: center; gap: .5rem; padding: .5rem .7rem; border-bottom: 1px solid var(--hairline); }
+  .skill-bar span { font-family: var(--mono); font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin-right: auto; }
+  .btn-sm { font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; padding: .3rem .65rem; border: 1px solid var(--hairline); border-radius: 5px; color: var(--ink-dim); transition: all .2s; }
+  .btn-sm:hover { color: var(--ink); border-color: var(--hairline-strong); }
+  .btn-sm.primary { background: var(--gold); border-color: var(--gold); color: var(--void); font-weight: 500; }
+  .btn-sm.primary:hover { filter: brightness(1.12); }
+  .skill-box pre { padding: .9rem; overflow-x: auto; font-family: var(--mono); font-size: .74rem; line-height: 1.6; color: var(--ink); white-space: pre-wrap; word-break: break-word; }
+  .skill-box pre mark { background: rgba(212,175,106,.18); color: var(--gold); padding: 0 .15em; border-radius: 2px; }
+
+  .built-toggle { display: flex; align-items: center; gap: .6rem; padding: .8rem 1rem; border: 1px solid var(--hairline); border-radius: 8px; width: 100%; margin-bottom: 1.4rem; transition: all .2s; }
+  .built-toggle:hover { border-color: var(--hairline-strong); }
+  .built-toggle .box { width: 16px; height: 16px; border: 1px solid var(--hairline-strong); border-radius: 4px; display: grid; place-items: center; font-size: .7rem; flex-shrink: 0; }
+  .built-toggle[aria-pressed="true"] { border-color: #a8b878; }
+  .built-toggle[aria-pressed="true"] .box { background: #a8b878; border-color: #a8b878; color: var(--void); }
+  .built-toggle span { font-size: .85rem; color: var(--ink-dim); }
+
+  .scrim { position: fixed; inset: 0; background: rgba(3,4,7,.55); opacity: 0; pointer-events: none; transition: opacity .4s; z-index: 55; }
+  .scrim.on { opacity: 1; pointer-events: auto; }
+
+  /* brain panel extras */
+  .kb-doc { border: 1px solid var(--hairline); border-radius: 8px; padding: .9rem 1rem; margin-bottom: .6rem; }
+  .kb-doc h5 { font-family: var(--serif); font-size: 1rem; font-weight: 400; margin-bottom: .3rem; }
+  .kb-doc p { font-size: .84rem; color: var(--ink-dim); margin-bottom: .5rem; }
+  .kb-doc .tpl { font-family: var(--mono); font-size: .68rem; color: var(--ink-faint); line-height: 1.7; }
+  .kb-doc .readers { font-family: var(--mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-top: .5rem; }
+
+  /* ── footer ─────────────────────────────────────────── */
+  .site-foot { border-top: 1px solid var(--hairline); padding-block: 2.5rem 3.5rem; margin-top: 2rem; }
+  .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: space-between; align-items: center; }
+  .site-foot p { font-size: .82rem; color: var(--ink-faint); max-width: 60ch; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+  .site-foot a:hover { color: var(--gold); }
+
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translate(-50%, 200%); background: var(--ink); color: var(--void); font-size: .82rem; font-weight: 500; padding: .6rem 1.2rem; border-radius: 999px; z-index: 90; transition: transform .4s var(--ease-out); }
+  .toast.on { transform: translate(-50%, 0); }
+
+  @media (max-width: 900px) {
+    .wrap { width: min(1400px, 100% - 2rem); }
+    .row { grid-template-columns: 24px 1fr 78px; }
+    .row .rep, .row .out { display: none; }
+    .map-shell { height: 68vh; }
+    .panel { width: 100vw; }
+    .count-live { display: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#stage">Skip to the map</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM&nbsp;Solutions</a>
+    <nav>
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/agent-map" aria-current="page">Agent Map</a>
+      <a href="/#work">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap">
+    <p class="eyebrow">The operating system</p>
+    <h1>A company run by <em>137 agents</em>, around one brain.</h1>
+    <p class="lede">
+      Seven departments, thirty-three trees, and a single knowledge base at the centre that
+      everything else reads from. Every node opens: what the agent replaces, what it needs,
+      where it sits on the autonomy ladder, and the actual prompt — fill in the blanks and
+      run it in whatever model you already pay for. Nothing here is theoretical. All 137 are
+      doable with today's models, which is the whole point.
+    </p>
+    <div class="stats">
+      <div class="stat"><b id="stat-agents">—</b><span>Agents</span></div>
+      <div class="stat"><b id="stat-depts">—</b><span>Departments</span></div>
+      <div class="stat"><b id="stat-branches">—</b><span>Job trees</span></div>
+      <div class="stat"><b id="stat-brain">—</b><span>Brain documents</span></div>
+      <div class="stat"><b id="stat-built">0</b><span>Marked built</span></div>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <div class="wrap">
+      <div class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input type="search" id="q" placeholder="Search 137 agents — try 'churn', 'invoice', 'cold email'" aria-label="Search agents" autocomplete="off" />
+      </div>
+      <div class="chips" id="dept-chips" role="group" aria-label="Filter by department"></div>
+      <div class="chips" id="tier-chips" role="group" aria-label="Filter by autonomy level"></div>
+      <div class="seg" role="group" aria-label="View">
+        <button id="view-map" aria-pressed="true">Map</button>
+        <button id="view-ladder" aria-pressed="false">Ladder</button>
+      </div>
+      <span class="count-live" id="count-live"></span>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <!-- MAP -->
+    <div class="view on" id="v-map">
+      <div class="map-shell" id="map-shell">
+        <svg id="map" viewBox="0 0 1000 1000" role="img" aria-label="Radial map of 137 agents across 7 departments, arranged around a central company knowledge base">
+          <defs>
+            <radialGradient id="brainGlow">
+              <stop offset="0%" stop-color="#d4af6a" stop-opacity=".30"/>
+              <stop offset="70%" stop-color="#d4af6a" stop-opacity=".05"/>
+              <stop offset="100%" stop-color="#d4af6a" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g id="cam">
+            <g id="g-links"></g>
+            <g id="g-brain"></g>
+            <g id="g-nodes"></g>
+          </g>
+        </svg>
+        <p class="map-hint">Drag to pan · ⌘/Ctrl + scroll or pinch to zoom · click any node</p>
+        <div class="zoombar">
+          <button id="zoom-in" aria-label="Zoom in">+</button>
+          <button id="zoom-out" aria-label="Zoom out">−</button>
+          <button id="zoom-reset" aria-label="Reset view">◎</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LADDER -->
+    <div class="view" id="v-ladder">
+      <div class="wrap ladder" id="ladder"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <p>
+      Built by CM Solutions. The agents are real jobs with real prompts — the map is the easy part.
+      If you want this wired into your actual stack rather than clicked through on a website,
+      <a href="/#contact">that is the conversation to have</a>.
+    </p>
+    <p><a href="/ai-tools">AI Tools →</a></p>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" tabindex="-1">
+  <div class="panel-head">
+    <button class="panel-close" id="panel-close" aria-label="Close panel">✕</button>
+    <p class="panel-path" id="panel-path"></p>
+    <h2 id="panel-title">—</h2>
+    <div class="badges" id="panel-badges"></div>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</aside>
+
+<div class="toast" id="toast">Copied</div>
+
+<script src="/agents-data.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYOUT
+   Polar, from one centre. Each department owns an arc sized by its agent
+   count so the outer ring stays evenly spaced whatever the distribution is.
+   ═══════════════════════════════════════════════════════════════════════ */
+const CX = 500, CY = 500;
+const R_DEPT = 170, R_BRANCH = 285, R_AGENT = 400;
+const DEPT_GAP = 4;                     // degrees of breathing room between trees
+const SVGNS = "http://www.w3.org/2000/svg";
+
+const byId    = (arr, id) => arr.find(x => x.i === id);
+const deptOf  = a => byId(DEPTS, byId(BRANCHES, a.b).d);
+const branchOf= a => byId(BRANCHES, a.b);
+const el      = id => document.getElementById(id);
+const pol     = (r, deg) => { const t = (deg - 90) * Math.PI / 180; return [CX + r * Math.cos(t), CY + r * Math.sin(t)]; };
+const mk      = (tag, attrs = {}) => { const n = document.createElementNS(SVGNS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+const esc     = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* Give every agent, branch and department an angle. */
+const LAYOUT = { agents: {}, branches: {}, depts: {} };
+(function layout() {
+  const unit = (360 - DEPTS.length * DEPT_GAP) / AGENTS.length;
+  let cursor = -DEPTS.length * DEPT_GAP / 2;   // start so the first tree opens at the top
+  for (const d of DEPTS) {
+    const branches = BRANCHES.filter(b => b.d === d.i);
+    const deptStart = cursor;
+    for (const b of branches) {
+      const kids = AGENTS.filter(a => a.b === b.i);
+      const bStart = cursor;
+      kids.forEach((a, i) => { LAYOUT.agents[a.i] = bStart + (i + 0.5) * unit; });
+      cursor += kids.length * unit;
+      LAYOUT.branches[b.i] = (bStart + cursor) / 2;
+    }
+    LAYOUT.depts[d.i] = (deptStart + cursor) / 2;
+    cursor += DEPT_GAP;
+  }
+})();
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════════════════════════════ */
+const BUILT_KEY = "cms.agentmap.built";
+const state = {
+  q: "",
+  depts: new Set(),
+  tiers: new Set(),
+  sel: null,
+  built: new Set(JSON.parse(localStorage.getItem(BUILT_KEY) || "[]"))
+};
+const saveBuilt = () => localStorage.setItem(BUILT_KEY, JSON.stringify([...state.built]));
+
+function matches(a) {
+  if (state.depts.size && !state.depts.has(deptOf(a).i)) return false;
+  if (state.tiers.size && !state.tiers.has(a.t)) return false;
+  if (state.q) {
+    const hay = (a.n + " " + a.r + " " + a.in + " " + a.out + " " + a.s + " " +
+                 branchOf(a).n + " " + deptOf(a).n).toLowerCase();
+    if (!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAP RENDER — built once, then only classes change on filter/select.
+   ═══════════════════════════════════════════════════════════════════════ */
+const gLinks = el("g-links"), gBrain = el("g-brain"), gNodes = el("g-nodes");
+const nodeEls = {}, linkEls = { dept: {}, branch: {}, agent: {} };
+
+function drawBrain() {
+  gBrain.appendChild(mk("circle", { cx: CX, cy: CY, r: 120, fill: "url(#brainGlow)" }));
+  gBrain.appendChild(mk("circle", { class: "brain-halo", cx: CX, cy: CY, r: 64, fill: "none", stroke: "#d4af6a", "stroke-width": ".6" }));
+
+  const g = mk("g", { class: "node", tabindex: "0", role: "button" });
+  g.setAttribute("aria-label", "The company brain — the shared knowledge base");
+  g.appendChild(mk("circle", { cx: CX, cy: CY, r: 46, fill: "#0c0e14", stroke: "#d4af6a", "stroke-width": "1.4" }));
+  g.appendChild(mk("circle", { cx: CX, cy: CY, r: 38, fill: "none", stroke: "#d4af6a", "stroke-width": ".4", "stroke-opacity": ".45" }));
+  const t1 = mk("text", { class: "brain-label", x: CX, y: CY - 2 }); t1.textContent = "COMPANY";
+  const t2 = mk("text", { class: "brain-label", x: CX, y: CY + 13 }); t2.textContent = "BRAIN";
+  const t3 = mk("text", { class: "brain-sub", x: CX, y: CY + 27 }); t3.textContent = BRAIN.length + " docs";
+  g.append(t1, t2, t3);
+  g.addEventListener("click", openBrain);
+  g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openBrain(); } });
+  gBrain.appendChild(g);
+}
+
+function drawTree() {
+  for (const d of DEPTS) {
+    const da = LAYOUT.depts[d.i], [dx, dy] = pol(R_DEPT, da);
+
+    // brain → department
+    const l0 = mk("line", { class: "link", x1: CX, y1: CY, x2: dx, y2: dy, stroke: d.c, "stroke-opacity": ".35" });
+    gLinks.appendChild(l0); linkEls.dept[d.i] = l0;
+
+    const dg = mk("g", { class: "node", tabindex: "0", role: "button", "data-dept": d.i });
+    dg.setAttribute("aria-label", d.n + " department");
+    dg.appendChild(mk("circle", { cx: dx, cy: dy, r: 13, fill: d.c, "fill-opacity": ".16", stroke: d.c, "stroke-width": "1.3" }));
+    const dt = mk("text", { class: "dept-label", x: dx, y: dy + 4, "text-anchor": "middle", fill: d.c });
+    dt.textContent = d.e;
+    dg.appendChild(dt);
+    const dn = mk("text", {
+      class: "dept-label", x: pol(R_DEPT - 34, da)[0], y: pol(R_DEPT - 34, da)[1] + 4,
+      "text-anchor": "middle", fill: d.c
+    });
+    dn.textContent = d.n;
+    dg.appendChild(dn);
+    dg.addEventListener("click", () => openDept(d));
+    dg.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openDept(d); } });
+    gNodes.appendChild(dg); nodeEls["dept:" + d.i] = dg;
+
+    for (const b of BRANCHES.filter(x => x.d === d.i)) {
+      const ba = LAYOUT.branches[b.i], [bx, by] = pol(R_BRANCH, ba);
+
+      const l1 = mk("line", { class: "link", x1: dx, y1: dy, x2: bx, y2: by, stroke: d.c, "stroke-opacity": ".28" });
+      gLinks.appendChild(l1); linkEls.branch[b.i] = l1;
+
+      const bg = mk("g", { class: "node", tabindex: "0", role: "button", "data-branch": b.i });
+      bg.setAttribute("aria-label", b.n + " — " + d.n);
+      bg.appendChild(mk("circle", { cx: bx, cy: by, r: 7, fill: "#0c0e14", stroke: d.c, "stroke-width": "1.1" }));
+      const flip = ba > 180;
+      const [lx, ly] = pol(R_BRANCH - 13, ba);
+      const bt = mk("text", {
+        class: "branch-label", x: lx, y: ly,
+        "text-anchor": flip ? "start" : "end", fill: d.c,
+        transform: `rotate(${flip ? ba + 90 : ba - 90} ${lx} ${ly})`
+      });
+      bt.textContent = b.n;
+      bg.appendChild(bt);
+      bg.addEventListener("click", () => openBranch(b));
+      bg.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openBranch(b); } });
+      gNodes.appendChild(bg); nodeEls["branch:" + b.i] = bg;
+
+      for (const a of AGENTS.filter(x => x.b === b.i)) {
+        const aa = LAYOUT.agents[a.i], [ax, ay] = pol(R_AGENT, aa);
+
+        const l2 = mk("line", { class: "link", x1: bx, y1: by, x2: ax, y2: ay, stroke: d.c, "stroke-opacity": ".22" });
+        gLinks.appendChild(l2); linkEls.agent[a.i] = l2;
+
+        const ag = mk("g", { class: "node", tabindex: "0", role: "button", "data-agent": a.i });
+        ag.setAttribute("aria-label", a.n + " — " + b.n + ", " + d.n + ". " + TIERS[a.t].label + ", phase " + a.p);
+        const dot = mk("circle", {
+          cx: ax, cy: ay, r: 4.6, fill: d.c,
+          "fill-opacity": a.t === "autonomous" ? ".95" : a.t === "assisted" ? ".5" : ".14",
+          stroke: d.c, "stroke-width": ".9"
+        });
+        ag.appendChild(dot);
+        const flip2 = aa > 180;
+        const [tx, ty] = pol(R_AGENT + 9, aa);
+        const at = mk("text", {
+          class: "agent-label", x: tx, y: ty + 2,
+          "text-anchor": flip2 ? "end" : "start",
+          transform: `rotate(${flip2 ? aa + 90 : aa - 90} ${tx} ${ty})`
+        });
+        at.textContent = a.n.length > 24 ? a.n.slice(0, 23) + "…" : a.n;
+        ag.appendChild(at);
+        ag.addEventListener("click", () => openAgent(a));
+        ag.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openAgent(a); } });
+        ag.addEventListener("mouseenter", () => hot(a, true));
+        ag.addEventListener("mouseleave", () => hot(a, false));
+        gNodes.appendChild(ag); nodeEls["agent:" + a.i] = ag;
+      }
+    }
+  }
+}
+
+/* highlight the lineage brain → dept → branch → agent */
+function hot(a, on) {
+  const d = deptOf(a);
+  [linkEls.agent[a.i], linkEls.branch[a.b], linkEls.dept[d.i]].forEach(l => l && l.classList.toggle("hot", on));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FILTER APPLICATION — dims rather than removes, so the shape of the whole
+   company stays visible while you narrow down.
+   ═══════════════════════════════════════════════════════════════════════ */
+function applyFilters() {
+  const live = AGENTS.filter(matches);
+  const liveIds = new Set(live.map(a => a.i));
+  const liveBranches = new Set(live.map(a => a.b));
+  const liveDepts = new Set(live.map(a => deptOf(a).i));
+
+  for (const a of AGENTS) {
+    const on = liveIds.has(a.i);
+    nodeEls["agent:" + a.i].classList.toggle("dim", !on);
+    linkEls.agent[a.i].style.opacity = on ? "" : ".08";
+  }
+  for (const b of BRANCHES) {
+    const on = liveBranches.has(b.i);
+    nodeEls["branch:" + b.i].classList.toggle("dim", !on);
+    linkEls.branch[b.i].style.opacity = on ? "" : ".08";
+  }
+  for (const d of DEPTS) {
+    const on = liveDepts.has(d.i);
+    nodeEls["dept:" + d.i].classList.toggle("dim", !on);
+    linkEls.dept[d.i].style.opacity = on ? "" : ".08";
+  }
+
+  const filtering = state.q || state.depts.size || state.tiers.size;
+  el("count-live").textContent = filtering
+    ? live.length + " of " + AGENTS.length + " agents"
+    : AGENTS.length + " agents · " + BRANCHES.length + " trees";
+
+  renderLadder(live);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LADDER VIEW — the accessible, complete, no-pointer-needed version.
+   ═══════════════════════════════════════════════════════════════════════ */
+function renderLadder(live) {
+  const host = el("ladder");
+  if (!live.length) {
+    host.innerHTML = '<p class="ladder-empty">No agents match that. Clear a filter and try again.</p>';
+    return;
+  }
+  let html = "";
+  for (const p of [1, 2, 3, 4]) {
+    const rows = live.filter(a => a.p === p);
+    if (!rows.length) continue;
+    const ph = PHASES[p];
+    html += `<section class="phase-block">
+      <div class="phase-head">
+        <h3>Phase ${p} — ${esc(ph.label)}</h3>
+        <span class="when">${esc(ph.when)}</span>
+        <span class="when" style="color:var(--ink-faint)">${rows.length} agent${rows.length > 1 ? "s" : ""}</span>
+        <p class="note">${esc(ph.note)}</p>
+      </div>
+      ${p === 1 ? `<button class="row brain-card" id="ladder-brain">
+        <span class="idx">00</span>
+        <span class="nm">Write the ${BRAIN.length} brain documents<small style="color:var(--gold)">The centre · do this before any of the 137</small></span>
+        <span class="rep">Replaces: every agent guessing at your prices, proof and voice</span>
+        <span class="out">The shared context all ${AGENTS.length} agents read</span>
+        <span class="tier" style="color:var(--gold)">Manual</span>
+      </button>` : ""}
+      <div class="rows">`;
+    rows.forEach((a, i) => {
+      const d = deptOf(a), t = TIERS[a.t];
+      html += `<button class="row" data-open="${a.i}">
+        <span class="idx">${state.built.has(a.i) ? "✓" : String(i + 1).padStart(2, "0")}</span>
+        <span class="nm">${esc(a.n)}<small style="color:${d.c}">${esc(d.n)} · ${esc(branchOf(a).n)}</small></span>
+        <span class="rep">Replaces: ${esc(a.r)}</span>
+        <span class="out">${esc(a.out)}</span>
+        <span class="tier" style="color:${t.c}">${esc(t.label)}</span>
+      </button>`;
+    });
+    html += "</div></section>";
+  }
+  host.innerHTML = html;
+  host.querySelectorAll("[data-open]").forEach(b =>
+    b.addEventListener("click", () => openAgent(byId(AGENTS, b.dataset.open)))
+  );
+  const bc = el("ladder-brain");
+  if (bc) bc.addEventListener("click", () => openBrain());
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PANEL
+   ═══════════════════════════════════════════════════════════════════════ */
+const panel = el("panel"), scrim = el("scrim");
+let lastFocus = null;
+
+function showPanel() {
+  lastFocus = document.activeElement;
+  panel.classList.add("open"); scrim.classList.add("on");
+  panel.focus();
+}
+function closePanel() {
+  panel.classList.remove("open"); scrim.classList.remove("on");
+  if (state.sel) { nodeEls["agent:" + state.sel]?.classList.remove("sel"); state.sel = null; }
+  history.replaceState(null, "", location.pathname);
+  if (lastFocus && lastFocus.focus) lastFocus.focus();
+}
+el("panel-close").addEventListener("click", closePanel);
+scrim.addEventListener("click", closePanel);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && panel.classList.contains("open")) closePanel(); });
+
+/* Pull {{VARS}} out of a skill so they can become real inputs. */
+const varsOf = s => [...new Set((s.match(/\{\{[A-Z0-9_]+\}\}/g) || []))];
+
+function renderSkill(a) {
+  const vars = varsOf(a.s);
+  const varHtml = vars.length ? `<div class="vars">${vars.map(v => {
+    const key = v.slice(2, -2);
+    return `<div class="var">
+      <label for="var-${key}">${esc(key)}</label>
+      <textarea id="var-${key}" data-var="${esc(v)}" rows="1" placeholder="Paste or describe your ${esc(key.toLowerCase().replace(/_/g, " "))}…"></textarea>
+    </div>`;
+  }).join("")}</div>` : "";
+
+  return `${varHtml}
+    <div class="skill-box">
+      <div class="skill-bar">
+        <span>The skill · runnable</span>
+        <button class="btn-sm" id="copy-raw">Copy raw</button>
+        <button class="btn-sm primary" id="copy-filled">Copy filled</button>
+      </div>
+      <pre id="skill-pre">${highlight(a.s)}</pre>
+    </div>`;
+}
+const highlight = s => esc(s).replace(/\{\{[A-Z0-9_]+\}\}/g, m => `<mark>${m}</mark>`);
+
+function filledSkill(a) {
+  let out = a.s;
+  document.querySelectorAll("#panel-body [data-var]").forEach(t => {
+    if (t.value.trim()) out = out.split(t.dataset.var).join(t.value.trim());
+  });
+  return out;
+}
+
+function openAgent(a) {
+  if (!a) return;
+  if (state.sel) nodeEls["agent:" + state.sel]?.classList.remove("sel");
+  state.sel = a.i;
+  nodeEls["agent:" + a.i]?.classList.add("sel");
+
+  const d = deptOf(a), b = branchOf(a), t = TIERS[a.t], ph = PHASES[a.p];
+  el("panel-path").innerHTML = `<b style="color:${d.c}">${esc(d.e)} ${esc(d.n)}</b> › ${esc(b.n)}`;
+  el("panel-title").textContent = a.n;
+  el("panel-badges").innerHTML =
+    `<span class="badge solid" style="background:${t.c};border-color:${t.c}">${esc(t.label)}</span>` +
+    `<span class="badge">Phase ${a.p} · ${esc(ph.label)}</span>` +
+    `<span class="badge">${esc(ph.when)}</span>`;
+
+  el("panel-body").innerHTML = `
+    <button class="built-toggle" id="built-btn" aria-pressed="${state.built.has(a.i)}">
+      <span class="box">${state.built.has(a.i) ? "✓" : ""}</span>
+      <span>${state.built.has(a.i) ? "Built — you have this one running" : "Mark as built"}</span>
+    </button>
+
+    <div class="field"><h4>Replaces</h4><p>${esc(a.r)}</p></div>
+
+    <div class="field">
+      <h4>Autonomy — ${esc(t.label)}</h4>
+      <p style="color:var(--ink-dim);font-size:.86rem">${esc(t.hint)}</p>
+    </div>
+
+    <div class="field">
+      <div class="io">
+        <div><h4>Needs</h4><p style="font-size:.86rem">${esc(a.in)}</p></div>
+        <div><h4>Returns</h4><p style="font-size:.86rem">${esc(a.out)}</p></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <h4>Reads from the brain</h4>
+      <div class="kb-links">${a.k.map(k => {
+        const doc = byId(BRAIN, k);
+        return `<button class="kb-link" data-kb="${esc(k)}">${esc(doc ? doc.n : k)}</button>`;
+      }).join("")}</div>
+    </div>
+
+    <div class="field">
+      <h4>Run it</h4>
+      <p style="color:var(--ink-dim);font-size:.86rem;margin-bottom:.9rem">
+        Fill the gold fields, hit <em>Copy filled</em>, and paste it into Claude, ChatGPT or whatever
+        you already use. Leave them blank and copy raw if you would rather template it yourself.
+      </p>
+      ${renderSkill(a)}
+    </div>`;
+
+  wirePanel(a);
+  history.replaceState(null, "", "#agent=" + a.i);
+  showPanel();
+}
+
+function wirePanel(a) {
+  /* Updated in place rather than by re-opening the panel — a re-render would
+     wipe whatever the user has already typed into the variable fields. */
+  const built = el("built-btn");
+  if (built) built.addEventListener("click", () => {
+    const on = !state.built.has(a.i);
+    on ? state.built.add(a.i) : state.built.delete(a.i);
+    saveBuilt(); updateBuiltStat();
+    built.setAttribute("aria-pressed", on);
+    built.querySelector(".box").textContent = on ? "✓" : "";
+    built.querySelector("span:last-child").textContent = on
+      ? "Built — you have this one running"
+      : "Mark as built";
+    renderLadder(AGENTS.filter(matches));
+  });
+
+  const raw = el("copy-raw"), filled = el("copy-filled");
+  if (raw) raw.addEventListener("click", () => copy(a.s, "Raw skill copied"));
+  if (filled) filled.addEventListener("click", () => copy(filledSkill(a), "Skill copied, ready to paste"));
+
+  document.querySelectorAll("#panel-body [data-var]").forEach(t => {
+    t.addEventListener("input", () => {
+      t.style.height = "auto"; t.style.height = Math.min(t.scrollHeight, 200) + "px";
+      el("skill-pre").innerHTML = highlight(filledSkill(a));
+    });
+  });
+
+  document.querySelectorAll("#panel-body [data-kb]").forEach(btn =>
+    btn.addEventListener("click", () => openBrain(btn.dataset.kb))
+  );
+}
+
+function openBranch(b) {
+  const d = byId(DEPTS, b.d), kids = AGENTS.filter(a => a.b === b.i);
+  el("panel-path").innerHTML = `<b style="color:${d.c}">${esc(d.e)} ${esc(d.n)}</b> › tree`;
+  el("panel-title").textContent = b.n;
+  el("panel-badges").innerHTML = `<span class="badge">${kids.length} agents</span>` +
+    `<span class="badge">Phases ${Math.min(...kids.map(a => a.p))}–${Math.max(...kids.map(a => a.p))}</span>`;
+  el("panel-body").innerHTML = `
+    <div class="field"><p>${esc(b.d2)}</p></div>
+    <div class="field"><h4>The agents in this tree</h4><div class="rows">
+      ${kids.map(a => `<button class="row" data-open="${a.i}" style="grid-template-columns:1fr 92px">
+        <span class="nm">${esc(a.n)}<small style="color:var(--ink-faint)">Replaces: ${esc(a.r)}</small></span>
+        <span class="tier" style="color:${TIERS[a.t].c}">${esc(TIERS[a.t].label)}</span>
+      </button>`).join("")}
+    </div></div>`;
+  el("panel-body").querySelectorAll("[data-open]").forEach(x =>
+    x.addEventListener("click", () => openAgent(byId(AGENTS, x.dataset.open))));
+  showPanel();
+}
+
+function openDept(d) {
+  const branches = BRANCHES.filter(b => b.d === d.i);
+  const kids = AGENTS.filter(a => deptOf(a).i === d.i);
+  const doneCount = kids.filter(a => state.built.has(a.i)).length;
+  el("panel-path").innerHTML = `<b style="color:${d.c}">Department</b>`;
+  el("panel-title").textContent = d.e + " " + d.n;
+  el("panel-badges").innerHTML = `<span class="badge">${kids.length} agents</span>` +
+    `<span class="badge">${branches.length} trees</span>` +
+    `<span class="badge">${doneCount} built</span>`;
+  el("panel-body").innerHTML = `
+    <div class="field"><p>${esc(d.d)}</p></div>
+    ${branches.map(b => {
+      const bk = AGENTS.filter(a => a.b === b.i);
+      return `<div class="field">
+        <h4 style="color:${d.c}">${esc(b.n)} — ${bk.length} agents</h4>
+        <p style="color:var(--ink-dim);font-size:.85rem;margin-bottom:.5rem">${esc(b.d2)}</p>
+        <div class="rows">${bk.map(a => `<button class="row" data-open="${a.i}" style="grid-template-columns:1fr 92px">
+          <span class="nm" style="font-size:.88rem">${esc(a.n)}</span>
+          <span class="tier" style="color:${TIERS[a.t].c}">${esc(TIERS[a.t].label)}</span>
+        </button>`).join("")}</div>
+      </div>`;
+    }).join("")}`;
+  el("panel-body").querySelectorAll("[data-open]").forEach(x =>
+    x.addEventListener("click", () => openAgent(byId(AGENTS, x.dataset.open))));
+  showPanel();
+}
+
+function openBrain(focusId) {
+  el("panel-path").innerHTML = `<b style="color:var(--gold)">The centre</b>`;
+  el("panel-title").textContent = "The Company Brain";
+  el("panel-badges").innerHTML = `<span class="badge solid" style="background:var(--gold);border-color:var(--gold)">${BRAIN.length} documents</span>` +
+    `<span class="badge">Read by all ${AGENTS.length}</span>`;
+  el("panel-body").innerHTML = `
+    <div class="field">
+      <p>Every agent on this map reads from here. Build these ${BRAIN.length} documents first and the
+      other ${AGENTS.length} jobs inherit your actual business — your prices, your proof, your voice,
+      your rules. Skip them and you get 137 confident strangers inventing your company on the fly.
+      This is the whole difference between an agent and a chatbot.</p>
+    </div>
+    ${BRAIN.map(k => {
+      const readers = AGENTS.filter(a => a.k.includes(k.i)).length;
+      return `<div class="kb-doc" id="kb-${esc(k.i)}"${focusId === k.i ? ' style="border-color:var(--gold)"' : ""}>
+        <h5>${esc(k.n)}</h5>
+        <p>${esc(k.d)}</p>
+        <div class="tpl">${esc(k.t).split(" · ").map(x => "· " + x).join("<br>")}</div>
+        <div class="readers">${readers} agent${readers === 1 ? "" : "s"} read this</div>
+      </div>`;
+    }).join("")}`;
+  showPanel();
+  if (focusId) {
+    const target = el("kb-" + focusId);
+    if (target) target.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONTROLS
+   ═══════════════════════════════════════════════════════════════════════ */
+function buildChips() {
+  el("dept-chips").innerHTML = DEPTS.map(d =>
+    `<button class="chip" data-dept="${d.i}" style="--c:${d.c}" aria-pressed="false"><span class="dot"></span>${esc(d.n)}</button>`
+  ).join("");
+  el("tier-chips").innerHTML = Object.entries(TIERS).map(([k, t]) =>
+    `<button class="chip" data-tier="${k}" style="--c:${t.c}" aria-pressed="false" title="${esc(t.hint)}">${esc(t.label)}</button>`
+  ).join("");
+
+  document.querySelectorAll("[data-dept]").forEach(c => c.addEventListener("click", () => {
+    const id = c.dataset.dept;
+    state.depts.has(id) ? state.depts.delete(id) : state.depts.add(id);
+    c.setAttribute("aria-pressed", state.depts.has(id));
+    applyFilters();
+  }));
+  document.querySelectorAll("[data-tier]").forEach(c => c.addEventListener("click", () => {
+    const id = c.dataset.tier;
+    state.tiers.has(id) ? state.tiers.delete(id) : state.tiers.add(id);
+    c.setAttribute("aria-pressed", state.tiers.has(id));
+    applyFilters();
+  }));
+}
+
+let qt;
+el("q").addEventListener("input", e => {
+  clearTimeout(qt);
+  qt = setTimeout(() => { state.q = e.target.value.trim().toLowerCase(); applyFilters(); }, 140);
+});
+
+const vMap = el("view-map"), vLad = el("view-ladder");
+function setView(which) {
+  const map = which === "map";
+  vMap.setAttribute("aria-pressed", map); vLad.setAttribute("aria-pressed", !map);
+  el("v-map").classList.toggle("on", map);
+  el("v-ladder").classList.toggle("on", !map);
+}
+vMap.addEventListener("click", () => setView("map"));
+vLad.addEventListener("click", () => setView("ladder"));
+
+/* pan + zoom */
+const cam = el("cam"), shell = el("map-shell");
+/* Agent labels run outward to roughly r=490, so a 1.0 fit clips them against
+   the shell edges. Start slightly zoomed out and treat that as "reset". */
+const FIT = .88;
+let zoom = FIT, panX = 0, panY = 0, drag = null;
+const applyCam = () => cam.setAttribute("transform", `translate(${panX} ${panY}) translate(${CX} ${CY}) scale(${zoom}) translate(${-CX} ${-CY})`);
+function setZoom(z, ox, oy) {
+  const nz = Math.max(.55, Math.min(4.5, z));
+  if (ox != null) { const k = nz / zoom; panX = ox - k * (ox - panX); panY = oy - k * (oy - panY); }
+  zoom = nz; applyCam();
+}
+/* Wheel zooms only with a modifier held. The map is 86vh, so swallowing plain
+   wheel events would trap anyone trying to scroll past it to the rest of the
+   page — a genuinely hostile piece of UI. Pinch on a trackpad arrives as
+   ctrlKey, so pinch-to-zoom keeps working natively. */
+shell.addEventListener("wheel", e => {
+  if (!e.ctrlKey && !e.metaKey) return;
+  e.preventDefault();
+  const r = shell.getBoundingClientRect();
+  setZoom(zoom * (e.deltaY < 0 ? 1.12 : .89), e.clientX - r.left, e.clientY - r.top);
+}, { passive: false });
+shell.addEventListener("pointerdown", e => {
+  if (e.target.closest(".node") || e.target.closest(".zoombar")) return;
+  drag = { x: e.clientX - panX, y: e.clientY - panY };
+  shell.classList.add("dragging"); shell.setPointerCapture(e.pointerId);
+});
+shell.addEventListener("pointermove", e => { if (!drag) return; panX = e.clientX - drag.x; panY = e.clientY - drag.y; applyCam(); });
+["pointerup", "pointercancel"].forEach(ev => shell.addEventListener(ev, () => { drag = null; shell.classList.remove("dragging"); }));
+el("zoom-in").addEventListener("click", () => setZoom(zoom * 1.25));
+el("zoom-out").addEventListener("click", () => setZoom(zoom * .8));
+el("zoom-reset").addEventListener("click", () => { zoom = FIT; panX = 0; panY = 0; applyCam(); });
+
+/* misc */
+function copy(text, msg) {
+  navigator.clipboard.writeText(text).then(() => toast(msg)).catch(() => toast("Copy failed — select and copy manually"));
+}
+let tt;
+function toast(msg) {
+  const t = el("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2200);
+}
+function updateBuiltStat() { el("stat-built").textContent = state.built.size; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════════════════════════════════════ */
+el("stat-agents").textContent = COUNTS.agents;
+el("stat-depts").textContent = COUNTS.depts;
+el("stat-branches").textContent = COUNTS.branches;
+el("stat-brain").textContent = COUNTS.brain;
+updateBuiltStat();
+
+drawBrain();
+drawTree();
+buildChips();
+applyFilters();
+applyCam();
+
+const hash = location.hash.match(/#agent=([\w-]+)/);
+if (hash) { const a = byId(AGENTS, hash[1]); if (a) openAgent(a); }
+</script>
+</body>
+</html>
