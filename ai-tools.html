@@ -256,6 +256,15 @@
     .js .fade, .js .fade.is-in { opacity: 1; transform: none; transition: none; }
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+  /*
+    Four nav links with nowrap do not fit 375px — the header pushed the whole
+    page into a horizontal scroll on a phone, which is where this gets opened
+    at a conference. Allowed to wrap, with a tighter gap.
+  */
+  @media (max-width: 640px) {
+    .site-head nav { flex-wrap: wrap; gap: 0.75rem 1.1rem; }
+    .site-head nav a { font-size: 0.85rem; }
+  }
 </style>
 </head>
 <body>

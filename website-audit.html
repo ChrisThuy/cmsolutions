@@ -301,6 +301,19 @@
     html { scroll-behavior: auto; }
     * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
   }
+  /*
+    Four nav links with nowrap do not fit 375px — the header pushed the whole
+    page into a horizontal scroll on a phone, which is where this gets opened
+    at a conference. Allowed to wrap, with a tighter gap.
+  */
+  @media (max-width: 640px) {
+    .site-head nav { flex-wrap: wrap; gap: 0.75rem 1.1rem; }
+    .site-head nav a { font-size: 0.85rem; }
+  }
+  /* 44px minimum tap target. The selects were 41px. */
+  @media (max-width: 640px) {
+    select, .btn, button { min-height: 44px; }
+  }
 </style>
 </head>
 <body>
