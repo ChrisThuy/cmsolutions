@@ -11,7 +11,7 @@
   fetchPage is injected throughout, so nothing here touches the network.
 */
 
-import { crawlSite, sameOriginLinks } from "../lib/audit/crawl.mjs";
+import { crawlSite, sameOriginLinks, sitemapUrls } from "../lib/audit/crawl.mjs";
 import { UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
 
 let failures = 0;
@@ -118,8 +118,15 @@ console.log("\nThe crawl is bounded");
     maxPages: 6,
   });
 
-  check("no more than the cap is fetched", log.length <= 6, `fetched ${log.length}`);
-  check("the cap is actually reached when links allow", result.counts.pages === 6, `${result.counts.pages}`);
+  check("no more pages than the cap are checked", result.counts.pages === 6, `${result.counts.pages}`);
+  /*
+    Discovery costs two extra requests — robots.txt and sitemap.xml — so a
+    scan is up to eight outbound requests, not six. Asserted explicitly rather
+    than left implicit, because this is the amplification bound and it changed
+    when sitemap support was added.
+  */
+  check("total outbound requests stay within pages + discovery",
+    log.length <= 8, `fetched ${log.length}`);
   check("the requested page is first", result.pagesChecked[0] === "https://example.com/");
 }
 
@@ -215,6 +222,92 @@ console.log("\nA bad address costs nothing");
     check("cloud metadata is refused", cause instanceof UnsafeUrlError);
   }
   check("and nothing was fetched", fetched === 0);
+}
+
+console.log("\nSitemap parsing stays on the origin");
+{
+  const xml = `<?xml version="1.0"?><urlset>
+    <url><loc>https://example.com/</loc></url>
+    <url><loc>https://example.com/services</loc></url>
+    <url><loc>https://example.com/about/</loc></url>
+    <url><loc>https://evil.example/steal</loc></url>
+    <url><loc>  https://example.com/spaced  </loc></url>
+    <url><loc>not a url at all</loc></url>
+  </urlset>`;
+  const { isIndex, urls } = sitemapUrls(xml, "https://example.com/");
+
+  check("it is not an index", isIndex === false);
+  check("same-origin entries are kept", urls.includes("https://example.com/services"));
+  check("a trailing slash is normalised", urls.includes("https://example.com/about"));
+  check("whitespace inside <loc> is trimmed", urls.includes("https://example.com/spaced"));
+  check("an off-origin entry is dropped", !urls.some((u) => u.includes("evil.example")));
+  check("an unparseable entry is dropped", urls.length === 4, urls.join(" "));
+}
+
+{
+  const index = `<?xml version="1.0"?><sitemapindex>
+    <sitemap><loc>https://example.com/sitemap-1.xml</loc></sitemap>
+  </sitemapindex>`;
+  check("a sitemap index is identified", sitemapUrls(index, "https://example.com/").isIndex === true);
+}
+
+console.log("\nThe sitemap is preferred over guessing from the nav");
+{
+  // The real case this fixes: our own site declared six pages and link
+  // discovery found three, so the audit was missing half of what it was
+  // pointed at.
+  const pages = {
+    "https://example.com/": htmlWith(["/only-linked"]),
+    "https://example.com/robots.txt": "User-agent: *\nAllow: /\nSitemap: https://example.com/sitemap.xml",
+    "https://example.com/sitemap.xml":
+      `<urlset><url><loc>https://example.com/</loc></url>
+       <url><loc>https://example.com/deep-page</loc></url>
+       <url><loc>https://example.com/another</loc></url></urlset>`,
+    "https://example.com/only-linked": htmlWith([]),
+    "https://example.com/deep-page": htmlWith([]),
+    "https://example.com/another": htmlWith([]),
+  };
+
+  const result = await crawlSite("example.com", { fetchPageImpl: fakeFetcher(pages) });
+
+  check("a page only in the sitemap is checked",
+    result.pagesChecked.includes("https://example.com/deep-page"), JSON.stringify(result.pagesChecked));
+  check("a page only in the nav is still checked",
+    result.pagesChecked.includes("https://example.com/only-linked"), JSON.stringify(result.pagesChecked));
+  check("the home page is not queued twice",
+    result.pagesChecked.filter((u) => u === "https://example.com/").length === 1);
+  check("discovery reports the sitemap was used", result.discovery === "sitemap", result.discovery);
+}
+
+console.log("\nNo sitemap is normal, not a fault");
+{
+  const pages = {
+    "https://example.com/": htmlWith(["/a"]),
+    "https://example.com/a": htmlWith([]),
+    // robots.txt and sitemap.xml deliberately absent — the fetcher throws.
+  };
+  const result = await crawlSite("example.com", { fetchPageImpl: fakeFetcher(pages) });
+
+  check("the crawl still works", result.counts.pages === 2, `${result.counts.pages}`);
+  check("it falls back to links", result.discovery === "links", result.discovery);
+  check("a missing sitemap is not reported as unreachable",
+    !result.unreachable.some((u) => u.url.includes("sitemap")), JSON.stringify(result.unreachable));
+}
+
+console.log("\nA sitemap cannot be used to reach another origin");
+{
+  let fetched = [];
+  const pages = {
+    "https://example.com/": htmlWith([]),
+    "https://example.com/robots.txt": "Sitemap: https://evil.example/sitemap.xml",
+    "https://example.com/sitemap.xml": `<urlset><url><loc>https://evil.example/secret</loc></url></urlset>`,
+  };
+  const result = await crawlSite("example.com", { fetchPageImpl: fakeFetcher(pages, fetched) });
+
+  check("an off-origin Sitemap: directive is ignored",
+    !fetched.some((u) => u.includes("evil.example")), fetched.join(" "));
+  check("an off-origin <loc> is never fetched",
+    !result.pagesChecked.some((u) => u.includes("evil.example")));
 }
 
 console.log(
