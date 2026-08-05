@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI Document Data Extraction Tool | CM Solutions</title>
+<meta name="description" content="Pull structured data out of invoices, receipts, contracts and CVs. Every field quotes the text it came from, and missing means missing. Free to try." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-document-data-extraction" />
+
+<meta property="og:title" content="AI Document Data Extraction | CM Solutions" />
+<meta property="og:description" content="Stop retyping numbers off PDFs. Every field quotes the text it came from, and a value that is not on the document comes back empty rather than invented." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-document-data-extraction" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Document Data Extraction | CM Solutions" />
+<meta name="twitter:description" content="Every field quotes the text it came from, and missing means missing." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --ink:#e8e6df; --ink-dim:#a09d93; --ink-faint:#6b6960; --void:#07080c;
+    --hairline:rgba(232,230,223,0.12);
+    --high:#a8b878; --medium:#d4af6a; --low:#d98b6a; --absent:#6b6960; --accent:#7ab8d4;
+    --serif:"Fraunces",Georgia,serif; --sans:"Inter",-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1180px,100% - 3rem);margin-inline:auto}
+  a{color:var(--accent)}
+
+  .skip{position:absolute;left:-9999px}
+  .skip:focus{left:1rem;top:1rem;position:fixed;background:var(--ink);color:var(--void);padding:.75rem 1rem;z-index:99}
+
+  .site-head{border-bottom:1px solid var(--hairline);padding-block:1.1rem}
+  .site-head .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .wordmark{font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-decoration:none}
+  .site-head nav{display:flex;gap:1.6rem;font-size:.9rem;flex-wrap:wrap}
+  .site-head nav a{color:var(--ink-dim);text-decoration:none}
+  .site-head nav a:hover{color:var(--ink)}
+
+  .crumbs{padding-top:2.2rem;font-size:.8rem;color:var(--ink-faint)}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+  .crumbs a{color:var(--ink-dim);text-decoration:none}
+  .crumbs li+li::before{content:"/";margin-right:.5rem}
+
+  .hero{padding-block:3rem 2rem}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;letter-spacing:-.02em;max-width:20ch}
+  h1 em{font-style:italic;color:var(--medium)}
+  .lede{margin-top:1.5rem;max-width:66ch;font-size:clamp(1rem,2.2vw,1.1rem);color:var(--ink-dim)}
+  .lede+.lede{margin-top:.9rem}
+  .lede b{color:var(--ink);font-weight:400}
+
+  .tool{display:grid;gap:2.4rem;align-items:start;padding-bottom:3rem}
+  .tool>*{min-width:0}
+  @media(min-width:1000px){.tool{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}}
+
+  h2{font-family:var(--serif);font-weight:400;font-size:1.35rem;margin-bottom:.9rem}
+  h3{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:2rem 0 .8rem}
+  .privacy{font-size:.82rem;color:var(--ink-faint);margin-top:.6rem}
+
+  .drop{border:1px dashed var(--hairline);border-radius:4px;padding:2rem 1.2rem;text-align:center;margin:1.4rem 0;transition:border-color .15s,background .15s}
+  .drop.over{border-color:var(--accent);background:rgba(122,184,212,.06)}
+  .drop p{font-size:.9rem;color:var(--ink-dim)}
+  .drop .file{margin-top:.6rem;font-family:var(--mono);font-size:.82rem;color:var(--ink)}
+
+  .field{margin-bottom:1.2rem}
+  .field label{display:block;font-size:.92rem;margin-bottom:.3rem}
+  .field .hint{display:block;font-size:.78rem;color:var(--ink-faint);margin-bottom:.45rem}
+  select,textarea,input[type=file]{width:100%;background:rgba(232,230,223,.04);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem .7rem;font-family:var(--sans);font-size:.92rem;min-height:44px}
+  textarea{font-family:var(--mono);font-size:.85rem;min-height:7rem;resize:vertical}
+  select:focus,textarea:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+
+  .btn{background:rgba(232,230,223,.06);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem 1.1rem;font-family:var(--sans);font-size:.9rem;cursor:pointer;min-height:44px}
+  .btn:hover{background:rgba(232,230,223,.12)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn--primary{background:var(--ink);color:var(--void);border-color:var(--ink);font-weight:500;width:100%;margin-top:.5rem}
+
+  .report{border-top:1px solid var(--hairline);padding-top:1.8rem}
+  .doctype{font-family:var(--serif);font-size:clamp(1.1rem,2.4vw,1.4rem);font-weight:300}
+  .meta{margin-top:.6rem;font-size:.78rem;color:var(--ink-faint)}
+
+  .warn-box{margin-top:1.4rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--medium);font-size:.88rem;color:var(--ink-dim)}
+  .warn-box b{color:var(--ink);font-weight:400}
+  .warn-box ul{list-style:none;margin-top:.5rem}
+  .warn-box li{padding:.3rem 0}
+
+  .scroller{overflow-x:auto;margin-top:1.4rem}
+  table{width:100%;border-collapse:collapse;font-size:.86rem}
+  th,td{text-align:left;padding:.6rem .5rem;border-bottom:1px solid var(--hairline);vertical-align:top}
+  th{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);font-weight:400}
+  td.val{font-family:var(--mono);font-size:.84rem}
+  td.val.empty{color:var(--ink-faint);font-style:italic;font-family:var(--sans)}
+  .ev{display:block;margin-top:.3rem;font-size:.76rem;color:var(--ink-faint);font-family:var(--sans)}
+  .conf{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase}
+  .conf--high{color:var(--high)}.conf--medium{color:var(--medium)}
+  .conf--low{color:var(--low)}.conf--absent{color:var(--absent)}
+
+  .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.4rem}
+
+  .caveat{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--medium);font-size:.86rem;color:var(--ink-dim)}
+  .caveat b{color:var(--ink);font-weight:400}
+
+  .status{margin-top:1rem;font-size:.88rem;color:var(--ink-dim);min-height:1.4rem}
+  .status--error{color:var(--low)}
+
+  .section{border-top:1px solid var(--hairline);padding-block:3rem}
+  .cards{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:1.5rem}
+  .card{border:1px solid var(--hairline);padding:1.2rem}
+  .card h4{font-family:var(--serif);font-weight:400;font-size:1.05rem;margin-bottom:.5rem}
+  .card p{font-size:.88rem;color:var(--ink-dim)}
+
+  .site-foot{border-top:1px solid var(--hairline);padding-block:2rem;margin-top:2rem;font-size:.82rem;color:var(--ink-faint)}
+  .site-foot .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .site-foot a{color:var(--ink-dim);text-decoration:none}
+
+  [hidden]{display:none!important}
+
+  @media(max-width:720px){
+    .wrap{width:min(1180px,100% - 2.5rem)}
+    .site-head .wrap{flex-direction:column;align-items:flex-start;gap:.9rem}
+    .site-head nav a,.wordmark{min-height:44px;display:inline-flex;align-items:center}
+    .crumbs a,.site-foot a{min-height:32px;display:inline-flex;align-items:center}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.01ms!important}}
+
+  .print-head,.print-foot{display:none}
+  @media print{
+    .site-head,.site-foot,.crumbs,.hero,#form,.section,.no-print{display:none!important}
+    html,body{background:#fff!important;color:#111!important}
+    .wrap{width:100%}
+    .print-head{display:block;margin-bottom:1.2rem}
+    .print-head .t{font-family:var(--serif);font-size:1.25rem}
+    .print-head .s{font-size:.82rem;color:#666;margin-top:.3rem}
+    .report{border-top:0;padding-top:0}
+    .doctype{color:#111}
+    table,th,td,.caveat,.warn-box{border-color:#ddd}
+    th,.meta,.ev{color:#666}
+    .conf--high{color:#4a6b1f}.conf--medium{color:#8a6a1f}.conf--low{color:#a33}
+    .caveat,.warn-box{color:#444}
+    .print-foot{display:block;margin-top:1.6rem;padding-top:.8rem;border-top:1px solid #ccc;font-size:.74rem;color:#555}
+    .print-foot b{color:#111}
+    .report[hidden]~.print-foot,.print-head:has(~.report[hidden]){display:none}
+    tr,.warn-box,.caveat{break-inside:avoid}
+    @page{margin:16mm 14mm}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/website-audit">Website Check</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs wrap" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    <li><a href="/ai-tools">AI Tools</a></li>
+    <li aria-current="page">Document data extraction</li>
+  </ol>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <p class="kicker">Invoices · receipts · contracts · CVs</p>
+    <h1>Stop retyping numbers off a PDF. And <em>never trust one that was guessed</em>.</h1>
+    <p class="lede">
+      Drop in a document, name the fields you want, and get them back as data.
+      The part that matters is what happens when a field <b>isn't there</b>:
+      it comes back empty with a reason, not filled in with something plausible.
+      Every value that is returned quotes the exact text it was read from, so
+      you can check it in seconds instead of re-reading the document.
+    </p>
+    <p class="lede">
+      A wrong total that looks confident is worse than no tool at all, because
+      nobody double-checks a number that arrives neatly formatted in a table.
+    </p>
+  </section>
+
+  <div class="wrap tool">
+    <form id="form" aria-labelledby="form-h">
+      <h2 id="form-h">Your document</h2>
+      <p class="privacy">
+        The file is read and discarded. It is never written to disk, never
+        stored with the AI provider, and its contents are never logged — only
+        that a request happened. Nothing here is kept.
+      </p>
+
+      <div class="drop" id="drop">
+        <p>Drop a PDF or an image here, or choose a file.</p>
+        <input type="file" id="file" accept="application/pdf,image/png,image/jpeg,image/webp" style="margin-top:.9rem" />
+        <p class="file" id="file-name" hidden></p>
+      </div>
+
+      <div class="field">
+        <label for="preset">What is it?</label>
+        <span class="hint" id="preset-blurb"></span>
+        <select id="preset"></select>
+      </div>
+
+      <div class="field" id="custom-field" hidden>
+        <label for="fields">Fields to pull out</label>
+        <span class="hint">One per line. Write them the way they appear on the document.</span>
+        <textarea id="fields" placeholder="Invoice number&#10;Total amount due&#10;Due date"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn--primary" id="run" disabled>Read the document</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div>
+      <div class="print-head" aria-hidden="true">
+        <p class="t">Extracted document data</p>
+        <p class="s" id="print-sub"></p>
+      </div>
+
+      <section class="report" id="report" hidden aria-labelledby="doctype">
+        <p class="doctype" id="doctype"></p>
+        <p class="meta" id="meta"></p>
+
+        <div class="warn-box" id="warnings" hidden>
+          <b>Worth checking before you use this</b>
+          <ul id="warning-list"></ul>
+        </div>
+
+        <div class="scroller">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Value, and where it came from</th>
+                <th scope="col">Confidence</th>
+              </tr>
+            </thead>
+            <tbody id="fields-body"></tbody>
+          </table>
+        </div>
+
+        <div id="rows-section" hidden>
+          <h3>Line items</h3>
+          <div class="scroller">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Description</th>
+                  <th scope="col">Qty</th>
+                  <th scope="col">Unit price</th>
+                  <th scope="col">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="rows-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="actions no-print">
+          <button type="button" class="btn" id="copy-csv">Copy as CSV</button>
+          <button type="button" class="btn" id="copy-json">Copy as JSON</button>
+          <button type="button" class="btn" id="print">Print or save as PDF</button>
+        </div>
+
+        <p class="caveat">
+          <b>What this is.</b> A demonstration of a document-reading pipeline,
+          not a bookkeeping system. It reads one document at a time and keeps
+          nothing. Check anything marked medium or low before it goes into an
+          accounts system — the confidence and the quoted evidence exist so
+          that checking takes seconds rather than a re-read.
+        </p>
+      </section>
+
+      <div class="print-foot" aria-hidden="true">
+        <p><b>CM Solutions</b> — custom AI systems and internal tooling.</p>
+        <p>contact@cmsolutions.tech · cmsolutions.tech</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="how">
+    <div class="wrap">
+      <h2 id="how">What this is actually for</h2>
+      <p class="lede" style="margin-top:0">
+        The demo reads one document. The version worth paying for reads the
+        inbox: every supplier invoice that arrives, matched against the
+        purchase order, routed for approval, written into the ledger. This page
+        is the engine underneath that, working, so you can judge it before
+        commissioning anything.
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h4>Accounts payable</h4>
+          <p>Supplier invoices into your ledger without a person retyping them, with the exceptions flagged rather than silently wrong.</p>
+        </div>
+        <div class="card">
+          <h4>Contract intake</h4>
+          <p>Renewal dates, notice periods and liability caps pulled out of signed PDFs into something you can actually search.</p>
+        </div>
+        <div class="card">
+          <h4>Recruitment intake</h4>
+          <p>CVs into structured candidate records, with the source text attached so a hiring decision never rests on a paraphrase.</p>
+        </div>
+        <div class="card">
+          <h4>Expense processing</h4>
+          <p>Photographed receipts into claim lines, with totals that reconcile or say why they do not.</p>
+        </div>
+      </div>
+      <p class="lede">
+        If one of those is a real cost in your business,
+        <a href="/#contact">tell me what the document flow looks like</a> and
+        I will tell you honestly whether it is worth automating.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { PRESETS, normaliseFields, presetById } from "/lib/extract/schema.mjs";
+
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+
+  let file = null;
+  let lastResult = null;
+
+  // ── presets ─────────────────────────────────────────────────────────────
+  $("preset").innerHTML = PRESETS.map((p) => `<option value="${p.id}">${p.name}</option>`).join("");
+  function syncPreset() {
+    const preset = presetById($("preset").value);
+    $("preset-blurb").textContent = preset?.blurb ?? "";
+    $("custom-field").hidden = preset?.id !== "custom";
+    updateReady();
+  }
+  $("preset").addEventListener("change", syncPreset);
+  syncPreset();
+
+  // ── file selection, by drop or by picker ────────────────────────────────
+  const drop = $("drop");
+  for (const type of ["dragenter", "dragover"]) {
+    drop.addEventListener(type, (e) => { e.preventDefault(); drop.classList.add("over"); });
+  }
+  for (const type of ["dragleave", "drop"]) {
+    drop.addEventListener(type, () => drop.classList.remove("over"));
+  }
+  drop.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const dropped = e.dataTransfer?.files?.[0];
+    if (dropped) { $("file").files = e.dataTransfer.files; setFile(dropped); }
+  });
+  $("file").addEventListener("change", (e) => setFile(e.target.files?.[0] ?? null));
+
+  const MAX_BYTES = 3 * 1024 * 1024;
+
+  function setFile(chosen) {
+    file = chosen;
+    if (!chosen) { $("file-name").hidden = true; updateReady(); return; }
+    $("file-name").hidden = false;
+    $("file-name").textContent = `${chosen.name} — ${(chosen.size / 1024).toFixed(0)} KB`;
+    // Checked here as well as on the server, so the person is told before
+    // they wait for an upload that was always going to be refused.
+    if (chosen.size > MAX_BYTES) {
+      say(`That file is ${(chosen.size / 1024 / 1024).toFixed(1)} MB. This tool takes up to about 3 MB.`, true);
+      file = null;
+    } else {
+      say("");
+    }
+    updateReady();
+  }
+
+  function customFields() {
+    return normaliseFields($("fields").value.split("\n"));
+  }
+
+  function updateReady() {
+    const preset = presetById($("preset").value);
+    const hasFields = preset?.id !== "custom" || customFields().length > 0;
+    $("run").disabled = !(file && hasFields);
+  }
+  $("fields").addEventListener("input", updateReady);
+
+  function say(message, isError = false) {
+    $("status").textContent = message;
+    $("status").className = `status${isError ? " status--error" : ""}`;
+  }
+
+  const toBase64 = (blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("That file could not be read."));
+    reader.onload = () => resolve(String(reader.result).split(",")[1] ?? "");
+    reader.readAsDataURL(blob);
+  });
+
+  const escapeHtml = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  // ── run ─────────────────────────────────────────────────────────────────
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!file) return;
+
+    const preset = presetById($("preset").value);
+    $("run").disabled = true;
+    say("Reading the document. This takes a few seconds.");
+
+    try {
+      const data = await toBase64(file);
+      const res = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          presetId: preset?.id,
+          fields: preset?.id === "custom" ? customFields() : undefined,
+          wantsRows: preset?.wantsRows !== false,
+          media: { type: file.type, data },
+        }),
+      });
+
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) {
+        say(payload?.error ?? "That did not work. Try again.", true);
+        return;
+      }
+      render(payload);
+      say("");
+    } catch (cause) {
+      say(cause?.message ?? "That did not work. Try again.", true);
+    } finally {
+      $("run").disabled = false;
+      updateReady();
+    }
+  });
+
+  function render(result) {
+    lastResult = result;
+
+    $("doctype").textContent = result.documentType || "Document";
+    $("meta").textContent =
+      `Read ${new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })}` +
+      ` · ${result.fields.length} field${result.fields.length === 1 ? "" : "s"}` +
+      ` · nothing stored`;
+    $("print-sub").textContent = `${result.documentType || "Document"} · prepared by CM Solutions`;
+
+    const warnings = result.warnings ?? [];
+    $("warnings").hidden = warnings.length === 0;
+    $("warning-list").innerHTML = warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join("");
+
+    $("fields-body").innerHTML = result.fields.map((f) => {
+      const empty = f.value === null || f.value === "";
+      return `<tr>
+        <td>${escapeHtml(f.name)}</td>
+        <td class="val${empty ? " empty" : ""}">${empty ? "not on this document" : escapeHtml(f.value)}
+          ${f.evidence && !empty ? `<span class="ev">read from: “${escapeHtml(f.evidence)}”</span>` : ""}
+          ${f.note ? `<span class="ev">${escapeHtml(f.note)}</span>` : ""}
+        </td>
+        <td><span class="conf conf--${escapeHtml(f.confidence)}">${escapeHtml(f.confidence)}</span></td>
+      </tr>`;
+    }).join("");
+
+    const rows = result.rows ?? [];
+    $("rows-section").hidden = rows.length === 0;
+    $("rows-body").innerHTML = rows.map((r) => `<tr>
+      <td>${escapeHtml(r.description)}</td>
+      <td class="val">${escapeHtml(r.quantity ?? "—")}</td>
+      <td class="val">${escapeHtml(r.unitPrice ?? "—")}</td>
+      <td class="val">${escapeHtml(r.amount ?? "—")}</td>
+    </tr>`).join("");
+
+    $("report").hidden = false;
+    $("report").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  // ── taking the data away ────────────────────────────────────────────────
+  const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+
+  async function copy(text, button, label) {
+    try {
+      await navigator.clipboard.writeText(text);
+      const original = button.textContent;
+      button.textContent = "Copied";
+      setTimeout(() => { button.textContent = original; }, 1600);
+    } catch {
+      say(`Your browser blocked the clipboard. The ${label} is still on screen.`, true);
+    }
+  }
+
+  $("copy-csv").addEventListener("click", (e) => {
+    if (!lastResult) return;
+    const lines = [
+      ["Field", "Value", "Confidence", "Evidence", "Note"].map(csvCell).join(","),
+      ...lastResult.fields.map((f) =>
+        [f.name, f.value ?? "", f.confidence, f.evidence, f.note].map(csvCell).join(",")),
+    ];
+    if (lastResult.rows?.length) {
+      lines.push("", ["Description", "Quantity", "Unit price", "Amount"].map(csvCell).join(","));
+      for (const r of lastResult.rows) {
+        lines.push([r.description, r.quantity ?? "", r.unitPrice ?? "", r.amount ?? ""].map(csvCell).join(","));
+      }
+    }
+    copy(lines.join("\n"), e.currentTarget, "CSV");
+  });
+
+  $("copy-json").addEventListener("click", (e) => {
+    if (!lastResult) return;
+    copy(JSON.stringify(lastResult, null, 2), e.currentTarget, "JSON");
+  });
+
+  $("print").addEventListener("click", () => window.print());
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CM Document Data Extraction",
+  "url": "https://cmsolutions.tech/ai-document-data-extraction",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any modern browser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+  "description": "Extracts structured fields from invoices, receipts, purchase orders, contracts and CVs. Every value quotes the source text it was read from, and fields absent from the document are returned empty rather than inferred.",
+  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+}
+</script>
+</body>
+</html>

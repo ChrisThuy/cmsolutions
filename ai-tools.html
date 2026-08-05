@@ -470,6 +470,28 @@
           </div>
         </article>
 
+        <article class="tool fade" style="--accent: var(--c-psychart)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/ai-document-data-extraction">Document Data Extraction</a></h3>
+          <p class="tool-for">For anyone retyping numbers off PDFs</p>
+          <p class="tool-sub">
+            Drop in an invoice, receipt, contract or CV and get the fields back
+            as data. The part that matters is what happens when a field is not
+            there: it comes back empty with a reason rather than filled in with
+            something plausible. A wrong total that looks confident is worse
+            than no tool at all, because nobody re-checks a tidy number.
+          </p>
+          <ul>
+            <li>Every value quotes the exact text it was read from</li>
+            <li>Flags what it could not verify — cropped scans, totals that do not add up</li>
+            <li>Your own field names, not a fixed template</li>
+            <li>The file is read and discarded — never stored, never logged</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/ai-document-data-extraction">Read a document</a>
+          </div>
+        </article>
+
       </div>
     </section>
 
@@ -682,6 +704,21 @@
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web browser",
               "description": "An estate of 135 AI agents mapped onto the oil and gas value chain, each stating what it replaces, what it needs to run and the KPI it moves.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/ai-document-data-extraction#software",
+              "name": "CM Document Data Extraction",
+              "url": "https://cmsolutions.tech/ai-document-data-extraction",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "Extracts structured fields from invoices, receipts, purchase orders, contracts and CVs, quoting the source text for every value and returning absent fields empty rather than inferred.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }
