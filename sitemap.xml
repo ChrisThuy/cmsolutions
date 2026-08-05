@@ -6,9 +6,8 @@
   the authenticated application, it is permanently noindex, and listing it here
   would ask crawlers to index something built not to be indexed.
 
-  Also absent: /ai-proposal-generator. It does not exist yet. Add it here when
-  it ships, not before — a sitemap entry that 404s trains crawlers to distrust
-  the file.
+  Every URL below was confirmed to return 200 before being added. A sitemap
+  entry that 404s trains crawlers to distrust the whole file.
 
   lastmod reflects a genuine content change. Do not bump these on every deploy.
 -->
@@ -24,6 +23,12 @@
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://cmsolutions.tech/ai-proposal-generator</loc>
+    <lastmod>2026-08-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://cmsolutions.tech/agent-map</loc>

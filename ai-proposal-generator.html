@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>AI Proposal Generator for Agencies &amp; Consultants | CM Proposal AI</title>
+<meta name="description" content="CM Proposal AI turns a short questionnaire into a structured client proposal — scope, timeline and a costed investment table — editable section by section and exported as a branded PDF. See a real worked example, no account needed." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-proposal-generator" />
+
+<meta property="og:title" content="AI Proposal Generator for Agencies &amp; Consultants | CM Proposal AI" />
+<meta property="og:description" content="A short questionnaire in, a complete client proposal out — scope, timeline, costed investment table, branded PDF. See a real worked example, no account needed." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-proposal-generator" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Proposal Generator | CM Proposal AI" />
+<meta name="twitter:description" content="A short questionnaire in, a complete client proposal out. See a real worked example, no account needed." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+<meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  CM PROPOSAL AI — PRODUCT PAGE
+
+  This is the ONLY indexable surface for this product. The application at
+  proposal.cmsolutions.tech is permanently noindex, so every claim a search
+  engine or an AI assistant can see about CM Proposal AI is on this page.
+
+  That makes accuracy a functional requirement, not a preference:
+
+    - Every capability listed here is one that works TODAY in the live app.
+      If a feature is removed or broken, it comes off this page the same day.
+    - No customer counts, no time-saved figures, no testimonials, no ratings.
+      Nothing here can be substantiated except by using the product, so
+      nothing here claims more than that.
+    - The demonstration link must stay working. It is the whole argument:
+      a visitor sees a genuine, complete output before being asked for
+      anything at all.
+
+  Structurally self-contained on purpose. The home page fades content in with
+  an IntersectionObserver and its `.reveal` class starts at opacity:0; reusing
+  it here would hide an acquisition page from anyone without JavaScript. The
+  `.fade` class below is applied by script, so no-JS gets full content.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  :root {
+    --ink:        #e8e6df;
+    --ink-dim:    #a09d93;
+    --ink-faint:  #6b6960;
+    --void:       #07080c;
+    --hairline:   rgba(232, 230, 223, 0.12);
+    --hairline-strong: rgba(232, 230, 223, 0.25);
+
+    --c-psychart: #d4af6a;
+    --c-olive:    #a8b878;
+    --c-huddle:   #7ab8d4;
+    --c-fathers:  #d49a7a;
+
+    --accent: var(--c-psychart);
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; }
+
+  :focus-visible {
+    outline: 2px solid var(--c-psychart);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection { background: rgba(212, 175, 106, 0.25); }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--ink); color: var(--void);
+    padding: 0.75rem 1.25rem; z-index: 10;
+  }
+  .skip:focus { left: 0; }
+
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  /* ── header ─────────────────────────────────────────── */
+  .site-head { border-bottom: 1px solid var(--hairline); }
+  .site-head .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; padding-block: 1.4rem;
+  }
+  .wordmark {
+    font-family: var(--serif); font-size: 1.05rem; letter-spacing: -0.01em;
+    text-decoration: none; white-space: nowrap;
+  }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: 0.9rem; }
+  .site-head nav a {
+    color: var(--ink-dim); text-decoration: none; white-space: nowrap;
+    transition: color 0.3s var(--ease-out);
+  }
+  .site-head nav a:hover { color: var(--ink); }
+  .site-head nav a[aria-current="page"] { color: var(--c-psychart); }
+
+  /* ── breadcrumb ─────────────────────────────────────── */
+  .crumbs { padding-top: 2.2rem; font-size: 0.8rem; color: var(--ink-faint); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .crumbs a:hover { color: var(--ink); }
+  .crumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--ink-faint); }
+
+  /* ── hero ───────────────────────────────────────────── */
+  .hero { padding-block: 3rem 3.4rem; }
+  .kicker {
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 1.4rem;
+  }
+  h1 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(2.3rem, 5.6vw, 3.8rem); line-height: 1.08;
+    letter-spacing: -0.02em; max-width: 19ch;
+  }
+  h1 em { font-style: italic; color: var(--c-psychart); }
+  .lede {
+    margin-top: 1.6rem; max-width: 62ch;
+    font-size: clamp(1rem, 2.2vw, 1.15rem); color: var(--ink-dim);
+  }
+  .lede + .lede { margin-top: 1rem; }
+  .hero-actions { margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+  .hero-note { margin-top: 1.1rem; font-size: 0.82rem; color: var(--ink-faint); }
+
+  /* ── sections ───────────────────────────────────────── */
+  .section { padding-bottom: 4rem; }
+  .section-head {
+    border-top: 1px solid var(--hairline);
+    padding-top: 2.4rem; margin-bottom: 2.2rem;
+  }
+  .section-head h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.5rem, 3.5vw, 2rem); letter-spacing: -0.01em;
+  }
+  .section-head p { color: var(--ink-dim); margin-top: 0.7rem; max-width: 60ch; }
+
+  /* ── numbered steps ─────────────────────────────────── */
+  .steps { display: grid; gap: 1.8rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .step-n {
+    font-family: var(--serif); font-size: 0.85rem; color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+  .step h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 1.15rem;
+    margin: 0.6rem 0 0.5rem;
+  }
+  .step p { color: var(--ink-dim); font-size: 0.94rem; }
+
+  /* ── detail list ────────────────────────────────────── */
+  .details { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .detail h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 1.15rem;
+    margin-bottom: 0.6rem;
+  }
+  .detail p { color: var(--ink-dim); font-size: 0.94rem; }
+
+  /* ── two-column comparison ──────────────────────────── */
+  .compare { display: grid; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .panel {
+    border: 1px solid var(--hairline); border-radius: 14px;
+    padding: clamp(1.4rem, 3.5vw, 2rem);
+  }
+  .panel h3 {
+    font-family: var(--serif); font-weight: 400; font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+  .panel > p { color: var(--ink-faint); font-size: 0.85rem; }
+  .panel ul { list-style: none; margin-top: 1.3rem; display: grid; gap: 0.55rem; }
+  .panel li { position: relative; padding-left: 1.3rem; font-size: 0.94rem; color: var(--ink-dim); }
+  .panel li::before {
+    content: ""; position: absolute; left: 0; top: 0.62em;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+  }
+  .panel--muted li::before { background: var(--ink-faint); }
+
+  /* ── FAQ ────────────────────────────────────────────── */
+  .faq { display: grid; gap: 0; }
+  .faq details {
+    border-top: 1px solid var(--hairline);
+    padding-block: 1.2rem;
+  }
+  .faq details:last-child { border-bottom: 1px solid var(--hairline); }
+  .faq summary {
+    cursor: pointer; list-style: none;
+    font-size: 1rem; color: var(--ink);
+    display: flex; justify-content: space-between; gap: 1rem; align-items: baseline;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: "+"; color: var(--accent); font-size: 1.1rem; line-height: 1;
+  }
+  .faq details[open] summary::after { content: "–"; }
+  .faq details p { color: var(--ink-dim); font-size: 0.94rem; margin-top: 0.8rem; max-width: 68ch; }
+
+  /* ── closing CTA ────────────────────────────────────── */
+  .cta { border-top: 1px solid var(--hairline); padding-block: 3rem 4rem; }
+  .cta h2 {
+    font-family: var(--serif); font-weight: 400;
+    font-size: clamp(1.6rem, 4vw, 2.3rem); letter-spacing: -0.01em; max-width: 22ch;
+  }
+  .cta p { color: var(--ink-dim); margin-top: 1rem; max-width: 58ch; }
+  .cta-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.8rem; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.4rem; border-radius: 999px;
+    font-size: 0.9rem; text-decoration: none;
+    border: 1px solid var(--hairline-strong);
+    transition: border-color 0.3s var(--ease-out), opacity 0.3s var(--ease-out);
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn--primary { background: var(--ink); color: var(--void); border-color: var(--ink); }
+  .btn--primary:hover { opacity: 0.9; border-color: var(--ink); }
+
+  /* ── footer ─────────────────────────────────────────── */
+  .site-foot {
+    border-top: 1px solid var(--hairline);
+    padding-block: 2rem 3rem; font-size: 0.85rem; color: var(--ink-faint);
+  }
+  .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+  .site-foot a:hover { color: var(--ink); }
+
+  /* ── entrance animation: enhancement only ───────────── */
+  .js .fade { opacity: 0; transform: translateY(14px); }
+  .js .fade.is-in {
+    opacity: 1; transform: none;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    transition-delay: var(--d, 0s);
+  }
+
+  @media (max-width: 640px) {
+    .wrap { width: min(1080px, 100% - 2.5rem); }
+    .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+    .site-head nav { gap: 1.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .fade, .js .fade.is-in { opacity: 1; transform: none; transition: none; }
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/agent-map">Agent Map</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/ai-tools">AI Tools</a></li>
+        <li aria-current="page">CM Proposal AI</li>
+      </ol>
+    </nav>
+
+    <div class="hero">
+      <p class="kicker fade">CM Proposal AI · for agencies, consultants and freelancers</p>
+      <h1 class="fade" style="--d: 0.06s">The proposal is due Friday. It is <em>Thursday night</em>.</h1>
+      <p class="lede fade" style="--d: 0.12s">
+        Writing a good proposal costs most firms the better part of a working
+        day, and the ones that matter get written when there is least time to
+        write them. So they get rushed, or they get copied from the last one and
+        quietly carry its mistakes forward.
+      </p>
+      <p class="lede fade" style="--d: 0.16s">
+        CM Proposal AI takes a short questionnaire about the project and returns
+        a complete, structured proposal: scope, phased timeline, a costed
+        investment table, stated exclusions and next steps. Every section is
+        yours to rewrite, and it exports as a branded PDF.
+      </p>
+      <div class="hero-actions fade" style="--d: 0.2s">
+        <a class="btn btn--primary" href="https://proposal.cmsolutions.tech/demo">See a finished proposal</a>
+        <a class="btn" href="https://proposal.cmsolutions.tech/demo/try">Run it on your own project</a>
+      </div>
+      <p class="hero-note fade" style="--d: 0.24s">
+        The worked example needs no account, no card and no email address.
+      </p>
+    </div>
+
+    <!-- ── how it works ──────────────────────────────── -->
+    <section class="section" aria-labelledby="how">
+      <div class="section-head fade">
+        <h2 id="how">How it works</h2>
+        <p>
+          Three steps, and the middle one is the only part that needs you at a
+          keyboard for more than a minute.
+        </p>
+      </div>
+
+      <div class="steps">
+        <div class="step fade">
+          <p class="step-n">01</p>
+          <h3>Set your company up once</h3>
+          <p>
+            Name, logo, services, currency and payment terms live in a reusable
+            profile. You never retype them, and every proposal inherits them.
+          </p>
+        </div>
+        <div class="step fade" style="--d: 0.06s">
+          <p class="step-n">02</p>
+          <h3>Answer a short questionnaire</h3>
+          <p>
+            Client, situation, deliverables, timeline, budget and tone. Four
+            steps with real questions, rather than a blank document and a
+            cursor.
+          </p>
+        </div>
+        <div class="step fade" style="--d: 0.12s">
+          <p class="step-n">03</p>
+          <h3>Edit, then export</h3>
+          <p>
+            The draft is a starting point. Change any section — including the
+            prices and the phases — without regenerating the rest, then export a
+            branded PDF.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── the details that matter ───────────────────── -->
+    <section class="section" aria-labelledby="details">
+      <div class="section-head fade">
+        <h2 id="details">The parts that are easy to miss</h2>
+        <p>
+          Anything can produce prose. These are the things that decide whether a
+          document is safe to put in front of a client.
+        </p>
+      </div>
+
+      <div class="details">
+        <div class="detail fade">
+          <h3>The total cannot disagree with its parts</h3>
+          <p>
+            The fee is calculated from the line items on the server, never taken
+            from the browser. A total that contradicts its own breakdown is made
+            structurally impossible rather than merely checked for — which
+            matters, because that is the error that costs you credibility in
+            front of a client.
+          </p>
+        </div>
+        <div class="detail fade" style="--d: 0.06s">
+          <h3>Exclusions are written down</h3>
+          <p>
+            What is <em>not</em> included appears in the document, in plain
+            words. Stating it up front is the cheapest way to prevent a scope
+            argument in week six.
+          </p>
+        </div>
+        <div class="detail fade" style="--d: 0.12s">
+          <h3>It uses the detail you give it</h3>
+          <p>
+            Mention that the client is worried about disruption during a busy
+            period, and it shapes the approach and the phasing — not just a
+            sentence. Naming a client's actual constraints is what separates a
+            real proposal from a template.
+          </p>
+        </div>
+        <div class="detail fade" style="--d: 0.18s">
+          <h3>Every section is editable</h3>
+          <p>
+            Prices, phases, deliverables, exclusions and closing steps are all
+            changed in place. Moving one line does not mean regenerating the
+            whole document and losing your edits.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── demo vs implementation ────────────────────── -->
+    <section class="section" aria-labelledby="scope">
+      <div class="section-head fade">
+        <h2 id="scope">Try it, then decide what you actually need</h2>
+        <p>
+          The public demonstration is a real, working version of the product.
+          What it deliberately leaves out is the configuration that makes a
+          system belong to one business — and that is what CM Solutions builds.
+        </p>
+      </div>
+
+      <div class="compare">
+        <div class="panel fade">
+          <h3>In the demonstration</h3>
+          <p>Free · no card</p>
+          <ul>
+            <li>A complete worked example, all eight sections, with its PDF</li>
+            <li>One live proposal generated for your own project</li>
+            <li>Full editing, including prices and phases</li>
+            <li>PDF export, watermarked</li>
+            <li>Kept for seven days, then deleted along with the account</li>
+          </ul>
+        </div>
+        <div class="panel panel--muted fade" style="--d: 0.06s">
+          <h3>In a built implementation</h3>
+          <p>Designed and deployed for your business</p>
+          <ul>
+            <li>Your logo, typeface, colour and document layout</li>
+            <li>Your tone, section structure and commercial terms</li>
+            <li>CRM, email and calendar integration</li>
+            <li>Staff accounts, roles and permissions</li>
+            <li>Partner approval before anything reaches a client</li>
+            <li>Your rate cards, discount limits and margin floors</li>
+            <li>Reporting on win rate, value and time to proposal</li>
+            <li>Hosting, backups, monitoring and support</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FAQ ───────────────────────────────────────── -->
+    <section class="section" aria-labelledby="faq">
+      <div class="section-head fade">
+        <h2 id="faq">Questions worth asking</h2>
+      </div>
+
+      <div class="faq fade">
+        <details>
+          <summary>Is the proposal any good, or is it obviously written by a machine?</summary>
+          <p>
+            Judge it yourself before giving us anything — the worked example on
+            the demonstration page is a genuine, unedited output from the same
+            pipeline the product uses, not copy written to look impressive. It is
+            a starting point rather than a finished document: the tone is yours
+            to adjust, and every section is editable for that reason.
+          </p>
+        </details>
+        <details>
+          <summary>Do I have to sign up to see it work?</summary>
+          <p>
+            No. The worked example and its PDF are open to anyone. An email
+            address is only asked for if you want the system to write a proposal
+            for your own project, because each of those calls a frontier model at
+            real cost and the demonstration would otherwise be drained by
+            automated traffic.
+          </p>
+        </details>
+        <details>
+          <summary>What happens to what I type into the demonstration?</summary>
+          <p>
+            It is stored in an isolated database, visible only to your own
+            account, and deleted after seven days along with the account and the
+            address you signed up with. Please do not put confidential client
+            information into a public demonstration; a system built for your
+            business is configured separately for your own retention and security
+            requirements.
+          </p>
+        </details>
+        <details>
+          <summary>Can it use my branding?</summary>
+          <p>
+            The product supports your logo, colour and payment terms on the
+            exported PDF. The public demonstration deliberately does not — its
+            exports carry a demonstration mark — because an unbranded document is
+            the thing being demonstrated and a branded one is the thing being
+            built.
+          </p>
+        </details>
+        <details>
+          <summary>Will it connect to our CRM and send the proposal?</summary>
+          <p>
+            Not in the demonstration, and not as an off-the-shelf switch. Raising
+            a proposal from an opportunity, sending it from your own domain and
+            writing the outcome back against the record is integration work
+            against your systems and your permissions. It is exactly the kind of
+            thing CM Solutions is engaged to build.
+          </p>
+        </details>
+        <details>
+          <summary>Is this a subscription?</summary>
+          <p>
+            No. CM Solutions designs and implements systems for businesses. The
+            demonstration exists to show what one looks like when it is finished,
+            so a conversation can start from something concrete rather than a
+            capability deck.
+          </p>
+        </details>
+        <details>
+          <summary>Who is it for?</summary>
+          <p>
+            Agencies, consultancies, accountancy and professional services firms,
+            and independent consultants — anyone who writes the same kind of
+            proposal repeatedly, where the thinking is quick and the document is
+            slow.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── closing CTA ─────────────────────────────────── -->
+  <section class="cta" aria-labelledby="cta-heading">
+    <div class="wrap">
+      <h2 id="cta-heading" class="fade">
+        Start with the example. It takes about a minute.
+      </h2>
+      <p class="fade" style="--d: 0.06s">
+        If it is close to what your firm needs, the next conversation is about
+        your branding, your pricing rules and the systems it should talk to — not
+        about whether the idea works.
+      </p>
+      <div class="cta-actions fade" style="--d: 0.12s">
+        <a class="btn btn--primary" href="https://proposal.cmsolutions.tech/demo">See a finished proposal</a>
+        <a class="btn" href="https://proposal.cmsolutions.tech/enquiry">Build this for my business</a>
+        <a class="btn" href="/ai-tools">All AI tools</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script>
+  // Enhancement only. The class is added here, so a visitor without JavaScript
+  // gets fully visible content rather than an empty page.
+  document.documentElement.classList.add("js");
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const items = document.querySelectorAll(".fade");
+
+  if (reduced || !("IntersectionObserver" in window)) {
+    items.forEach((el) => el.classList.add("is-in"));
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -10% 0px" });
+    items.forEach((el) => io.observe(el));
+  }
+</script>
+
+<!--
+  JSON-LD. The FAQPage entries must stay word-for-word identical to the visible
+  <details> above — structured data that does not match what a visitor reads is
+  a manual-action risk, and it is trivially detectable.
+-->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cmsolutions.tech/#organization",
+      "name": "CM Solutions",
+      "url": "https://cmsolutions.tech/",
+      "email": "contact@cmsolutions.tech",
+      "description": "AI systems and product engineering — AI agents, workflow automation and full digital products."
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://cmsolutions.tech/#website",
+      "url": "https://cmsolutions.tech/",
+      "name": "CM Solutions",
+      "publisher": { "@id": "https://cmsolutions.tech/#organization" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://cmsolutions.tech/ai-proposal-generator#webpage",
+      "url": "https://cmsolutions.tech/ai-proposal-generator",
+      "name": "AI Proposal Generator for Agencies & Consultants | CM Proposal AI",
+      "description": "CM Proposal AI turns a short questionnaire into a structured client proposal — scope, timeline and a costed investment table — editable section by section and exported as a branded PDF.",
+      "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
+      "about": { "@id": "https://cmsolutions.tech/ai-proposal-generator#software" },
+      "breadcrumb": { "@id": "https://cmsolutions.tech/ai-proposal-generator#breadcrumb" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://cmsolutions.tech/ai-proposal-generator#software",
+      "name": "CM Proposal AI",
+      "url": "https://cmsolutions.tech/ai-proposal-generator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "description": "Turns a short questionnaire about a project into a structured, editable client proposal with scope, phased timeline and a costed investment table, exportable as a branded PDF.",
+      "featureList": [
+        "Structured proposal sections: summary, understanding, approach, scope, timeline, investment, next steps",
+        "Costed investment table whose total is derived from its line items",
+        "Stated exclusions alongside deliverables",
+        "Section-by-section editing without regenerating the document",
+        "Branded PDF export",
+        "Reusable company profile"
+      ],
+      "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://cmsolutions.tech/ai-proposal-generator#faq",
+      "isPartOf": { "@id": "https://cmsolutions.tech/ai-proposal-generator#webpage" },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is the proposal any good, or is it obviously written by a machine?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Judge it yourself before giving us anything — the worked example on the demonstration page is a genuine, unedited output from the same pipeline the product uses, not copy written to look impressive. It is a starting point rather than a finished document: the tone is yours to adjust, and every section is editable for that reason."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do I have to sign up to see it work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The worked example and its PDF are open to anyone. An email address is only asked for if you want the system to write a proposal for your own project, because each of those calls a frontier model at real cost and the demonstration would otherwise be drained by automated traffic."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What happens to what I type into the demonstration?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It is stored in an isolated database, visible only to your own account, and deleted after seven days along with the account and the address you signed up with. Please do not put confidential client information into a public demonstration; a system built for your business is configured separately for your own retention and security requirements."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can it use my branding?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The product supports your logo, colour and payment terms on the exported PDF. The public demonstration deliberately does not — its exports carry a demonstration mark — because an unbranded document is the thing being demonstrated and a branded one is the thing being built."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Will it connect to our CRM and send the proposal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Not in the demonstration, and not as an off-the-shelf switch. Raising a proposal from an opportunity, sending it from your own domain and writing the outcome back against the record is integration work against your systems and your permissions. It is exactly the kind of thing CM Solutions is engaged to build."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is this a subscription?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. CM Solutions designs and implements systems for businesses. The demonstration exists to show what one looks like when it is finished, so a conversation can start from something concrete rather than a capability deck."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who is it for?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Agencies, consultancies, accountancy and professional services firms, and independent consultants — anyone who writes the same kind of proposal repeatedly, where the thinking is quick and the document is slow."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-proposal-generator#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Tools", "item": "https://cmsolutions.tech/ai-tools" },
+        { "@type": "ListItem", "position": 3, "name": "CM Proposal AI" }
+      ]
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
