@@ -877,6 +877,30 @@
     background: var(--ink, #e8e6df); color: #07080c;
     padding: 0.75rem 1rem; border-radius: 3px; font-size: 0.9rem;
   }
+
+  /*
+    Tap targets on a phone.
+
+    The four project-domain links in the chapter headers and the fourteen
+    links in the footer nav measured 18px. They are standalone links, not
+    links inline in a sentence, so WCAG 2.2's 24px floor applies to them and
+    the inline exemption does not.
+
+    The two links inside the tools paragraph ARE inline in prose and are
+    deliberately left alone — padding them out would break the sentence they
+    sit in, which is exactly what the exemption exists for.
+
+    Nothing here changes the desktop layout; the header links are inline-flex
+    so the extra height is hit area rather than visible space.
+  */
+  @media (max-width: 720px) {
+    .chapter-domain,
+    footer nav a {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
 </style>
 </head>
 <body>
