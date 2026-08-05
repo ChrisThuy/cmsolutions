@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI Customer Service Software | CM Solutions</title>
+<meta name="description" content="A support agent that answers only from your policy, quotes the passage it used, and escalates when the answer is not there. Try it on your own text." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-customer-service-software" />
+
+<meta property="og:title" content="AI Customer Service Software | CM Solutions" />
+<meta property="og:description" content="Most support bots fail by inventing policy confidently. This one can only say what your policy says, quotes the passage, and hands over when it cannot." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-customer-service-software" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Customer Service Software | CM Solutions" />
+<meta name="twitter:description" content="A support agent that quotes your policy or admits it does not know." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#e8e6df;--ink-dim:#a09d93;--ink-faint:#6b6960;--void:#07080c;
+    --hairline:rgba(232,230,223,0.12);
+    --ok:#a8b878;--partial:#d4af6a;--none:#d98b6a;--accent:#7ab8d4;
+    --serif:"Fraunces",Georgia,serif;--sans:"Inter",-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1180px,100% - 3rem);margin-inline:auto}
+  a{color:var(--accent)}
+
+  .skip{position:absolute;left:-9999px}
+  .skip:focus{left:1rem;top:1rem;position:fixed;background:var(--ink);color:var(--void);padding:.75rem 1rem;z-index:99}
+
+  .site-head{border-bottom:1px solid var(--hairline);padding-block:1.1rem}
+  .site-head .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .wordmark{font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-decoration:none}
+  .site-head nav{display:flex;gap:1.6rem;font-size:.9rem;flex-wrap:wrap}
+  .site-head nav a{color:var(--ink-dim);text-decoration:none}
+  .site-head nav a:hover{color:var(--ink)}
+
+  .crumbs{padding-top:2.2rem;font-size:.8rem;color:var(--ink-faint)}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+  .crumbs a{color:var(--ink-dim);text-decoration:none}
+  .crumbs li+li::before{content:"/";margin-right:.5rem}
+
+  .hero{padding-block:3rem 2rem}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;letter-spacing:-.02em;max-width:21ch}
+  h1 em{font-style:italic;color:var(--partial)}
+  .lede{margin-top:1.5rem;max-width:66ch;font-size:clamp(1rem,2.2vw,1.1rem);color:var(--ink-dim)}
+  .lede+.lede{margin-top:.9rem}
+  .lede b{color:var(--ink);font-weight:400}
+
+  .tool{display:grid;gap:2.4rem;align-items:start;padding-bottom:3rem}
+  .tool>*{min-width:0}
+  @media(min-width:1000px){.tool{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+
+  h2{font-family:var(--serif);font-weight:400;font-size:1.35rem;margin-bottom:.9rem}
+  h3{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:1.8rem 0 .7rem}
+  .privacy{font-size:.82rem;color:var(--ink-faint);margin-top:.6rem}
+
+  .field{margin-bottom:1.2rem}
+  .field label{display:block;font-size:.92rem;margin-bottom:.3rem}
+  .field .hint{display:block;font-size:.78rem;color:var(--ink-faint);margin-bottom:.45rem}
+  textarea,input[type=text]{width:100%;background:rgba(232,230,223,.04);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem .7rem;font-family:var(--sans);font-size:.92rem;min-height:44px}
+  #knowledge{font-family:var(--mono);font-size:.8rem;min-height:15rem;resize:vertical;line-height:1.55}
+  textarea:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .counter{font-size:.72rem;color:var(--ink-faint);text-align:right;margin-top:.25rem}
+
+  .btn{background:rgba(232,230,223,.06);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem 1.1rem;font-family:var(--sans);font-size:.9rem;cursor:pointer;min-height:44px}
+  .btn:hover{background:rgba(232,230,223,.12)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn--primary{background:var(--ink);color:var(--void);border-color:var(--ink);font-weight:500;width:100%;margin-top:.5rem}
+  .btn--small{font-size:.8rem;padding:.4rem .7rem;min-height:auto}
+
+  .suggestions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.5rem}
+  .suggestions button{background:none;border:1px solid var(--hairline);color:var(--ink-dim);border-radius:100px;padding:.35rem .8rem;font-family:var(--sans);font-size:.78rem;cursor:pointer;min-height:32px}
+  .suggestions button:hover{color:var(--ink);border-color:var(--ink-faint)}
+
+  .answer{border-top:1px solid var(--hairline);padding-top:1.8rem}
+  .verdict{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:1rem}
+  .dot{width:9px;height:9px;border-radius:50%}
+  .v--complete{color:var(--ok)} .v--complete .dot{background:var(--ok)}
+  .v--partial{color:var(--partial)} .v--partial .dot{background:var(--partial)}
+  .v--none{color:var(--none)} .v--none .dot{background:var(--none)}
+
+  .reply{font-family:var(--serif);font-size:clamp(1.05rem,2.3vw,1.28rem);line-height:1.5;font-weight:300;white-space:pre-wrap}
+
+  .quotes{list-style:none;margin-top:.6rem}
+  .quotes li{border-left:2px solid var(--hairline);padding:.55rem 0 .55rem .9rem;margin-bottom:.6rem;font-size:.87rem;color:var(--ink-dim)}
+  .quotes .loc{display:block;font-size:.72rem;color:var(--ink-faint);margin-top:.3rem;letter-spacing:.06em;text-transform:uppercase}
+
+  .esc{margin-top:1.4rem;border:1px solid var(--hairline);border-left:2px solid var(--partial);padding:1rem 1.1rem}
+  .esc .why{font-size:.86rem;color:var(--ink-dim)}
+  .esc pre{margin-top:.7rem;font-family:var(--mono);font-size:.8rem;color:var(--ink);white-space:pre-wrap;line-height:1.6}
+
+  .gaps{list-style:none;margin-top:.5rem}
+  .gaps li{font-size:.86rem;color:var(--ink-dim);padding:.35rem 0 .35rem .9rem;border-left:1px solid var(--hairline);margin-bottom:.3rem}
+
+  .caveat{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--partial);font-size:.86rem;color:var(--ink-dim)}
+  .caveat b{color:var(--ink);font-weight:400}
+
+  .status{margin-top:1rem;font-size:.88rem;color:var(--ink-dim);min-height:1.4rem}
+  .status--error{color:var(--none)}
+
+  .section{border-top:1px solid var(--hairline);padding-block:3rem}
+  .cards{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:1.5rem}
+  .card{border:1px solid var(--hairline);padding:1.2rem}
+  .card h4{font-family:var(--serif);font-weight:400;font-size:1.05rem;margin-bottom:.5rem}
+  .card p{font-size:.88rem;color:var(--ink-dim)}
+
+  .site-foot{border-top:1px solid var(--hairline);padding-block:2rem;margin-top:2rem;font-size:.82rem;color:var(--ink-faint)}
+  .site-foot .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .site-foot a{color:var(--ink-dim);text-decoration:none}
+
+  [hidden]{display:none!important}
+
+  @media(max-width:720px){
+    .wrap{width:min(1180px,100% - 2.5rem)}
+    .site-head .wrap{flex-direction:column;align-items:flex-start;gap:.9rem}
+    .site-head nav a,.wordmark{min-height:44px;display:inline-flex;align-items:center}
+    .crumbs a,.site-foot a{min-height:32px;display:inline-flex;align-items:center}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/ai-document-data-extraction">Document Extraction</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs wrap" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    <li><a href="/ai-tools">AI Tools</a></li>
+    <li aria-current="page">Customer service agent</li>
+  </ol>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <p class="kicker">Support automation · grounded answers</p>
+    <h1>Most support bots fail by <em>confidently inventing your policy</em>.</h1>
+    <p class="lede">
+      A bot that makes up a returns window sounds exactly like one that read
+      the policy — same tone, same certainty. There is nothing for a customer
+      to detect. So the fix cannot be a better prompt; it has to be structural.
+    </p>
+    <p class="lede">
+      This agent can only say what your policy says. Every answer <b>quotes the
+      passage it rests on</b>, and the server checks that quotation actually
+      appears in your text before you see it. When the policy does not cover
+      the question, it says so and drafts the handover to a colleague — because
+      "I don't know, here's who does" is a good support answer and a guess is not.
+    </p>
+  </section>
+
+  <div class="wrap tool">
+    <form id="form" aria-labelledby="form-h">
+      <h2 id="form-h">Try it</h2>
+      <p class="privacy">
+        Your policy text and question are sent to be answered and then
+        discarded. Nothing is stored, and the text itself is never logged.
+      </p>
+
+      <div class="field">
+        <label for="knowledge">What the agent is allowed to know</label>
+        <span class="hint">
+          Paste your returns policy, FAQ, terms — anything. Loaded with a
+          sample that deliberately has holes in it, so you can watch it decline.
+        </span>
+        <textarea id="knowledge" spellcheck="false"></textarea>
+        <p class="counter"><span id="chars">0</span> characters · <button type="button" class="btn btn--small" id="reset-sample">Restore sample</button></p>
+      </div>
+
+      <div class="field">
+        <label for="question">Ask it something, as a customer would</label>
+        <input type="text" id="question" placeholder="How long do I have to return something?" />
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+
+      <button type="submit" class="btn btn--primary" id="run">Ask the agent</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div>
+      <section class="answer" id="answer" hidden aria-labelledby="reply">
+        <p class="verdict" id="verdict"><span class="dot"></span><span id="verdict-text"></span></p>
+        <p class="reply" id="reply"></p>
+
+        <div id="quotes-block" hidden>
+          <h3>What it based that on</h3>
+          <ul class="quotes" id="quotes"></ul>
+        </div>
+
+        <div class="esc" id="escalation" hidden>
+          <p class="why" id="esc-reason"></p>
+          <pre id="esc-draft"></pre>
+          <button type="button" class="btn btn--small" id="copy-esc" style="margin-top:.7rem">Copy handover</button>
+        </div>
+
+        <div id="gaps-block" hidden>
+          <h3>What your policy would need to say</h3>
+          <ul class="gaps" id="gaps"></ul>
+        </div>
+
+        <p class="caveat">
+          <b>Why this matters more than the answer.</b> Run a week of real
+          questions through it and the gaps list becomes your documentation
+          backlog — written by customers, in the order they actually ask. That
+          is usually worth more than the deflection rate.
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="how">
+    <div class="wrap">
+      <h2 id="how">How it refuses</h2>
+      <p class="lede" style="margin-top:0">
+        Three mechanisms, because a prompt asking politely for grounded answers
+        is not one.
+      </p>
+      <div class="cards">
+        <div class="card">
+          <h4>The shape forbids it</h4>
+          <p>An answer and its quotations are one structural unit. A claim with nothing quoted is a malformed response, not a stylistic slip.</p>
+        </div>
+        <div class="card">
+          <h4>Contradictions are rejected</h4>
+          <p>Saying the policy does not cover something and then answering anyway is caught before it renders, not left to tone.</p>
+        </div>
+        <div class="card">
+          <h4>Quotes are verified</h4>
+          <p>Every quotation is checked against your text on the server. A fabricated quote looks like evidence, so that check is not left to the model.</p>
+        </div>
+        <div class="card">
+          <h4>Gaps become work</h4>
+          <p>A question it cannot answer produces a drafted handover and a named gap, rather than a dead end and an apology.</p>
+        </div>
+      </div>
+      <p class="lede">
+        This page answers one question at a time against text you paste. The
+        version worth commissioning sits on your helpdesk, reads your whole
+        knowledge base, and writes back to the ticket.
+        <a href="/#contact">Tell me what your queue looks like</a> and I will
+        say honestly whether it is worth automating.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { SAMPLE, SAMPLE_QUESTIONS, MAX_KNOWLEDGE_CHARS, normaliseQuestion }
+    from "/lib/support/knowledge.mjs";
+
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+
+  const escapeHtml = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  // ── the sample, with its deliberate holes ───────────────────────────────
+  function loadSample() {
+    $("knowledge").value = SAMPLE.text;
+    countChars();
+  }
+  $("reset-sample").addEventListener("click", loadSample);
+  loadSample();
+
+  function countChars() {
+    const n = $("knowledge").value.length;
+    $("chars").textContent = n.toLocaleString("en-GB");
+    $("chars").style.color = n > MAX_KNOWLEDGE_CHARS ? "var(--none)" : "";
+  }
+  $("knowledge").addEventListener("input", countChars);
+
+  $("suggestions").innerHTML = SAMPLE_QUESTIONS
+    .map((q) => `<button type="button" data-q="${escapeHtml(q)}">${escapeHtml(q)}</button>`)
+    .join("");
+  $("suggestions").addEventListener("click", (e) => {
+    const q = e.target.closest("button")?.dataset.q;
+    if (!q) return;
+    $("question").value = q;
+    $("question").focus();
+  });
+
+  function say(message, isError = false) {
+    $("status").textContent = message;
+    $("status").className = `status${isError ? " status--error" : ""}`;
+  }
+
+  // ── ask ─────────────────────────────────────────────────────────────────
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const question = normaliseQuestion($("question").value);
+    if (!question) { say("Type a question first.", true); return; }
+
+    $("run").disabled = true;
+    say("Asking the agent…");
+
+    try {
+      const res = await fetch("/api/support-answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ knowledge: $("knowledge").value, question }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) { say(payload?.error ?? "That did not work. Try again.", true); return; }
+      render(payload);
+      say("");
+    } catch (cause) {
+      say(cause?.message ?? "That did not work. Try again.", true);
+    } finally {
+      $("run").disabled = false;
+    }
+  });
+
+  const VERDICTS = {
+    complete: "Answered from your policy",
+    partial: "Partly answered — a person is needed",
+    none: "Not in your policy — handed over",
+  };
+
+  function render(a) {
+    $("verdict").className = `verdict v--${a.coverage}`;
+    $("verdict-text").textContent = VERDICTS[a.coverage] ?? a.coverage;
+    $("reply").textContent = a.reply;
+
+    const quotes = a.quotes ?? [];
+    $("quotes-block").hidden = quotes.length === 0;
+    $("quotes").innerHTML = quotes.map((q) =>
+      `<li>“${escapeHtml(q.text)}”<span class="loc">${escapeHtml(q.locator)}</span></li>`).join("");
+
+    const esc = a.escalation ?? {};
+    $("escalation").hidden = !esc.needed;
+    $("esc-reason").textContent = esc.reason ?? "";
+    $("esc-draft").textContent = esc.draft ?? "";
+
+    const gaps = a.gaps ?? [];
+    $("gaps-block").hidden = gaps.length === 0;
+    $("gaps").innerHTML = gaps.map((g) => `<li>${escapeHtml(g)}</li>`).join("");
+
+    // Surfaced rather than swallowed: if the server rejected a fabricated
+    // quotation, the person trying this should be told it happened.
+    if (a.quotesRejected > 0) {
+      say(`${a.quotesRejected} quotation${a.quotesRejected === 1 ? "" : "s"} could not be found in your text, so the answer was withheld.`, true);
+    } else if (a.knowledgeTruncated) {
+      say("Your text was longer than this demonstration reads, so it was trimmed.");
+    }
+
+    $("answer").hidden = false;
+    $("answer").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  $("copy-esc").addEventListener("click", async (e) => {
+    try {
+      await navigator.clipboard.writeText($("esc-draft").textContent);
+      const b = e.currentTarget; const original = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(() => { b.textContent = original; }, 1600);
+    } catch {
+      say("Your browser blocked the clipboard. The handover is still on screen.", true);
+    }
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CM Customer Service Agent",
+  "url": "https://cmsolutions.tech/ai-customer-service-software",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any modern browser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+  "description": "A customer service agent that answers only from supplied policy text, quotes the passage each answer rests on, verifies those quotations server-side, and escalates with a drafted handover when the policy does not cover the question.",
+  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+}
+</script>
+</body>
+</html>

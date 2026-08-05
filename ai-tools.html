@@ -492,6 +492,28 @@
           </div>
         </article>
 
+        <article class="tool fade" style="--accent: var(--c-huddle)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/ai-customer-service-software">AI Customer Service Agent</a></h3>
+          <p class="tool-for">For anyone answering the same questions all day</p>
+          <p class="tool-sub">
+            A bot that invents your returns window sounds exactly like one that
+            read the policy — same tone, same certainty, nothing for a customer
+            to detect. This one can only say what your policy says, quotes the
+            passage it used, and the server checks that quotation is really in
+            your text before you see it.
+          </p>
+          <ul>
+            <li>Answers quote the policy, or there is no answer</li>
+            <li>Fabricated quotations are caught server-side and withheld</li>
+            <li>Questions it cannot answer become a drafted handover, not a dead end</li>
+            <li>The gaps it finds are your documentation backlog, written by customers</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/ai-customer-service-software">Try the agent</a>
+          </div>
+        </article>
+
       </div>
     </section>
 
@@ -719,6 +741,21 @@
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web browser",
               "description": "Extracts structured fields from invoices, receipts, purchase orders, contracts and CVs, quoting the source text for every value and returning absent fields empty rather than inferred.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 8,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/ai-customer-service-software#software",
+              "name": "CM Customer Service Agent",
+              "url": "https://cmsolutions.tech/ai-customer-service-software",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "A support agent that answers only from supplied policy text, quotes the passage each answer rests on, verifies those quotations server-side, and escalates with a drafted handover when the policy does not cover the question.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }
