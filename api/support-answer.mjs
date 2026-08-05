@@ -140,7 +140,7 @@ export default async function handler(req, res) {
   try {
     response = await client.messages.parse({
       model: MODEL,
-      max_tokens: 4000,
+      max_tokens: 16000,
       system: SYSTEM,
       messages: [{
         role: "user",
@@ -160,6 +160,11 @@ export default async function handler(req, res) {
     }
     console.error(`[support] failed: ${cause?.message ?? cause}`);
     return res.status(502).json({ error: "The agent could not answer that. Try again." });
+  }
+
+  if (response.stop_reason === "max_tokens") {
+    console.error("[support] response hit max_tokens — output was truncated");
+    return res.status(502).json({ error: "That answer came back incomplete. Try a shorter policy." });
   }
 
   const answer = response.parsed_output;

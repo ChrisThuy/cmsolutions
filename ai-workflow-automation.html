@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI Workflow Automation Planner | CM Solutions</title>
+<meta name="description" content="Describe a process you do by hand and get an automation plan — what to automate, what to keep human, what breaks, and the hours it saves from your own numbers." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-workflow-automation" />
+
+<meta property="og:title" content="AI Workflow Automation Planner | CM Solutions" />
+<meta property="og:description" content="What to automate, what to keep human, and what breaks. Hours saved computed from your numbers — or no figure at all if you do not give any." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-workflow-automation" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Workflow Automation Planner | CM Solutions" />
+<meta name="twitter:description" content="What to automate, what to keep human, and what breaks." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#e8e6df;--ink-dim:#a09d93;--ink-faint:#6b6960;--void:#07080c;
+    --hairline:rgba(232,230,223,0.12);
+    --auto:#a8b878;--assist:#7ab8d4;--human:#d4af6a;--risk:#d98b6a;
+    --serif:"Fraunces",Georgia,serif;--sans:"Inter",-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1180px,100% - 3rem);margin-inline:auto}
+  a{color:var(--assist)}
+
+  .skip{position:absolute;left:-9999px}
+  .skip:focus{left:1rem;top:1rem;position:fixed;background:var(--ink);color:var(--void);padding:.75rem 1rem;z-index:99}
+
+  .site-head{border-bottom:1px solid var(--hairline);padding-block:1.1rem}
+  .site-head .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .wordmark{font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-decoration:none}
+  .site-head nav{display:flex;gap:1.6rem;font-size:.9rem;flex-wrap:wrap}
+  .site-head nav a{color:var(--ink-dim);text-decoration:none}
+  .site-head nav a:hover{color:var(--ink)}
+
+  .crumbs{padding-top:2.2rem;font-size:.8rem;color:var(--ink-faint)}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+  .crumbs a{color:var(--ink-dim);text-decoration:none}
+  .crumbs li+li::before{content:"/";margin-right:.5rem}
+
+  .hero{padding-block:3rem 2rem}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;letter-spacing:-.02em;max-width:21ch}
+  h1 em{font-style:italic;color:var(--human)}
+  .lede{margin-top:1.5rem;max-width:66ch;font-size:clamp(1rem,2.2vw,1.1rem);color:var(--ink-dim)}
+  .lede+.lede{margin-top:.9rem}
+  .lede b{color:var(--ink);font-weight:400}
+
+  .tool{display:grid;gap:2.4rem;align-items:start;padding-bottom:3rem}
+  .tool>*{min-width:0}
+  @media(min-width:1000px){.tool{grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr)}}
+
+  h2{font-family:var(--serif);font-weight:400;font-size:1.35rem;margin-bottom:.9rem}
+  h3{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:2rem 0 .8rem}
+  .privacy{font-size:.82rem;color:var(--ink-faint);margin-top:.6rem}
+
+  .field{margin-bottom:1.2rem}
+  .field label{display:block;font-size:.92rem;margin-bottom:.3rem}
+  .field .hint{display:block;font-size:.78rem;color:var(--ink-faint);margin-bottom:.45rem}
+  textarea,select,input[type=number]{width:100%;background:rgba(232,230,223,.04);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem .7rem;font-family:var(--sans);font-size:.92rem;min-height:44px}
+  #description{min-height:11rem;resize:vertical;line-height:1.6}
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--assist);outline-offset:1px}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  @media(max-width:520px){.pair{grid-template-columns:1fr}}
+
+  .btn{background:rgba(232,230,223,.06);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem 1.1rem;font-family:var(--sans);font-size:.9rem;cursor:pointer;min-height:44px}
+  .btn:hover{background:rgba(232,230,223,.12)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn--primary{background:var(--ink);color:var(--void);border-color:var(--ink);font-weight:500;width:100%;margin-top:.5rem}
+
+  .examples{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
+  .examples button{background:none;border:1px solid var(--hairline);color:var(--ink-dim);border-radius:100px;padding:.35rem .8rem;font-family:var(--sans);font-size:.78rem;cursor:pointer;min-height:32px}
+  .examples button:hover{color:var(--ink);border-color:var(--ink-faint)}
+
+  .plan{border-top:1px solid var(--hairline);padding-top:1.8rem}
+  .flow{font-family:var(--serif);font-size:clamp(1.05rem,2.3vw,1.3rem);line-height:1.45;font-weight:300}
+  .flow .arrow{color:var(--ink-faint);margin:0 .5rem}
+
+  .figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);margin-top:1.6rem}
+  .fig{background:var(--void);padding:1rem}
+  .fig .k{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .fig .v{font-family:var(--mono);font-size:1.3rem;margin-top:.35rem;letter-spacing:-.02em}
+  .fig .u{font-size:.72rem;color:var(--ink-faint);margin-top:.2rem}
+
+  .noestimate{margin-top:1.6rem;border:1px solid var(--hairline);border-left:2px solid var(--human);padding:1rem 1.1rem;font-size:.88rem;color:var(--ink-dim)}
+  .noestimate b{color:var(--ink);font-weight:400}
+
+  ol.steps{list-style:none;counter-reset:s;margin-top:.6rem}
+  ol.steps li{counter-increment:s;border-left:2px solid var(--hairline);padding:.85rem 0 .85rem 1rem;margin-bottom:.5rem;position:relative}
+  ol.steps li.h--automated{border-left-color:var(--auto)}
+  ol.steps li.h--assisted{border-left-color:var(--assist)}
+  ol.steps li.h--human{border-left-color:var(--human)}
+  .s-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;flex-wrap:wrap}
+  .s-name{font-size:.96rem;color:var(--ink)}
+  .s-name::before{content:counter(s) ". ";color:var(--ink-faint)}
+  .s-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+  .h--automated .s-tag{color:var(--auto)}
+  .h--assisted .s-tag{color:var(--assist)}
+  .h--human .s-tag{color:var(--human)}
+  .s-detail{font-size:.87rem;color:var(--ink-dim);margin-top:.3rem}
+  .s-meta{font-size:.8rem;color:var(--ink-faint);margin-top:.45rem}
+  .s-meta b{color:var(--ink-dim);font-weight:400}
+
+  ul.plain{list-style:none;margin-top:.5rem}
+  ul.plain li{font-size:.87rem;color:var(--ink-dim);padding:.4rem 0 .4rem .9rem;border-left:1px solid var(--hairline);margin-bottom:.3rem}
+  ul.plain.warn li{border-left-color:var(--risk)}
+
+  .startwith{margin-top:1.6rem;border:1px solid var(--hairline);border-left:2px solid var(--auto);padding:1rem 1.1rem}
+  .startwith .k{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+  .startwith .v{font-family:var(--serif);font-size:1.1rem;margin-top:.35rem}
+
+  .caveat{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--human);font-size:.86rem;color:var(--ink-dim)}
+  .caveat b{color:var(--ink);font-weight:400}
+
+  .status{margin-top:1rem;font-size:.88rem;color:var(--ink-dim);min-height:1.4rem}
+  .status--error{color:var(--risk)}
+
+  .section{border-top:1px solid var(--hairline);padding-block:3rem}
+  .cards{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:1.5rem}
+  .card{border:1px solid var(--hairline);padding:1.2rem}
+  .card h4{font-family:var(--serif);font-weight:400;font-size:1.05rem;margin-bottom:.5rem}
+  .card p{font-size:.88rem;color:var(--ink-dim)}
+
+  .site-foot{border-top:1px solid var(--hairline);padding-block:2rem;margin-top:2rem;font-size:.82rem;color:var(--ink-faint)}
+  .site-foot .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .site-foot a{color:var(--ink-dim);text-decoration:none}
+
+  [hidden]{display:none!important}
+
+  @media(max-width:720px){
+    .wrap{width:min(1180px,100% - 2.5rem)}
+    .site-head .wrap{flex-direction:column;align-items:flex-start;gap:.9rem}
+    .site-head nav a,.wordmark{min-height:44px;display:inline-flex;align-items:center}
+    .crumbs a,.site-foot a{min-height:32px;display:inline-flex;align-items:center}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  .print-head,.print-foot{display:none}
+  @media print{
+    .site-head,.site-foot,.crumbs,.hero,#form,.section,.no-print{display:none!important}
+    html,body{background:#fff!important;color:#111!important}
+    .wrap{width:100%}
+    .print-head{display:block;margin-bottom:1.2rem}
+    .print-head .t{font-family:var(--serif);font-size:1.25rem}
+    .print-head .s{font-size:.82rem;color:#666;margin-top:.3rem}
+    .plan{border-top:0;padding-top:0}
+    .flow,.fig .v,.startwith .v{color:#111}
+    .figures,.fig,.caveat,.startwith,.noestimate,ol.steps li,ul.plain li{border-color:#ddd}
+    .fig{background:#fff} .figures{background:#ddd}
+    .fig .k,.fig .u,.s-meta,ul.plain li{color:#555}
+    .s-detail{color:#444}
+    .h--automated .s-tag{color:#4a6b1f}.h--assisted .s-tag{color:#1f5a6b}.h--human .s-tag{color:#8a6a1f}
+    .caveat,.noestimate{color:#444}
+    .plan[hidden]~.print-foot,.print-head:has(~.plan[hidden]){display:none}
+    .print-foot{display:block;margin-top:1.6rem;padding-top:.8rem;border-top:1px solid #ccc;font-size:.74rem;color:#555}
+    .print-foot b{color:#111}
+    ol.steps li,.figures,.caveat,.startwith{break-inside:avoid}
+    @page{margin:16mm 14mm}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/ai-customer-service-software">Support Agent</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs wrap" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    <li><a href="/ai-tools">AI Tools</a></li>
+    <li aria-current="page">Workflow automation</li>
+  </ol>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <p class="kicker">Process design · honest scoping</p>
+    <h1>The useful answer is usually <em>which steps not to automate</em>.</h1>
+    <p class="lede">
+      Describe something your business does by hand every week. You get back
+      the steps as they actually happen, each one marked automate, assist or
+      <b>keep human</b> — with the reason, and with what breaks when it breaks.
+    </p>
+    <p class="lede">
+      If you tell it how often the process runs and how long it takes, it works
+      out the hours. <b>That arithmetic happens in code, not in the model</b> —
+      it is the one number anybody checks, so it is a function with tests
+      rather than a sentence an AI produced. Give it no volume figures and it
+      gives you no estimate at all.
+    </p>
+  </section>
+
+  <div class="wrap tool">
+    <form id="form" aria-labelledby="form-h">
+      <h2 id="form-h">Your process</h2>
+      <p class="privacy">
+        Your description is sent to be planned and then discarded. Nothing is
+        stored, and the text is never logged.
+      </p>
+
+      <div class="examples" id="examples"></div>
+
+      <div class="field">
+        <label for="description">How is it done today?</label>
+        <span class="hint">
+          Plain English, as you would explain it to a new starter. Mention who
+          does what, where things get stuck, and what happens when something
+          does not match.
+        </span>
+        <textarea id="description" spellcheck="true"
+          placeholder="Invoices arrive by email. Someone types them into the accounting system, checks them against the purchase order…"></textarea>
+      </div>
+
+      <h3>Volume — optional, but it is what turns this into a number</h3>
+      <div class="pair">
+        <div class="field">
+          <label for="cadence">How often does it run?</label>
+          <select id="cadence"><option value="">Not sure</option></select>
+        </div>
+        <div class="field">
+          <label for="minutes">Minutes per run</label>
+          <input type="number" id="minutes" min="1" max="2000" step="1" placeholder="45" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="cost">Cost of an hour of that person's time, £ — optional</label>
+        <span class="hint">Left blank, you get hours and no money figure. We will not guess a rate.</span>
+        <input type="number" id="cost" min="1" max="1000" step="1" placeholder="e.g. 28" />
+      </div>
+
+      <button type="submit" class="btn btn--primary" id="run">Plan it</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <div>
+      <div class="print-head" aria-hidden="true">
+        <p class="t">Automation plan</p>
+        <p class="s" id="print-sub"></p>
+      </div>
+
+      <section class="plan" id="plan" hidden aria-labelledby="flow">
+        <p class="flow" id="flow"></p>
+
+        <div class="figures" id="figures" hidden></div>
+        <div class="noestimate" id="noestimate" hidden>
+          <b>No hours estimated.</b> You did not give a frequency and a
+          duration, so there is nothing to multiply. Add them above and the
+          figures appear — we would rather show you nothing than a number we
+          made up.
+        </div>
+
+        <h3>The steps, as they happen</h3>
+        <ol class="steps" id="steps"></ol>
+
+        <div id="keep-block" hidden>
+          <h3>Keep these human</h3>
+          <ul class="plain" id="keep"></ul>
+        </div>
+
+        <div id="risks-block" hidden>
+          <h3>What could go wrong</h3>
+          <ul class="plain warn" id="risks"></ul>
+        </div>
+
+        <div id="prereq-block" hidden>
+          <h3>Needed before any of this can be built</h3>
+          <ul class="plain" id="prereq"></ul>
+        </div>
+
+        <div id="unclear-block" hidden>
+          <h3>What your description did not say</h3>
+          <ul class="plain" id="unclear"></ul>
+        </div>
+
+        <div class="startwith" id="start-block" hidden>
+          <p class="k">If only one thing gets done</p>
+          <p class="v" id="startwith"></p>
+          <p class="s-detail" id="startwhy" style="margin-top:.5rem"></p>
+        </div>
+
+        <p class="caveat">
+          <b>What this is.</b> A scoping document produced from a paragraph, in
+          about a minute. It is a starting point for a conversation, not a
+          quote and not a build plan — it has never seen your systems, your
+          data or your team. What it is good for is arriving at that
+          conversation with the process already written down.
+        </p>
+
+        <div class="no-print" style="margin-top:1.4rem;display:flex;gap:.6rem;flex-wrap:wrap">
+          <button type="button" class="btn" id="print">Print or save as PDF</button>
+          <button type="button" class="btn" id="copy">Copy as text</button>
+        </div>
+      </section>
+
+      <div class="print-foot" aria-hidden="true">
+        <p><b>CM Solutions</b> — custom AI systems and internal tooling.</p>
+        <p>contact@cmsolutions.tech · cmsolutions.tech</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="how">
+    <div class="wrap">
+      <h2 id="how">Why it hedges</h2>
+      <div class="cards">
+        <div class="card">
+          <h4>The sums are code</h4>
+          <p>The model reads your process and classifies the steps. The multiplication happens in a tested function, because a model doing it silently is wrong occasionally and confidently.</p>
+        </div>
+        <div class="card">
+          <h4>No figures, no estimate</h4>
+          <p>Without a frequency and a duration there is nothing to compute, so nothing is shown. Not a range, not an illustration.</p>
+        </div>
+        <div class="card">
+          <h4>Every step has a failure mode</h4>
+          <p>A plan that only describes the happy path is a sales document. What happens when it breaks on a Friday night is the question worth answering.</p>
+        </div>
+        <div class="card">
+          <h4>Conservative on purpose</h4>
+          <p>Automated steps are credited with removing 90% of their time, not 100%. Something still has to notice when it stops working.</p>
+        </div>
+      </div>
+      <p class="lede">
+        The tools this connects already exist and can be tried:
+        <a href="/ai-document-data-extraction">document extraction</a> for the
+        retyping steps, the
+        <a href="/ai-customer-service-software">support agent</a> for the
+        answering ones, the
+        <a href="/website-audit">site check</a> for the monitoring ones.
+        <a href="/#contact">Tell me which process is costing you most</a> and I
+        will say honestly whether it is worth building.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { CADENCES, EXAMPLES, HANDLING, exampleById }
+    from "/lib/workflow/schema.mjs";
+
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  $("cadence").insertAdjacentHTML("beforeend",
+    CADENCES.map((c) => `<option value="${c.id}">${esc(c.label)}</option>`).join(""));
+
+  $("examples").innerHTML = EXAMPLES
+    .map((e) => `<button type="button" data-id="${e.id}">${esc(e.label)}</button>`).join("");
+  $("examples").addEventListener("click", (e) => {
+    const id = e.target.closest("button")?.dataset.id;
+    const ex = exampleById(id);
+    if (!ex) return;
+    $("description").value = ex.text;
+    $("cadence").value = ex.cadenceId;
+    $("minutes").value = ex.minutesPerRun;
+    $("description").focus();
+  });
+
+  function say(message, isError = false) {
+    $("status").textContent = message;
+    $("status").className = `status${isError ? " status--error" : ""}`;
+  }
+
+  let last = null;
+
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    // A dead button with no explanation is the worst possible failure. If the
+    // browser is refusing the form, say which field and why.
+    const bad = $("form").querySelector(":invalid");
+    if (bad) {
+      say(`${bad.previousElementSibling?.textContent?.trim() || "A field"} — ${bad.validationMessage}`, true);
+      bad.focus();
+      return;
+    }
+
+    $("run").disabled = true;
+    say("Reading the process and working out the steps…");
+
+    try {
+      const res = await fetch("/api/workflow-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          description: $("description").value,
+          cadenceId: $("cadence").value || undefined,
+          minutesPerRun: $("minutes").value ? Number($("minutes").value) : undefined,
+          hourlyCost: $("cost").value ? Number($("cost").value) : undefined,
+        }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) { say(payload?.error ?? "That did not work. Try again.", true); return; }
+      render(payload);
+      say(payload.planProblems?.length
+        ? `Note: ${payload.planProblems.join("; ")}.`
+        : "");
+    } catch (cause) {
+      say(cause?.message ?? "That did not work. Try again.", true);
+    } finally {
+      $("run").disabled = false;
+    }
+  });
+
+  const fmt = (n, dp = 0) =>
+    Number(n).toLocaleString("en-GB", { minimumFractionDigits: dp, maximumFractionDigits: dp });
+
+  function render(p) {
+    last = p;
+    $("flow").innerHTML =
+      `${esc(p.trigger)}<span class="arrow">→</span>${p.steps.length} steps<span class="arrow">→</span>${esc(p.outcome)}`;
+    $("print-sub").textContent =
+      `${p.tally.automated} automated · ${p.tally.assisted} assisted · ${p.tally.human} human · prepared by CM Solutions`;
+
+    // Figures only when the arithmetic had something to work from.
+    const s = p.saving;
+    $("figures").hidden = !s;
+    $("noestimate").hidden = !!s;
+    if (s) {
+      const figs = [
+        { k: "Hours now", v: fmt(s.hoursNowMonthly, 1), u: "per month, as you described it" },
+        { k: "Hours saved", v: fmt(s.hoursSavedMonthly, 1), u: `per month · ${fmt(s.hoursSavedYearly, 0)} a year` },
+      ];
+      if (s.costSavedMonthly !== null) {
+        figs.push({ k: "At your rate", v: "£" + fmt(s.costSavedMonthly), u: `per month · £${fmt(s.costSavedYearly)} a year` });
+      }
+      figs.push({ k: "Steps", v: `${p.tally.automated}/${p.tally.total}`, u: `automated · ${p.tally.human} stay human` });
+      $("figures").innerHTML = figs.map((f) =>
+        `<div class="fig"><p class="k">${esc(f.k)}</p><p class="v">${esc(f.v)}</p><p class="u">${esc(f.u)}</p></div>`).join("")
+        + `<div class="fig" style="grid-column:1/-1"><p class="k">Worked out from</p><p class="u" style="margin-top:.4rem">${
+          s.assumptions.map(esc).join(" · ")}</p></div>`;
+    }
+
+    $("steps").innerHTML = p.steps.map((st) => `
+      <li class="h--${esc(st.handling)}">
+        <div class="s-head">
+          <span class="s-name">${esc(st.name)}</span>
+          <span class="s-tag">${esc(HANDLING[st.handling]?.label ?? st.handling)}</span>
+        </div>
+        <p class="s-detail">${esc(st.detail)}</p>
+        <p class="s-meta"><b>Why:</b> ${esc(st.reasoning)}</p>
+        <p class="s-meta"><b>When it breaks:</b> ${esc(st.failureMode)}</p>
+      </li>`).join("");
+
+    const list = (id, blockId, items) => {
+      $(blockId).hidden = !items?.length;
+      $(id).innerHTML = (items ?? []).map((x) => `<li>${esc(x)}</li>`).join("");
+    };
+    list("keep", "keep-block", p.keepHuman);
+    list("risks", "risks-block", p.risks);
+    list("prereq", "prereq-block", p.prerequisites);
+    list("unclear", "unclear-block", p.unclear);
+
+    $("start-block").hidden = !p.startWith;
+    $("startwith").textContent = p.startWith ?? "";
+    $("startwhy").textContent = p.startWhy ?? "";
+
+    $("plan").hidden = false;
+    $("plan").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  $("print").addEventListener("click", () => window.print());
+
+  $("copy").addEventListener("click", async (e) => {
+    if (!last) return;
+    const s = last.saving;
+    const lines = [
+      `AUTOMATION PLAN`, ``,
+      `Trigger: ${last.trigger}`,
+      `Outcome: ${last.outcome}`, ``,
+    ];
+    if (s) {
+      lines.push(
+        `Hours now: ${fmt(s.hoursNowMonthly, 1)}/month`,
+        `Hours saved: ${fmt(s.hoursSavedMonthly, 1)}/month (${fmt(s.hoursSavedYearly, 0)}/year)`,
+        s.costSavedMonthly !== null ? `At your rate: £${fmt(s.costSavedMonthly)}/month` : "",
+        `Worked out from: ${s.assumptions.join("; ")}`, "",
+      );
+    } else {
+      lines.push("No hours estimated — no frequency and duration were given.", "");
+    }
+    lines.push("STEPS", "");
+    last.steps.forEach((st, i) => {
+      lines.push(
+        `${i + 1}. ${st.name}  [${HANDLING[st.handling]?.label ?? st.handling}]`,
+        `   ${st.detail}`,
+        `   Why: ${st.reasoning}`,
+        `   When it breaks: ${st.failureMode}`, "");
+    });
+    for (const [title, items] of [
+      ["KEEP HUMAN", last.keepHuman], ["RISKS", last.risks],
+      ["PREREQUISITES", last.prerequisites], ["NOT SPECIFIED", last.unclear],
+    ]) {
+      if (items?.length) lines.push(title, ...items.map((x) => `  - ${x}`), "");
+    }
+    lines.push(`START WITH: ${last.startWith}`, `  ${last.startWhy ?? ""}`, "", "Produced by CM Solutions — cmsolutions.tech");
+
+    try {
+      await navigator.clipboard.writeText(lines.filter((l) => l !== undefined).join("\n"));
+      const b = e.currentTarget, original = b.textContent;
+      b.textContent = "Copied";
+      setTimeout(() => { b.textContent = original; }, 1600);
+    } catch {
+      say("Your browser blocked the clipboard. The plan is still on screen.", true);
+    }
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "CM Workflow Automation Planner",
+  "url": "https://cmsolutions.tech/ai-workflow-automation",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Any modern browser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+  "description": "Turns a plain-English description of a manual business process into an automation plan: the steps as they happen, which to automate, assist or keep human, what breaks at each step, and hours saved computed from the user's own volume figures.",
+  "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+}
+</script>
+</body>
+</html>

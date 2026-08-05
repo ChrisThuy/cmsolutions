@@ -514,6 +514,27 @@
           </div>
         </article>
 
+        <article class="tool fade" style="--accent: var(--c-olive)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/ai-workflow-automation">Workflow Automation Planner</a></h3>
+          <p class="tool-for">For deciding what is worth automating at all</p>
+          <p class="tool-sub">
+            Describe something you do by hand every week. You get the steps as
+            they actually happen, each marked automate, assist or keep human,
+            with the reason and with what breaks when it breaks. The useful
+            answer is usually which steps <em>not</em> to automate.
+          </p>
+          <ul>
+            <li>Hours saved computed in code from your figures, not by the model</li>
+            <li>No frequency and duration means no estimate at all</li>
+            <li>Every step carries a failure mode, not just a happy path</li>
+            <li>Automated steps credited with 90% of their time, never 100%</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/ai-workflow-automation">Plan a process</a>
+          </div>
+        </article>
+
       </div>
     </section>
 
@@ -756,6 +777,21 @@
               "applicationCategory": "BusinessApplication",
               "operatingSystem": "Web browser",
               "description": "A support agent that answers only from supplied policy text, quotes the passage each answer rests on, verifies those quotations server-side, and escalates with a drafted handover when the policy does not cover the question.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 9,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/ai-workflow-automation#software",
+              "name": "CM Workflow Automation Planner",
+              "url": "https://cmsolutions.tech/ai-workflow-automation",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "Turns a plain-English description of a manual business process into an automation plan: the steps as they happen, which to automate, assist or keep human, what breaks at each step, and hours saved computed from the user's own volume figures.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }

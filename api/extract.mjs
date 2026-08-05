@@ -193,7 +193,7 @@ export default async function handler(req, res) {
   try {
     response = await client.messages.parse({
       model: MODEL,
-      max_tokens: 8000,
+      max_tokens: 16000,
       system: SYSTEM,
       messages: [{ role: "user", content: [documentBlock, { type: "text", text: instruction }] }],
       output_config: { format: zodOutputFormat(ExtractionSchema) },
@@ -217,6 +217,13 @@ export default async function handler(req, res) {
     }
     console.error(`[extract] failed: ${cause?.message ?? cause}`);
     return res.status(502).json({ error: "The reader could not finish that document." });
+  }
+
+  if (response.stop_reason === "max_tokens") {
+    console.error("[extract] response hit max_tokens — output was truncated");
+    return res.status(502).json({
+      error: "That document had more on it than fits in one pass. Try fewer fields, or a single page.",
+    });
   }
 
   const parsed = response.parsed_output;
