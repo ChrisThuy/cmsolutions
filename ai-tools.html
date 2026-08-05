@@ -303,7 +303,7 @@
     <section class="section" aria-labelledby="available">
       <div class="section-head">
         <h2 id="available">Available now</h2>
-        <p>Three products are live today.</p>
+        <p>Four products are live today.</p>
       </div>
 
       <div class="tools">
@@ -374,6 +374,28 @@
           </ul>
           <div class="tool-actions">
             <a class="btn btn--primary" href="/schema-generator">Generate markup</a>
+          </div>
+        </article>
+
+        <article class="tool fade" style="--accent: var(--c-huddle)">
+          <p class="tool-status">Live</p>
+          <h3><a href="/methane-readiness">Methane Compliance Readiness</a></h3>
+          <p class="tool-for">For oil &amp; gas operators, importers and exporters</p>
+          <p class="tool-sub">
+            The EU Methane Transparency Database opens in September 2026, and
+            from 2027 new import contracts must show measurement and
+            verification equivalent to EU producer standards. Most operators
+            can describe their programme; far fewer can evidence it against each
+            obligation with a date attached. Eight questions gives you the list.
+          </p>
+          <ul>
+            <li>EU Methane Regulation, OGMP 2.0 and US GHGRP obligations</li>
+            <li>Every finding cites its source, so it can be checked</li>
+            <li>Ordered by which deadline falls due first</li>
+            <li>Runs in your browser — your compliance posture stays with you</li>
+          </ul>
+          <div class="tool-actions">
+            <a class="btn btn--primary" href="/methane-readiness">Check readiness</a>
           </div>
         </article>
 
@@ -502,7 +524,7 @@
         "@type": "ItemList",
         "name": "CM Solutions AI business tools",
         "itemListOrder": "https://schema.org/ItemListOrderAscending",
-        "numberOfItems": 3,
+        "numberOfItems": 4,
         "itemListElement": [
           {
             "@type": "ListItem",
@@ -544,6 +566,21 @@
               "applicationCategory": "DeveloperApplication",
               "operatingSystem": "Web browser",
               "description": "Generates valid schema.org JSON-LD for a business — type, address, opening hours, services and FAQs — entirely in the browser, with no ratings or review data.",
+              "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+              "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "WebApplication",
+              "@id": "https://cmsolutions.tech/methane-readiness#software",
+              "name": "Methane Compliance Readiness Check",
+              "url": "https://cmsolutions.tech/methane-readiness",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web browser",
+              "description": "Assesses an oil and gas operation against published methane obligations under the EU Methane Regulation, OGMP 2.0 and the US Greenhouse Gas Reporting Program.",
               "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
               "publisher": { "@id": "https://cmsolutions.tech/#organization" }
             }

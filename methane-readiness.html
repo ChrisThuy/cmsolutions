@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Methane Compliance Readiness Check | CM Solutions</title>
+<meta name="description" content="Where does your operation stand against the EU Methane Regulation and OGMP 2.0? A dated gap assessment against sourced obligations. Runs entirely in your browser." />
+<link rel="canonical" href="https://cmsolutions.tech/methane-readiness" />
+
+<meta property="og:title" content="Methane Compliance Readiness Check | CM Solutions" />
+<meta property="og:description" content="A dated gap assessment against the EU Methane Regulation and OGMP 2.0. Nothing you enter leaves your browser." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/methane-readiness" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="CM Solutions — AI systems and product engineering." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Methane Compliance Readiness Check | CM Solutions" />
+<meta name="twitter:description" content="A dated gap assessment against the EU Methane Regulation and OGMP 2.0." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og.png" />
+<meta name="twitter:image:alt" content="CM Solutions — AI systems and product engineering." />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" sizes="32x32" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════
+  METHANE COMPLIANCE READINESS
+
+  Built for an audience that knows this subject better than the tool does. The
+  constraints that follow from that are not decoration:
+
+    - Every obligation shown carries a source, visible in the report. An
+      unattributable claim is worse than a missing one.
+    - It produces a readiness indicator, never a compliance determination and
+      never a regulatory submission. Telling an operator they are compliant
+      when they are not would be the worst possible failure of this thing.
+    - Nothing is quantified that cannot be cited. No modelled fine exposure,
+      no "typical operators save X".
+    - The framework carries a review date, shown on the report, because these
+      rules are moving and a stale answer presented as current is the failure
+      mode that matters most.
+
+  Entirely client-side. An operator's compliance posture is commercially
+  sensitive and they will not send it to a stranger's server — nor should they
+  have to. There is no endpoint here and no request: the assessment runs in the
+  browser, which also means it works on a conference stand with bad wifi.
+
+  Regulatory content in lib/methane/framework.mjs needs review by someone who
+  works in this field before it is put in front of an expert audience.
+  ═══════════════════════════════════════════════════════════════════════════
+-->
+
+<style>
+  :root {
+    --ink:        #e8e6df;
+    --ink-dim:    #a09d93;
+    --ink-faint:  #6b6960;
+    --void:       #07080c;
+    --hairline:   rgba(232, 230, 223, 0.12);
+    --hairline-strong: rgba(232, 230, 223, 0.25);
+
+    --gap:   #d98b6a;
+    --unsure:#d4af6a;
+    --ready: #a8b878;
+    --accent:#7ab8d4;
+
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans:  "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body { background: var(--void); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .skip { position: absolute; left: -9999px; top: 0; background: var(--ink); color: var(--void); padding: 0.75rem 1.25rem; z-index: 10; }
+  .skip:focus { left: 0; }
+  .wrap { width: min(1080px, 100% - 3rem); margin-inline: auto; }
+
+  .site-head { border-bottom: 1px solid var(--hairline); }
+  .site-head .wrap { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.4rem; }
+  .wordmark { font-family: var(--serif); font-size: 1.05rem; text-decoration: none; white-space: nowrap; }
+  .site-head nav { display: flex; gap: 1.6rem; font-size: 0.9rem; }
+  .site-head nav a { color: var(--ink-dim); text-decoration: none; white-space: nowrap; }
+  .site-head nav a:hover { color: var(--ink); }
+
+  .crumbs { padding-top: 2.2rem; font-size: 0.8rem; color: var(--ink-faint); }
+  .crumbs ol { list-style: none; display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .crumbs a { color: var(--ink-dim); text-decoration: none; }
+  .crumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--ink-faint); }
+
+  .hero { padding-block: 3rem 2rem; }
+  .kicker { font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 1.4rem; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(2.1rem, 5.2vw, 3.3rem); line-height: 1.1; letter-spacing: -0.02em; max-width: 20ch; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { margin-top: 1.5rem; max-width: 64ch; font-size: clamp(1rem, 2.2vw, 1.12rem); color: var(--ink-dim); }
+  .lede + .lede { margin-top: 0.9rem; }
+
+  .tool { display: grid; gap: 2.4rem; align-items: start; padding-bottom: 3rem; }
+  .tool > * { min-width: 0; }
+  @media (min-width: 1000px) { .tool { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
+
+  fieldset { border: 0; margin-bottom: 1.6rem; }
+  legend { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 0.9rem; }
+  .q { margin-bottom: 1.1rem; }
+  .q > label { display: block; font-size: 0.9rem; margin-bottom: 0.45rem; }
+  .q .note { font-size: 0.78rem; color: var(--ink-faint); margin-bottom: 0.45rem; }
+  select {
+    width: 100%; background: rgba(232, 230, 223, 0.04); border: 1px solid var(--hairline-strong);
+    border-radius: 10px; padding: 0.6rem 0.85rem; color: var(--ink); font: inherit; font-size: 0.9rem;
+  }
+  select option { background: #14161c; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.5rem; }
+  .btn { padding: 0.7rem 1.4rem; border-radius: 999px; border: 1px solid var(--hairline-strong); background: transparent; color: var(--ink); font: inherit; font-size: 0.9rem; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .btn:hover { border-color: var(--accent); }
+  .btn--primary { background: var(--ink); color: var(--void); border-color: var(--ink); }
+  .btn--primary:hover { opacity: 0.9; }
+
+  .report[hidden] { display: none; }
+  .report-head { border-top: 1px solid var(--hairline); padding-top: 1.6rem; }
+  .headline { font-family: var(--serif); font-size: clamp(1.1rem, 2.6vw, 1.4rem); line-height: 1.4; }
+  .tally { display: flex; flex-wrap: wrap; gap: 1.3rem; margin-top: 1rem; font-size: 0.88rem; color: var(--ink-dim); }
+  .tally b { color: var(--ink); font-weight: 500; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.45rem; }
+  .dot--gap { background: var(--gap); } .dot--unknown { background: var(--unsure); } .dot--ready { background: var(--ready); }
+
+  .findings { list-style: none; margin-top: 1.8rem; }
+  .findings > li { border-top: 1px solid var(--hairline); padding-block: 1.2rem; break-inside: avoid; page-break-inside: avoid; }
+  .findings > li:last-child { border-bottom: 1px solid var(--hairline); }
+  .f-head { display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; align-items: baseline; }
+  .f-title { font-size: 1rem; }
+  .f-status { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .f-status--gap { color: var(--gap); } .f-status--unknown { color: var(--unsure); } .f-status--ready { color: var(--ready); }
+  .f-when { font-size: 0.78rem; color: var(--ink-faint); }
+  .f-detail { font-size: 0.88rem; color: var(--ink-dim); margin-top: 0.5rem; max-width: 72ch; }
+  .f-action { font-size: 0.88rem; margin-top: 0.6rem; padding-left: 0.8rem; border-left: 2px solid var(--accent); max-width: 72ch; }
+  .f-action b { font-weight: 500; color: var(--accent); }
+  .f-source { font-size: 0.75rem; color: var(--ink-faint); margin-top: 0.6rem; }
+  .f-source a { color: var(--ink-faint); }
+
+  .caveat { margin-top: 1.6rem; border: 1px solid var(--hairline); border-left: 2px solid var(--unsure); border-radius: 10px; padding: 1rem 1.1rem; font-size: 0.82rem; color: var(--ink-dim); }
+  .caveat b { color: var(--ink); font-weight: 500; }
+
+  .section { padding-bottom: 3.5rem; }
+  .section-head { border-top: 1px solid var(--hairline); padding-top: 2.2rem; margin-bottom: 1.8rem; }
+  .section-head h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.4rem, 3.2vw, 1.9rem); }
+  .section-head p { color: var(--ink-dim); margin-top: 0.6rem; max-width: 62ch; }
+  .cols { display: grid; gap: 1.8rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .col h3 { font-family: var(--serif); font-weight: 400; font-size: 1.08rem; margin-bottom: 0.5rem; }
+  .col p { font-size: 0.9rem; color: var(--ink-dim); }
+
+  .cta { border-top: 1px solid var(--hairline); padding-block: 2.8rem 4rem; }
+  .cta h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.5rem, 3.6vw, 2.1rem); max-width: 24ch; }
+  .cta p { color: var(--ink-dim); margin-top: 0.9rem; max-width: 58ch; }
+
+  .site-foot { border-top: 1px solid var(--hairline); padding-block: 2rem 3rem; font-size: 0.85rem; color: var(--ink-faint); }
+  .site-foot .wrap { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; }
+  .site-foot a { color: var(--ink-dim); text-decoration: none; }
+
+  .print-head { display: none; }
+
+  @media (max-width: 640px) {
+    .wrap { width: min(1080px, 100% - 2.5rem); }
+    .site-head .wrap { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
+  }
+
+  /* The report goes into board packs, so it has to print as a document. */
+  @media print {
+    .site-head, .site-foot, .crumbs, .hero, form, .section, .cta, .no-print { display: none !important; }
+    html, body { background: #fff !important; color: #111 !important; }
+    .wrap { width: 100%; }
+    .print-head { display: block; margin-bottom: 1.2rem; }
+    .print-head .t { font-family: var(--serif); font-size: 1.25rem; }
+    .print-head .s { font-size: 0.82rem; color: #666; margin-top: 0.3rem; }
+    .report-head { border-top: 0; padding-top: 0; }
+    .headline { color: #111; }
+    .tally, .tally b { color: #111; }
+    .findings > li { border-color: #ddd; }
+    .f-detail { color: #444; } .f-when, .f-source, .f-source a { color: #666; }
+    .f-action { color: #111; border-left-color: #999; } .f-action b { color: #111; }
+    .f-status--gap { color: #a33; } .f-status--unknown { color: #8a6a1f; } .f-status--ready { color: #4a6b1f; }
+    .dot--gap { background: #a33; } .dot--unknown { background: #8a6a1f; } .dot--ready { background: #4a6b1f; }
+    .caveat { color: #444; border-color: #ccc; border-left-color: #8a6a1f; }
+    .caveat b { color: #111; }
+  }
+
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: 0.01ms !important; } }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/website-audit">Website Check</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/ai-tools">AI Tools</a></li>
+        <li aria-current="page">Methane Readiness</li>
+      </ol>
+    </nav>
+
+    <div class="hero">
+      <p class="kicker">Oil &amp; gas · EU Methane Regulation · OGMP 2.0</p>
+      <h1>Can you evidence your methane position <em>today</em>?</h1>
+      <p class="lede">
+        The EU Methane Transparency Database opens in September 2026. From 2027
+        new import contracts must show measurement, reporting and verification
+        equivalent to EU producer standards — quantified at source <em>and</em>
+        site level, independently verified. Intensity reporting follows in 2028,
+        and maximum intensity thresholds in 2030.
+      </p>
+      <p class="lede">
+        Most operators can describe their programme. Far fewer can evidence it
+        against each obligation, with a date attached. Eight questions below
+        will tell you which ones are open and which falls due first.
+      </p>
+    </div>
+
+    <div class="tool">
+      <form id="form">
+        <fieldset>
+          <legend>Your operation</legend>
+
+          <div class="q">
+            <label for="euRelationship">Where do you sit relative to the EU?</label>
+            <p class="note">This drives almost everything — exposure follows the molecule, not the company.</p>
+            <select id="euRelationship"></select>
+          </div>
+
+          <div class="q">
+            <label for="segment">Which part of the chain?</label>
+            <select id="segment"></select>
+          </div>
+
+          <div class="q">
+            <label for="usOperations">Do you have US operations reporting under the GHGRP?</label>
+            <select id="usOperations">
+              <option value="no">No</option>
+              <option value="yes">Yes</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Measurement and reporting</legend>
+
+          <div class="q">
+            <label for="ogmpLevel">Where are you on OGMP 2.0?</label>
+            <select id="ogmpLevel"></select>
+          </div>
+
+          <div class="q">
+            <label for="siteLevelMeasurement">Do you measure at site level, not only estimate at source?</label>
+            <select id="siteLevelMeasurement" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="verification">Is your methane reporting independently verified?</label>
+            <select id="verification" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="inventory">Could you produce a defensible source-level inventory this quarter?</label>
+            <select id="inventory" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="ldar">How is leak detection and repair run?</label>
+            <select id="ldar">
+              <option value="programme">A defined programme with documented surveys and repairs</option>
+              <option value="adhoc">Inspections happen, but not on a documented schedule</option>
+              <option value="none">No structured LDAR</option>
+              <option value="unknown">Not sure</option>
+            </select>
+          </div>
+
+          <div class="q">
+            <label for="intensity">Do you know your methane intensity?</label>
+            <select id="intensity" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="supplierData">Do you get methane data from your own suppliers?</label>
+            <p class="note">Only relevant if you import into the EU or sit in an LNG chain.</p>
+            <select id="supplierData" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="usReporting">Are your Subpart W submissions on track for the October 2026 deadline?</label>
+            <select id="usReporting" data-yesno></select>
+          </div>
+        </fieldset>
+
+        <div class="actions no-print">
+          <button type="button" class="btn btn--primary" id="assess">Assess readiness</button>
+          <button type="button" class="btn" id="print" hidden>Print / save as PDF</button>
+        </div>
+      </form>
+
+      <div>
+        <div class="print-head" aria-hidden="true">
+          <p class="t">Methane compliance readiness</p>
+          <p class="s" id="print-sub"></p>
+        </div>
+
+        <section class="report" id="report" hidden aria-labelledby="headline">
+          <div class="report-head">
+            <p class="headline" id="headline"></p>
+            <p class="tally" id="tally"></p>
+          </div>
+          <ul class="findings" id="findings"></ul>
+          <p class="caveat">
+            <b>What this is.</b> A readiness indicator against published
+            obligations, generated from your own answers. It is not a compliance
+            determination, not a regulatory submission and not legal advice, and
+            it does not quantify emissions — that is a measurement problem for
+            instrumentation and qualified people, not a web form. Every
+            obligation above links to its source so you can check it. Confirm
+            the detail that applies to your asset class with your own advisers.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="how">
+      <div class="section-head">
+        <h2 id="how">Why this is built the way it is</h2>
+        <p>
+          Three constraints, chosen because the alternative in each case is a
+          tool that reads well and cannot be trusted.
+        </p>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <h3>Nothing you enter leaves your browser</h3>
+          <p>
+            There is no server and no request. Your compliance posture is
+            commercially sensitive, and you should not have to hand it to a
+            stranger to find out where you stand. Check the network tab.
+          </p>
+        </div>
+        <div class="col">
+          <h3>Every obligation cites its source</h3>
+          <p>
+            You can follow each one back to the regulation or the framework it
+            comes from. A requirement nobody can attribute is worse than a
+            requirement left out.
+          </p>
+        </div>
+        <div class="col">
+          <h3>Nothing is quantified that cannot be cited</h3>
+          <p>
+            No modelled fine exposure, no estimated savings. The rules carry
+            their own numbers and dates; anything beyond those would be a guess
+            wearing a decimal point.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="cta" aria-labelledby="cta-h">
+    <div class="wrap">
+      <h2 id="cta-h">The assessment is the easy part.</h2>
+      <p>
+        Closing a measurement and verification gap is a data problem before it
+        is an engineering one: source-level inventories reconciled against site
+        measurement, survey and repair evidence an auditor can follow, supplier
+        data arriving in a usable shape, and reporting that assembles itself
+        rather than consuming a team each cycle. That is the kind of system CM
+        Solutions builds.
+      </p>
+      <div class="actions" style="margin-top:1.8rem">
+        <a class="btn btn--primary" href="/#contact">Talk about your programme</a>
+        <a class="btn" href="/ai-tools">Other tools</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { EU_RELATIONSHIPS, SEGMENTS, OGMP_LEVELS } from "/lib/methane/framework.mjs";
+  import { assess } from "/lib/methane/assess.mjs";
+
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  const fill = (id, options) => {
+    const el = document.getElementById(id);
+    for (const o of options) {
+      const opt = document.createElement("option");
+      opt.value = o.value;
+      opt.textContent = o.label;
+      el.append(opt);
+    }
+  };
+  fill("euRelationship", EU_RELATIONSHIPS);
+  fill("segment", SEGMENTS);
+  fill("ogmpLevel", OGMP_LEVELS);
+
+  // Yes / No / Not sure, where "not sure" is a real answer rather than a
+  // cop-out: an obligation nobody can speak to cannot be evidenced either.
+  for (const el of document.querySelectorAll("[data-yesno]")) {
+    for (const [value, label] of [["yes", "Yes"], ["no", "No"], ["unknown", "Not sure"]]) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = label;
+      el.append(opt);
+    }
+    el.value = "unknown";
+  }
+
+  const report = document.getElementById("report");
+  const printButton = document.getElementById("print");
+
+  function readProfile() {
+    const v = (id) => document.getElementById(id).value;
+    return {
+      euRelationship: v("euRelationship"), segment: v("segment"),
+      usOperations: v("usOperations"), usReporting: v("usReporting"),
+      ogmpLevel: v("ogmpLevel"), siteLevelMeasurement: v("siteLevelMeasurement"),
+      verification: v("verification"), inventory: v("inventory"),
+      ldar: v("ldar"), intensity: v("intensity"), supplierData: v("supplierData"),
+    };
+  }
+
+  const LABEL = { gap: "open", unknown: "not known", ready: "in hand" };
+
+  function render(result) {
+    document.getElementById("headline").textContent = result.headline;
+
+    const tally = document.getElementById("tally");
+    tally.replaceChildren();
+    for (const [key, word] of [["gap", "open"], ["unknown", "not known"], ["ready", "in hand"]]) {
+      const count = result.counts[key];
+      if (!count) continue;
+      const span = document.createElement("span");
+      const dot = document.createElement("span");
+      dot.className = `dot dot--${key}`;
+      const b = document.createElement("b");
+      b.textContent = String(count);
+      span.append(dot, b, document.createTextNode(` ${word}`));
+      tally.append(span);
+    }
+
+    const list = document.getElementById("findings");
+    list.replaceChildren();
+
+    for (const f of result.findings) {
+      const li = document.createElement("li");
+
+      const head = document.createElement("div");
+      head.className = "f-head";
+      const title = document.createElement("span");
+      title.className = "f-title";
+      title.textContent = f.title;
+      const status = document.createElement("span");
+      status.className = `f-status f-status--${f.status}`;
+      status.textContent = LABEL[f.status];
+      const when = document.createElement("span");
+      when.className = "f-when";
+      when.textContent = `${f.regime} · ${f.date} · ${f.horizon}`;
+      head.append(title, status, when);
+
+      const detail = document.createElement("p");
+      detail.className = "f-detail";
+      detail.textContent = f.detail;
+
+      li.append(head, detail);
+
+      if (f.dateNote) {
+        const note = document.createElement("p");
+        note.className = "f-source";
+        note.textContent = f.dateNote;
+        li.append(note);
+      }
+
+      if (f.action) {
+        const action = document.createElement("p");
+        action.className = "f-action";
+        const b = document.createElement("b");
+        b.textContent = "What closing this needs: ";
+        action.append(b, document.createTextNode(f.action));
+        li.append(action);
+      }
+
+      // The citation is not decoration — it is what makes the finding
+      // checkable by someone who knows the subject.
+      const source = document.createElement("p");
+      source.className = "f-source";
+      const link = document.createElement("a");
+      link.href = f.source.url;
+      link.target = "_blank";
+      link.rel = "noopener";
+      link.textContent = f.source.label;
+      source.append(document.createTextNode("Source: "), link);
+      li.append(source);
+
+      list.append(li);
+    }
+
+    const assessed = new Date(result.assessedAt).toLocaleDateString("en-GB",
+      { day: "numeric", month: "long", year: "numeric" });
+    document.getElementById("print-sub").textContent =
+      `Assessed ${assessed} · framework reviewed ${result.frameworkReviewed} · prepared by CM Solutions`;
+
+    report.hidden = false;
+    printButton.hidden = false;
+    report.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.getElementById("assess").addEventListener("click", () => render(assess(readProfile())));
+  printButton.addEventListener("click", () => window.print());
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cmsolutions.tech/#organization",
+      "name": "CM Solutions",
+      "url": "https://cmsolutions.tech/",
+      "email": "contact@cmsolutions.tech"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://cmsolutions.tech/methane-readiness#software",
+      "name": "Methane Compliance Readiness Check",
+      "url": "https://cmsolutions.tech/methane-readiness",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web browser",
+      "description": "Assesses an oil and gas operation against published methane obligations under the EU Methane Regulation, OGMP 2.0 and the US Greenhouse Gas Reporting Program, and reports which are open and which fall due first.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+      "publisher": { "@id": "https://cmsolutions.tech/#organization" }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://cmsolutions.tech/methane-readiness#webpage",
+      "url": "https://cmsolutions.tech/methane-readiness",
+      "name": "Methane Compliance Readiness Check | CM Solutions",
+      "description": "A dated gap assessment against the EU Methane Regulation and OGMP 2.0. Runs entirely in your browser.",
+      "about": { "@id": "https://cmsolutions.tech/methane-readiness#software" },
+      "breadcrumb": { "@id": "https://cmsolutions.tech/methane-readiness#breadcrumb" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/methane-readiness#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Tools", "item": "https://cmsolutions.tech/ai-tools" },
+        { "@type": "ListItem", "position": 3, "name": "Methane Readiness" }
+      ]
+    }
+  ]
+}
+</script>
+
+</body>
+</html>
