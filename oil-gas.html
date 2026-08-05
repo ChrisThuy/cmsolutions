@@ -386,6 +386,23 @@
   .agent-index li b { color: var(--ink); font-weight: 500; }
   .agent-index li em { font-style: normal; color: var(--gold); }
   @media (max-width: 640px) { .agent-index { padding: 2.5rem 1.25rem 4rem; } }
+
+  /*
+    Tap targets on a phone.
+
+    The console is a laptop instrument, and on a phone its controls measured
+    26–31px — under the 44px a thumb wants and under WCAG 2.2's 24px floor in
+    places. These are discrete buttons, so they can simply be made bigger.
+
+    The map's SVG nodes are not fixed here and cannot be: ~200 nodes at 17px
+    on a 375px screen is a layout that does not belong on a phone rather than
+    a sizing mistake. The static agent index below the map is the answer for
+    that reader, which is why the skip link at the top of the page points to it.
+  */
+  @media (max-width: 720px) {
+    .tab, .rail-item, .dir-item, .layer { min-height: 44px; }
+    .brand { min-height: 44px; display: inline-flex; align-items: center; }
+  }
 </style>
 </head>
 <body>

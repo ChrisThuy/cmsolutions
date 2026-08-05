@@ -284,6 +284,23 @@
   @media (max-width: 640px) {
     select, .btn, button { min-height: 44px; }
   }
+
+  /*
+    Tap targets on a phone.
+
+    WCAG 2.2 target size (2.5.8) puts the floor at 24x24 CSS px for anything
+    that is not an inline link inside a sentence; 44px is the size a thumb
+    actually wants. The nav here measured 22px — under even the floor — and
+    this page gets opened on a phone at a conference stand, from a QR code,
+    by someone standing up.
+
+    Source citations inside a sentence are exempt under the same rule and are
+    deliberately left alone: padding them out would break the prose they sit in.
+  */
+  @media (max-width: 720px) {
+    .site-head nav a { min-height: 44px; display: inline-flex; align-items: center; }
+    .crumbs a, .site-foot a { min-height: 32px; display: inline-flex; align-items: center; }
+  }
 </style>
 </head>
 <body>
