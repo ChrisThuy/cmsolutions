@@ -39,6 +39,10 @@ if (args.length === 0 || args.includes("--help")) {
     node scripts/audit-batch.mjs prospects.txt
     node scripts/audit-batch.mjs example.com another.com
     node scripts/audit-batch.mjs prospects.txt --reports ./out
+    node scripts/audit-batch.mjs cmsolutions.tech --pages 20
+
+  --pages raises the six-page crawl cap. The default is deliberate restraint
+  toward sites we do not own; raise it for our own.
 
   A list file is one address per line. Blank lines and lines starting with #
   are ignored, so it doubles as a notes file.
@@ -48,7 +52,31 @@ if (args.length === 0 || args.includes("--help")) {
 
 const reportsIndex = args.indexOf("--reports");
 const reportsDir = reportsIndex !== -1 ? args[reportsIndex + 1] : null;
-const inputs = args.filter((a, i) => a !== "--reports" && i !== reportsIndex + 1);
+/*
+  Guard the -1. Without it, an absent --reports makes reportsIndex + 1 equal 0
+  and the filter silently eats the first address — so the single most common
+  invocation, one site and no flags, reported "No addresses given."
+*/
+const skipValueAt = reportsIndex === -1 ? -1 : reportsIndex + 1;
+
+/*
+  The six-page default is politeness toward sites we do not own — a prospect
+  did not ask to be crawled, and six pages is enough to tell whether a problem
+  is systemic. Auditing our own site is the case where that restraint costs
+  something: the first self-audit checked six of eight pages and the page it
+  skipped had the worst title on the site.
+*/
+const pagesIndex = args.indexOf("--pages");
+const maxPages = pagesIndex !== -1 ? Number(args[pagesIndex + 1]) : undefined;
+if (pagesIndex !== -1 && (!Number.isInteger(maxPages) || maxPages < 1 || maxPages > 50)) {
+  console.error("  --pages needs a whole number between 1 and 50.");
+  process.exit(1);
+}
+const skipPagesAt = pagesIndex === -1 ? -1 : pagesIndex + 1;
+
+const inputs = args.filter(
+  (a, i) => a !== "--reports" && a !== "--pages" && i !== skipValueAt && i !== skipPagesAt,
+);
 
 /** A list file, or the addresses themselves. */
 function collectTargets(values) {
@@ -141,7 +169,7 @@ const results = [];
 for (const target of targets) {
   process.stdout.write(`  ${target.padEnd(38)} `);
   try {
-    const report = await crawlSite(target);
+    const report = await crawlSite(target, maxPages ? { maxPages } : undefined);
     results.push({ target, report });
     console.log(
       `${report.counts.pages}p · ${report.counts.fail} fail · ${report.counts.warn} warn`,
