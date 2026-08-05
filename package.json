@@ -2,12 +2,15 @@
   "name": "cmsolutions",
   "version": "1.0.0",
   "private": true,
-  "description": "CM Solutions \u2014 a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
+  "description": "CM Solutions — a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
     "test": "node scripts/test-safe-fetch.mjs && node scripts/test-audit-checks.mjs && node scripts/test-crawl.mjs && node scripts/test-schema-builder.mjs && node scripts/test-schema-extract.mjs && node scripts/test-methane.mjs",
-    "audit": "node scripts/audit-batch.mjs"
+    "audit": "node scripts/audit-batch.mjs",
+    "methane:verify": "node scripts/verify-methane.mjs",
+    "methane:test": "node scripts/test-methane.mjs",
+    "og": "node scripts/make-og.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"

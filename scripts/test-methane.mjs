@@ -62,7 +62,9 @@ console.log("\nEvery obligation is attributable");
     Official Journal costs more credibility than the citation buys. An earlier
     version did exactly that for two obligations, so the rule is a test now.
   */
-  const PRIMARY = /(^|\.)(europa\.eu|unep\.org|epa\.gov|federalregister\.gov|congress\.gov|ecfr\.gov|govinfo\.gov|iea\.org)$/;
+  // Government, IGO, or the body that actually sets the standard being cited —
+  // OGMP 2.0 is the authority on OGMP 2.0 levels in a way no regulator is.
+  const PRIMARY = /(^|\.)(europa\.eu|unep\.org|ogmpartnership\.org|epa\.gov|federalregister\.gov|congress\.gov|ecfr\.gov|govinfo\.gov|iea\.org)$/;
   for (const [key, src] of Object.entries(SOURCES)) {
     check(`${key} cites a primary source`, PRIMARY.test(new URL(src.url).hostname), src.url);
   }

@@ -1,0 +1,115 @@
+<!doctype html>
+<!--
+  Source for the methane tool's share card. Rendered to og-methane.png by
+  scripts/make-og.mjs — edit this, re-run that, never hand-edit the PNG.
+
+  Why the tool needs its own card: links to this page get passed around at a
+  conference in WhatsApp and LinkedIn, where the preview image is most of what
+  a person sees before deciding to tap. The site-wide card says "AI Architect
+  and Product Builder", which is true and tells an oil and gas trader nothing.
+
+  Two constraints drove the design. It has to survive being shown small, so
+  there is one claim in large serif and nothing competing with it. And it has
+  to be honest at a glance — the claim is the regulation's, and the card names
+  the regulation directly underneath rather than leaving it as an assertion.
+-->
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #e8e6df;
+    --ink-dim: #a09d93;
+    --ink-faint: #6b6960;
+    --void: #07080c;
+    --gap: #d98b6a;
+    --unsure: #d4af6a;
+    --ready: #a8b878;
+    --gold: #c9a227;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Inter", -apple-system, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 2400px; height: 1260px;
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 168px;
+    position: relative;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* A warm bloom off the top left and a cool one bottom right, matching the
+     site card. Nothing decorative competes with the type. */
+  body::before, body::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(200px);
+  }
+  body::before { width: 1500px; height: 1000px; top: -520px; left: -380px; background: rgba(201, 162, 39, 0.10); }
+  body::after  { width: 1500px; height: 1000px; bottom: -560px; right: -420px; background: rgba(122, 184, 212, 0.07); }
+
+  .inner { position: relative; z-index: 1; }
+
+  .eyebrow {
+    font-size: 30px; font-weight: 500; letter-spacing: 0.34em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 54px;
+  }
+  .eyebrow span { color: var(--ink-faint); }
+
+  h1 {
+    font-family: var(--serif); font-weight: 300;
+    font-size: 116px; line-height: 1.13; letter-spacing: -0.015em;
+    max-width: 1900px;
+  }
+  h1 em { font-style: normal; color: var(--unsure); }
+
+  .sub {
+    margin-top: 54px; font-size: 40px; font-weight: 300; line-height: 1.5;
+    color: var(--ink-dim); max-width: 1640px;
+  }
+  .sub b { color: var(--ink); font-weight: 400; }
+
+  /* A miniature of the tool's own compliance calendar. It makes the card
+     recognisably this page rather than generic, and the shape reads at
+     thumbnail size even when no word does. */
+  .track { margin-top: 78px; width: 1580px; height: 10px; border-radius: 5px; background: rgba(232,230,223,0.14); position: relative; }
+  .track i { position: absolute; top: -9px; width: 28px; height: 28px; border-radius: 50%; border: 5px solid var(--void); }
+  .track .t { left: 0; width: 10px; height: 28px; border-radius: 3px; border: 0; background: var(--ink); }
+
+  .foot {
+    position: absolute; left: 168px; right: 168px; bottom: 92px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 32px; color: var(--ink-faint);
+  }
+  .foot .url { color: var(--gold); font-weight: 500; letter-spacing: 0.02em; }
+</style>
+
+<div class="inner">
+  <p class="eyebrow">CM Solutions <span>— Methane Readiness</span></p>
+
+  <h1>From 2030, a cargo that cannot evidence its methane intensity <em>cannot be sold into Europe</em>.</h1>
+
+  <p class="sub">
+    Find out where you stand in four minutes — a dated gap check against
+    <b>Regulation (EU) 2024/1787</b> and <b>OGMP 2.0</b>, cited to primary law.
+  </p>
+
+  <div class="track">
+    <i class="t"></i>
+    <i style="left: 7%;  background: var(--gap)"></i>
+    <i style="left: 20%; background: var(--unsure)"></i>
+    <i style="left: 34%; background: var(--gap)"></i>
+    <i style="left: 61%; background: var(--ready)"></i>
+    <i style="left: 92%; background: var(--gap)"></i>
+  </div>
+</div>
+
+<div class="foot">
+  <span>Nothing you enter leaves your browser.</span>
+  <span class="url">cmsolutions.tech/methane-readiness</span>
+</div>
