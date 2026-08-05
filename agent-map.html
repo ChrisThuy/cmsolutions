@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <title>Agent OS — The 137-Agent Company | CM Solutions</title>
-<meta name="description" content="A live console of 137 AI agents across 7 departments, built around one shared company knowledge base. Click into any agent for a runnable skill, what it replaces, and where it sits on the autonomy ladder." />
+<meta name="description" content="A live console of 137 AI agents across 7 departments, built around one shared company knowledge base. Built by CM Solutions." />
 <link rel="canonical" href="https://cmsolutions.tech/agent-map" />
 
 <meta property="og:title" content="Agent OS — The 137-Agent Company | CM Solutions" />
@@ -1189,6 +1189,39 @@ renderInspector();
 renderLadder();
 setTab("map");
 if (!opened) syncHash();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://cmsolutions.tech/#organization",
+      "name": "CM Solutions",
+      "url": "https://cmsolutions.tech/",
+      "email": "contact@cmsolutions.tech"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://cmsolutions.tech/agent-map#webpage",
+      "url": "https://cmsolutions.tech/agent-map",
+      "name": "Agent OS — The 137-Agent Company | CM Solutions",
+      "description": "A live console of 137 AI agents across 7 departments, built around one shared company knowledge base.",
+      "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
+      "about": { "@id": "https://cmsolutions.tech/#organization" },
+      "breadcrumb": { "@id": "https://cmsolutions.tech/agent-map#breadcrumb" },
+      "inLanguage": "en-GB"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/agent-map#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "Agent Map" }
+      ]
+    }
+  ]
+}
 </script>
 </body>
 </html>
