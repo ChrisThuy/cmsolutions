@@ -99,7 +99,7 @@ export default async function handler(req, res) {
       }
 
       lines.push(
-        `Full report: ${siteOrigin()}/website-audit`,
+        `Full report: ${siteOrigin()}/free-website-audit-tool`,
         "",
         "You are getting this because you asked us to watch this site.",
         `Stop at any time: ${unsubscribeUrl}`,

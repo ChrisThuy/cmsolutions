@@ -47,7 +47,7 @@ ${body.map((line) => `<p>${escape(line)}</p>`).join("\n")}
 </main></body></html>`;
 }
 
-const HOME = '<a class="primary" href="/website-audit">Check another site</a><a href="/">CM Solutions</a>';
+const HOME = '<a class="primary" href="/free-website-audit-tool">Check another site</a><a href="/">CM Solutions</a>';
 
 export default async function handler(req, res) {
   const verifyToken = typeof req.query?.t === "string" ? req.query.t : null;

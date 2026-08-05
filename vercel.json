@@ -25,5 +25,12 @@
       "path": "/api/audit-cron",
       "schedule": "17 8 * * 1"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/website-audit",
+      "destination": "/free-website-audit-tool",
+      "permanent": true
+    }
   ]
 }
