@@ -15,7 +15,7 @@
 */
 
 import { assess, daysUntil, describeHorizon } from "../lib/methane/assess.mjs";
-import { applicableObligations, OBLIGATIONS, SOURCES } from "../lib/methane/framework.mjs";
+import { applicableObligations, OBLIGATIONS, ROLES, SOURCES } from "../lib/methane/framework.mjs";
 
 let failures = 0;
 
@@ -31,6 +31,7 @@ function check(name, condition, detail = "") {
 const TODAY = new Date("2026-08-05T12:00:00Z");
 
 const profile = (over = {}) => ({
+  role: "operator",
   euRelationship: "exporter",
   segment: "upstream",
   ogmpLevel: "l3",
@@ -42,6 +43,10 @@ const profile = (over = {}) => ({
   supplierData: "no",
   usOperations: "no",
   usReporting: "no",
+  cargoEvidence: "no",
+  contractClauses: "no",
+  counterpartyView: "no",
+  thresholdExposure: "no",
   ...over,
 });
 
@@ -181,6 +186,52 @@ for (const [name, p] of [
     check(`${name} is handled`, typeof r.headline === "string");
   } catch (cause) {
     check(`${name} is handled`, false, cause.message);
+  }
+}
+
+console.log("\nA trading desk is not treated like an operator");
+{
+  const trader = applicableObligations(profile({ role: "trader" })).map((o) => o.id);
+
+  check("a trader is not asked about LDAR", !trader.includes("ldar"), trader.join(","));
+  check("nor about running a site-level measurement campaign",
+    !trader.includes("eu-mrv-producer"), trader.join(","));
+  check("nor about their own OGMP level", !trader.includes("ogmp-l5"), trader.join(","));
+
+  check("but they are asked whether cargo methane can be evidenced",
+    trader.includes("cargo-evidence"), trader.join(","));
+  check("and whether their contracts require the data",
+    trader.includes("contract-clauses"));
+  check("and about 2030 threshold exposure", trader.includes("intensity-threshold"));
+  check("and whether they can see where counterparties stand",
+    trader.includes("counterparty-view"));
+}
+
+console.log("\nOther roles get what belongs to them");
+{
+  const operator = applicableObligations(profile({ role: "operator" })).map((o) => o.id);
+  check("an operator still gets the operational obligations",
+    operator.includes("ldar") && operator.includes("eu-mrv-producer"), operator.join(","));
+  check("but is not asked about their trading book",
+    !operator.includes("intensity-threshold"), operator.join(","));
+
+  const shipping = applicableObligations(profile({ role: "shipping" })).map((o) => o.id);
+  check("a shipowner is asked about cargo evidence", shipping.includes("cargo-evidence"));
+  check("but not about purchase contract clauses",
+    !shipping.includes("contract-clauses"), shipping.join(","));
+
+  const financier = applicableObligations(profile({ role: "financier" })).map((o) => o.id);
+  check("a financier gets counterparty and threshold exposure",
+    financier.includes("counterparty-view") && financier.includes("intensity-threshold"));
+  check("but is not asked to evidence cargo they never handle",
+    !financier.includes("cargo-evidence"), financier.join(","));
+}
+
+console.log("\nEvery role has something to be told");
+{
+  for (const role of ROLES) {
+    const scoped = applicableObligations(profile({ role: role.value }));
+    check(`${role.value} has obligations in scope`, scoped.length > 0, `${scoped.length}`);
   }
 }
 

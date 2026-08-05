@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Methane Compliance Readiness Check | CM Solutions</title>
+<title>Methane Readiness: Cargo, Contracts &amp; Compliance | CM Solutions</title>
 <meta name="description" content="Where does your operation stand against the EU Methane Regulation and OGMP 2.0? A dated gap assessment against sourced obligations. Runs entirely in your browser." />
 <link rel="canonical" href="https://cmsolutions.tech/methane-readiness" />
 
@@ -230,19 +230,22 @@
     </nav>
 
     <div class="hero">
-      <p class="kicker">Oil &amp; gas · EU Methane Regulation · OGMP 2.0</p>
-      <h1>Can you evidence your methane position <em>today</em>?</h1>
+      <p class="kicker">Crude · products · LNG · EU Methane Regulation</p>
+      <h1>From 2030, a cargo that cannot evidence its intensity <em>cannot be sold into Europe</em>.</h1>
       <p class="lede">
         The EU Methane Transparency Database opens in September 2026. From 2027
         new import contracts must show measurement, reporting and verification
-        equivalent to EU producer standards — quantified at source <em>and</em>
-        site level, independently verified. Intensity reporting follows in 2028,
-        and maximum intensity thresholds in 2030.
+        equivalent to EU producer standards. Intensity reporting follows in
+        2028, and maximum intensity thresholds in 2030 — at which point this
+        stops being a reporting question and starts deciding what can be
+        traded.
       </p>
       <p class="lede">
-        Most operators can describe their programme. Far fewer can evidence it
-        against each obligation, with a date attached. Eight questions below
-        will tell you which ones are open and which falls due first.
+        Equivalence attaches to the molecule, not to the company holding it —
+        so it reaches producers, traders, refiners, shipowners and the people
+        financing them, in different ways. The questions below adapt to which
+        of those you are, and tell you which obligations are open and which
+        falls due first.
       </p>
     </div>
 
@@ -250,6 +253,12 @@
       <form id="form">
         <fieldset>
           <legend>Your operation</legend>
+
+          <div class="q">
+            <label for="role">What does your organisation do?</label>
+            <p class="note">This decides which questions are worth asking you at all.</p>
+            <select id="role"></select>
+          </div>
 
           <div class="q">
             <label for="euRelationship">Where do you sit relative to the EU?</label>
@@ -318,6 +327,30 @@
           <div class="q">
             <label for="usReporting">Are your Subpart W submissions on track for the October 2026 deadline?</label>
             <select id="usReporting" data-yesno></select>
+          </div>
+        </fieldset>
+
+        <fieldset id="commercial-set" hidden>
+          <legend>Cargo and counterparties</legend>
+
+          <div class="q">
+            <label for="cargoEvidence">Can you evidence the methane performance of what you buy and sell?</label>
+            <select id="cargoEvidence" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="contractClauses">Do your purchase contracts oblige suppliers to provide measurement-based methane data?</label>
+            <select id="contractClauses" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="counterpartyView">Do you know which of your counterparties can evidence their methane reporting?</label>
+            <select id="counterpartyView" data-yesno></select>
+          </div>
+
+          <div class="q">
+            <label for="thresholdExposure">Have you assessed which supply in your book would clear a 2030 intensity threshold?</label>
+            <select id="thresholdExposure" data-yesno></select>
           </div>
         </fieldset>
 
@@ -416,7 +449,7 @@
 </footer>
 
 <script type="module">
-  import { EU_RELATIONSHIPS, SEGMENTS, OGMP_LEVELS } from "/lib/methane/framework.mjs";
+  import { EU_RELATIONSHIPS, SEGMENTS, OGMP_LEVELS, ROLES } from "/lib/methane/framework.mjs";
   import { assess } from "/lib/methane/assess.mjs";
 
   document.getElementById("year").textContent = new Date().getFullYear();
@@ -430,6 +463,7 @@
       el.append(opt);
     }
   };
+  fill("role", ROLES);
   fill("euRelationship", EU_RELATIONSHIPS);
   fill("segment", SEGMENTS);
   fill("ogmpLevel", OGMP_LEVELS);
@@ -446,17 +480,43 @@
     el.value = "unknown";
   }
 
+  /*
+    Show only the questions that belong to the role.
+
+    A trading desk asked about its LDAR schedule concludes the tool was built
+    for somebody else, and stops reading. Hiding the operational block is not
+    cosmetic — it is the difference between a tool that fits the room and one
+    that has to be apologised for.
+  */
+  const operationalSet = document.querySelector("fieldset:nth-of-type(2)");
+  const commercialSet = document.getElementById("commercial-set");
+
+  function syncRole() {
+    const role = document.getElementById("role").value;
+    const isOperator = role === "operator";
+    operationalSet.hidden = !isOperator;
+    commercialSet.hidden = isOperator;
+  }
+  document.getElementById("role").addEventListener("change", syncRole);
+  syncRole();
+
   const report = document.getElementById("report");
   const printButton = document.getElementById("print");
 
   function readProfile() {
     const v = (id) => document.getElementById(id).value;
     return {
+      // Read first, because everything downstream is gated on it. Omitting it
+      // meant a trading desk saw the right questions and then got an
+      // operator's report back — the questions swapped and the answer did not.
+      role: v("role"),
       euRelationship: v("euRelationship"), segment: v("segment"),
       usOperations: v("usOperations"), usReporting: v("usReporting"),
       ogmpLevel: v("ogmpLevel"), siteLevelMeasurement: v("siteLevelMeasurement"),
       verification: v("verification"), inventory: v("inventory"),
       ldar: v("ldar"), intensity: v("intensity"), supplierData: v("supplierData"),
+      cargoEvidence: v("cargoEvidence"), contractClauses: v("contractClauses"),
+      counterpartyView: v("counterpartyView"), thresholdExposure: v("thresholdExposure"),
     };
   }
 
