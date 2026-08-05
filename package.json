@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
-    "test": "node scripts/test-methane.mjs && node scripts/test-maritime.mjs && node scripts/build-agent-index.mjs --check",
+    "test": "node scripts/test-all.mjs",
     "audit": "node scripts/audit-batch.mjs",
     "methane:verify": "node scripts/verify-methane.mjs",
     "methane:test": "node scripts/test-methane.mjs",

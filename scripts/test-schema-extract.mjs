@@ -127,7 +127,9 @@ console.log("\nNothing is invented");
   check("no address is made up", b.street === "" && b.city === "" && b.postcode === "");
   check("no hours are made up", b.hours.length === 0);
   check("no profiles are made up", b.sameAs.length === 0);
-  check("the country still defaults to GB", b.country === "GB");
+  // Reading a page with no country and handing back "GB" would launder a
+  // guess into the user's form, where they would never think to question it.
+  check("no country is made up", b.country === "" || b.country === undefined, JSON.stringify(b.country));
   check("the url is carried through", b.url === URL_);
 }
 

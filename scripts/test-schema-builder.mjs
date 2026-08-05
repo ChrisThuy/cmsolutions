@@ -123,7 +123,25 @@ console.log("\nAddress handling");
 
   const cityOnly = buildBusiness({ name: "X", url: "x.example", businessType: "ProfessionalService", city: "Bristol" });
   check("a city alone is enough to publish an address", cityOnly.address?.addressLocality === "Bristol");
-  check("and the country defaults to GB", cityOnly.address?.addressCountry === "GB");
+  /*
+    It used to default to "GB". That meant a business entering a Singapore
+    address and not touching the country field published markup placing it in
+    the United Kingdom — a guess laundered into the user's live site. The tool
+    refuses to invent ratings; a country code is no different.
+  */
+  check("no country is invented when none was given",
+    cityOnly.address?.addressCountry === undefined, cityOnly.address?.addressCountry);
+
+  const sg = buildBusiness({ name: "X", url: "x.example", businessType: "ProfessionalService", city: "Singapore", country: "SG" });
+  check("a country that was given is used", sg.address?.addressCountry === "SG");
+
+  const missing = validate({ name: "X", url: "https://x.example", city: "Singapore" }, { "@graph": [] });
+  check("and the omission is raised rather than left silent",
+    missing.warnings.some((w) => /country code/i.test(w)), JSON.stringify(missing.warnings));
+
+  const bogus = validate({ name: "X", url: "https://x.example", city: "Singapore", country: "Singapore" }, { "@graph": [] });
+  check("a country that is not a two-letter code is an error",
+    bogus.errors.some((e) => /two-letter country code/i.test(e)), JSON.stringify(bogus.errors));
 }
 
 console.log("\nOrganization mode");
