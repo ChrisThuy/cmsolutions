@@ -3,7 +3,7 @@
   Builds a scroll-film from a design spec.
 
     node scripts/build-film.mjs spec.json --out ./film
-    node scripts/build-film.mjs spec.json --out ./film --tier chain --seconds 5
+    node scripts/build-film.mjs spec.json --out ./film --seconds 5 --resolution 1080p
     node scripts/build-film.mjs spec.json --out ./film --quote-only
 
   ── why this is a command and not an endpoint ──
@@ -26,7 +26,6 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { buildFilm, quoteChain } from "../lib/film/pipeline.mjs";
-import { mediaAvailable } from "../lib/media/provider.mjs";
 import { accountStatus, higgsfieldAvailable } from "../lib/media/higgsfield.mjs";
 
 const args = process.argv.slice(2);
@@ -44,8 +43,6 @@ if (!args.length || has("help")) {
     node scripts/build-film.mjs <spec.json> --out <dir> [options]
 
     --out <dir>        where clips, frames and the film go   (required)
-    --engine fal|higgsfield  which generator                 (default fal)
-    --tier cheap|chain which video model                     (default cheap)
     --seconds <n>      length of each clip                   (default 5)
     --resolution <r>   480p | 720p | 1080p                   (default 480p)
     --frames <n>       stills extracted for scrubbing        (default 240)
@@ -86,57 +83,35 @@ if (!spec?.chapters?.length) {
 }
 
 const seconds = Number(flag("seconds", 5));
-const tier = flag("tier", "cheap");
 const resolution = flag("resolution", "480p");
 const frames = Number(flag("frames", 240));
 
-const quote = quoteChain({ chapters: spec.chapters, seconds, tier });
+const quote = quoteChain({ chapters: spec.chapters, seconds });
 
 console.log(`\n  ${spec.conceptName ?? "Untitled"}`);
 console.log(`  ${spec.journey ?? ""}\n`);
-console.log(`  ${quote.clips} chapters × ${seconds}s at ${tier} / ${resolution}`);
+console.log(`  ${quote.clips} chapters × ${seconds}s at ${resolution}`);
 for (const [i, c] of spec.chapters.entries()) {
   console.log(`    ${i + 1}. ${c.name}`);
 }
-/*
-  Two engines, two currencies.
-
-  The quote below is in fal credits, because that is the engine this ledger
-  prices. Higgsfield bills in its own credits at its own rates, and printing
-  a fal total above a Higgsfield run would be a number that looks
-  authoritative and is wrong — which is worse than no number.
-*/
-const engineFlag = flag("engine", process.env.FILM_ENGINE ?? "fal");
-
-if (engineFlag === "higgsfield") {
-  console.log(`\n  ${quote.clips} clips + ${quote.clips + 1} boundary keyframes`);
-  console.log(`  Billed by Higgsfield in its own credits, not the figures below.`);
-  console.log(`  For the exact cost of one clip:`);
-  console.log(`    higgsfield generate cost seedance_2_0 --duration ${seconds} --resolution ${resolution}\n`);
-} else {
-  console.log(`\n  Keyframe        ${quote.keyframe} credits`);
-  console.log(`  ${quote.clips} clips        ${quote.perClip * quote.clips} credits  (${quote.perClip} each)`);
-  console.log(`  ─────────────────────────────`);
-  console.log(`  Total           ${quote.total} credits\n`);
-}
+console.log(`\n  ${quote.clips} clips + ${quote.keyframes} boundary keyframes · ${quote.totalSeconds}s of film`);
+console.log(`  Higgsfield bills this in its own credits. For the real figure:`);
+console.log(`    higgsfield generate cost seedance_2_0 --duration ${seconds} --resolution ${resolution}\n`);
 
 if (has("quote-only")) process.exit(0);
 
 /*
-  A ceiling that --yes cannot walk through.
+  The spend guard is now the account itself.
 
-  --yes exists for scripted runs, and it turned a 121-credit job into
-  something that started without anyone looking at the number. The prompt is
-  skippable; the ceiling is not. Raise it deliberately with --max or
-  FILM_MAX_CREDITS when a big run is genuinely intended.
+  This used to compare against a credit total computed here, from another
+  engine's price list. That list is gone, and inventing a number so the
+  ceiling still has something to compare against would be worse than having
+  no ceiling — it would be a guard that looks like it is protecting you.
+
+  What remains is real: the balance is read from the account before anything
+  is generated, a run against an empty account is refused, and nothing
+  starts without the total being printed and confirmed.
 */
-const ceiling = Number(flag("max", process.env.FILM_MAX_CREDITS ?? 60));
-if (engineFlag !== "higgsfield" && quote.total > ceiling) {
-  console.error(`  This run costs ${quote.total} credits, over the ${ceiling}-credit ceiling.`);
-  console.error(`  Nothing has been generated. Raise it deliberately:`);
-  console.error(`    --max ${Math.ceil(quote.total / 10) * 10}    or    FILM_MAX_CREDITS=${Math.ceil(quote.total / 10) * 10}\n`);
-  process.exit(1);
-}
 
 /*
   Which engine, and can it actually run.
@@ -145,28 +120,22 @@ if (engineFlag !== "higgsfield" && quote.total > ceiling) {
   asked "generate this?" by a tool that then discovers it has no credits is
   a worse experience than being told up front.
 */
-const engine = flag("engine", process.env.FILM_ENGINE ?? "fal");
-
-if (engine === "higgsfield") {
-  if (!(await higgsfieldAvailable())) {
-    console.error("  The higgsfield CLI is not logged in. Run: higgsfield auth login\n");
-    process.exit(1);
-  }
-  const account = await accountStatus();
-  console.log(`  engine: Higgsfield Seedance 2.0 — ${account.text}`);
-  if (account.credits === 0) {
-    console.error("\n  That account has no credits, so this run would fail at the first clip.");
-    console.error("  Top up at higgsfield.ai, then run this again.\n");
-    process.exit(1);
-  }
-  /* Both ends of every clip are pinned on this engine, which is the reason
-     to use it — the junction is a frame both neighbours were handed, rather
-     than a drift that gets measured afterwards and hoped about. */
-  console.log("  seams: both ends pinned\n");
-} else if (!mediaAvailable()) {
-  console.error("  FAL_KEY is not set, so nothing can be generated.\n");
+if (!(await higgsfieldAvailable())) {
+  console.error("  The higgsfield CLI is not logged in. Run: higgsfield auth login\n");
   process.exit(1);
 }
+
+const account = await accountStatus();
+console.log(`  engine: Higgsfield Seedance 2.0 — ${account.text}`);
+if (account.credits === 0) {
+  console.error("\n  That account has no credits, so this run would fail at the first clip.");
+  console.error("  Top up at higgsfield.ai, then run this again.\n");
+  process.exit(1);
+}
+/* Both ends of every clip are pinned, which is the reason for this engine —
+   the junction is a frame both neighbours were handed, rather than a drift
+   measured afterwards and hoped about. */
+console.log("  seams: both ends pinned\n");
 
 if (!has("yes")) {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -183,7 +152,7 @@ const elapsed = () => `${Math.round((Date.now() - started) / 1000)}s`;
 
 try {
   const manifest = await buildFilm({
-    spec, outDir: resolve(outDir), seconds, tier, resolution, frames, engine,
+    spec, outDir: resolve(outDir), seconds, resolution, frames,
     onStep(step) {
       switch (step.step) {
         case "keyframe":

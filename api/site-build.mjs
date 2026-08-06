@@ -4,8 +4,6 @@ import { readReference, referenceBrief, referenceAvailable } from "../lib/sitege
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
-import { mediaAvailable } from "../lib/media/provider.mjs";
-import { quote } from "../lib/media/credits.mjs";
 
 // Set in Vercel; falls back so a preview deployment still builds a usable link.
 const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://cmsolutions.tech";
@@ -57,7 +55,7 @@ const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://cmsolutions.tech";
 
   The premium tier in the brief is real footage — generated video chained
   shot to shot and scrubbed on a canvas. That needs an image-to-video engine
-  (Higgsfield, Kie.ai, fal, Replicate) with the operator's own account and
+  (Higgsfield Seedance is the one wired here) with the operator's own account and
   credits. No such key is configured, so the tier is refused with the reason
   rather than quietly downgraded to the free one and charged for.
 */
@@ -207,31 +205,28 @@ export default async function handler(req, res) {
   if (body?.tier === "cinematic") {
     /*
       Two separate things have to be true for this tier, and conflating them
-      was a real bug: gating only on mediaAvailable() meant that the moment a
-      FAL_KEY appeared, this endpoint happily built the FREE tier and returned
-      it under the cinematic label. No footage, no canvas, premium name. That
-      is the single worst thing this endpoint can do and it shipped for one
+      was a real bug: gating only on an engine key meant that the moment one
+      appeared, this endpoint happily built the FREE tier and returned it
+      under the cinematic label. No footage, no canvas, premium name. That is
+      the single worst thing this endpoint can do and it shipped for one
       deploy.
 
       An engine being reachable is necessary and nowhere near sufficient. The
       cinematic tier is a pipeline — storyboard the journey into chapters,
-      generate an opening keyframe, chain each clip from the previous clip's
-      last frame, gate every junction on measured similarity, assemble, and
-      drive it with a canvas scrub engine. The adapter in lib/media exists.
-      That pipeline does not.
+      generate every boundary keyframe, generate each clip pinned to the
+      frames on both sides of it, gate every junction on measured
+      similarity, assemble, and drive it with a canvas scrub engine. That
+      pipeline is scripts/build-film.mjs and it runs from a terminal.
 
       So the gate is the pipeline, and the engine is reported separately, and
       neither is allowed to stand in for the other.
     */
-    const perClip = quote("video.chain", { seconds: 5 });
-
-    if (!mediaAvailable()) {
-      return res.status(503).json({
-        error: "The Premium tier needs a connected image-to-video engine, and none is configured on this deployment. Standard is fully available and free.",
-        code: "no_video_engine",
-        engineConnected: false,
-      });
-    }
+    /*
+      The engine now lives behind a CLI on a workstation, not behind a key
+      this function could check. So this cannot report whether it is
+      reachable and does not pretend to — the honest answer from here is the
+      same either way: Premium is commissioned, and the reply says so.
+    */
     if (!CINEMATIC_PIPELINE_READY) {
       return res.status(503).json({
         error: "The Premium tier is not built on this deployment. Standard is fully available and free.",
@@ -243,7 +238,6 @@ export default async function handler(req, res) {
       error: "Premium is built, but it does not run from this button. Each chapter is a separate generation chained from the previous chapter's last frame and checked at every seam, so a five-shot film takes minutes and costs real money — it is commissioned and reviewed, not fired off. Standard is free and available right now, and the spec it produces is exactly what the film is built from. Ask us and we will quote the Premium build.",
       code: "not_self_serve",
       engineConnected: true,
-      wouldCost: perClip ? `about ${perClip.credits} credits per 5-second chapter` : null,
       next: "Build the free tier first — its spec is the storyboard.",
     });
   }
