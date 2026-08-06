@@ -3,6 +3,8 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
+import { mediaAvailable } from "../lib/media/provider.mjs";
+import { quote } from "../lib/media/credits.mjs";
 
 /*
   POST /api/site-build  { brief, tier }
@@ -142,10 +144,18 @@ export default async function handler(req, res) {
     for a premium tier and delivering the free one is the single worst thing
     this endpoint could do, so the absence of an engine is stated plainly.
   */
-  if (body?.tier === "cinematic" && !process.env.VIDEO_ENGINE_KEY) {
+  if (body?.tier === "cinematic" && !mediaAvailable()) {
+    /*
+      Checked against the real adapter rather than a placeholder flag, so this
+      tier switches on the moment a FAL_KEY exists and no code has to change.
+      Until then it refuses with the reason instead of quietly building the
+      free tier and charging for the premium one.
+    */
+    const perClip = quote("video.chain", { seconds: 5 });
     return res.status(503).json({
       error: "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free.",
       code: "no_video_engine",
+      wouldCost: perClip ? `${perClip.credits} credits per 5-second clip once connected` : null,
     });
   }
 
