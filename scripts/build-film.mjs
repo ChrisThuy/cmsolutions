@@ -98,10 +98,27 @@ console.log(`  ${quote.clips} chapters × ${seconds}s at ${tier} / ${resolution}
 for (const [i, c] of spec.chapters.entries()) {
   console.log(`    ${i + 1}. ${c.name}`);
 }
-console.log(`\n  Keyframe        ${quote.keyframe} credits`);
-console.log(`  ${quote.clips} clips        ${quote.perClip * quote.clips} credits  (${quote.perClip} each)`);
-console.log(`  ─────────────────────────────`);
-console.log(`  Total           ${quote.total} credits\n`);
+/*
+  Two engines, two currencies.
+
+  The quote below is in fal credits, because that is the engine this ledger
+  prices. Higgsfield bills in its own credits at its own rates, and printing
+  a fal total above a Higgsfield run would be a number that looks
+  authoritative and is wrong — which is worse than no number.
+*/
+const engineFlag = flag("engine", process.env.FILM_ENGINE ?? "fal");
+
+if (engineFlag === "higgsfield") {
+  console.log(`\n  ${quote.clips} clips + ${quote.clips + 1} boundary keyframes`);
+  console.log(`  Billed by Higgsfield in its own credits, not the figures below.`);
+  console.log(`  For the exact cost of one clip:`);
+  console.log(`    higgsfield generate cost seedance_2_0 --duration ${seconds} --resolution ${resolution}\n`);
+} else {
+  console.log(`\n  Keyframe        ${quote.keyframe} credits`);
+  console.log(`  ${quote.clips} clips        ${quote.perClip * quote.clips} credits  (${quote.perClip} each)`);
+  console.log(`  ─────────────────────────────`);
+  console.log(`  Total           ${quote.total} credits\n`);
+}
 
 if (has("quote-only")) process.exit(0);
 
@@ -114,7 +131,7 @@ if (has("quote-only")) process.exit(0);
   FILM_MAX_CREDITS when a big run is genuinely intended.
 */
 const ceiling = Number(flag("max", process.env.FILM_MAX_CREDITS ?? 60));
-if (quote.total > ceiling) {
+if (engineFlag !== "higgsfield" && quote.total > ceiling) {
   console.error(`  This run costs ${quote.total} credits, over the ${ceiling}-credit ceiling.`);
   console.error(`  Nothing has been generated. Raise it deliberately:`);
   console.error(`    --max ${Math.ceil(quote.total / 10) * 10}    or    FILM_MAX_CREDITS=${Math.ceil(quote.total / 10) * 10}\n`);
@@ -166,7 +183,7 @@ const elapsed = () => `${Math.round((Date.now() - started) / 1000)}s`;
 
 try {
   const manifest = await buildFilm({
-    spec, outDir: resolve(outDir), seconds, tier, resolution, frames,
+    spec, outDir: resolve(outDir), seconds, tier, resolution, frames, engine,
     onStep(step) {
       switch (step.step) {
         case "keyframe":
