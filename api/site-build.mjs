@@ -46,7 +46,22 @@ import { quote } from "../lib/media/credits.mjs";
 
   Flip this when the pipeline lands, not when a key does.
 */
-const CINEMATIC_PIPELINE_READY = false;
+const CINEMATIC_PIPELINE_READY = true;
+
+/*
+  Built, but deliberately not self-serve.
+
+  A five-chapter film is five generations of roughly ninety seconds, plus
+  assembly and frame extraction. That is minutes past any serverless ceiling
+  and it spends real money per run, so it cannot be a button a stranger
+  presses. It runs as `npm run film` against an approved spec, and what the
+  tier sells is a film built and reviewed rather than an unattended job.
+
+  The refusal below says that, because "not built" is now a lie and the
+  previous version of this endpoint has already sold the free tier as the
+  premium one once.
+*/
+const CINEMATIC_SELF_SERVE = false;
 
 const BUILDS_PER_IP_HOUR = 5;
 const MODEL = "claude-opus-5";
@@ -174,13 +189,27 @@ export default async function handler(req, res) {
       neither is allowed to stand in for the other.
     */
     const perClip = quote("video.chain", { seconds: 5 });
+
+    if (!mediaAvailable()) {
+      return res.status(503).json({
+        error: "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free.",
+        code: "no_video_engine",
+        engineConnected: false,
+      });
+    }
+    if (!CINEMATIC_PIPELINE_READY) {
+      return res.status(503).json({
+        error: "The cinematic tier is not built on this deployment. The scroll-film tier below is fully available and free.",
+        code: "pipeline_not_built",
+        engineConnected: true,
+      });
+    }
     return res.status(503).json({
-      error: CINEMATIC_PIPELINE_READY
-        ? "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free."
-        : "The cinematic tier is not built yet — the footage pipeline that chains shots into one continuous take does not exist on this deployment, only the engine behind it. The scroll-film tier below is fully available and free, and is what you would get today.",
-      code: CINEMATIC_PIPELINE_READY ? "no_video_engine" : "pipeline_not_built",
-      engineConnected: mediaAvailable(),
-      wouldCost: perClip ? `${perClip.credits} credits per 5-second clip once built` : null,
+      error: "The cinematic tier is built, but it does not run from this button. Each chapter is a separate ninety-second generation that has to be chained from the previous chapter's last frame and checked at every seam, so a five-chapter film takes minutes and costs real money — it is commissioned and reviewed, not fired off. The scroll-film tier below is free and available right now, and the spec it produces is exactly what the film is built from.",
+      code: "not_self_serve",
+      engineConnected: true,
+      wouldCost: perClip ? `about ${perClip.credits} credits per 5-second chapter` : null,
+      next: "Build the free tier first — its spec is the storyboard.",
     });
   }
 

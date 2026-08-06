@@ -103,6 +103,22 @@ console.log(`  Total           ${quote.total} credits\n`);
 
 if (has("quote-only")) process.exit(0);
 
+/*
+  A ceiling that --yes cannot walk through.
+
+  --yes exists for scripted runs, and it turned a 121-credit job into
+  something that started without anyone looking at the number. The prompt is
+  skippable; the ceiling is not. Raise it deliberately with --max or
+  FILM_MAX_CREDITS when a big run is genuinely intended.
+*/
+const ceiling = Number(flag("max", process.env.FILM_MAX_CREDITS ?? 60));
+if (quote.total > ceiling) {
+  console.error(`  This run costs ${quote.total} credits, over the ${ceiling}-credit ceiling.`);
+  console.error(`  Nothing has been generated. Raise it deliberately:`);
+  console.error(`    --max ${Math.ceil(quote.total / 10) * 10}    or    FILM_MAX_CREDITS=${Math.ceil(quote.total / 10) * 10}\n`);
+  process.exit(1);
+}
+
 if (!mediaAvailable()) {
   console.error("  FAL_KEY is not set, so nothing can be generated.\n");
   process.exit(1);
