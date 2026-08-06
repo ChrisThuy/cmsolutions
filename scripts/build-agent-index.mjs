@@ -69,11 +69,12 @@ function buildIndex({ DEPTS, BRANCHES, AGENTS }, arrangement) {
   const parts = [
     START,
     `<section class="agent-index" id="agent-index" aria-labelledby="agent-index-h">`,
-    `  <h2 id="agent-index-h">Every agent in the estate</h2>`,
+    `  <h2 id="agent-index-h">Every playbook, in full</h2>`,
     `  <p class="agent-index-lede">`,
-    `    ${AGENTS.length} agents across ${DEPTS.length} departments. Each one is a job a`,
-    `    competent person does today. The map above is the same estate, arranged by`,
-    `    ${arrangement}.`,
+    `    ${AGENTS.length} prompts across ${DEPTS.length} departments. Each one covers a job a`,
+    `    competent person does today, and each is a prompt you copy into your own`,
+    `    model — nothing on this page runs by itself. The map above is the same list,`,
+    `    arranged by ${arrangement}.`,
     `  </p>`,
   ];
 

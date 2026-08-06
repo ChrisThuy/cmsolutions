@@ -4,20 +4,20 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Petro Agent OS — AI Agents for Oil &amp; Gas | CM Solutions</title>
-<meta name="description" content="135 AI agents mapped onto the oil and gas value chain — drilling, production, subsurface, HSE, emissions and commercial. Each opens with a runnable skill." />
+<title>135 AI Prompt Playbooks for Oil &amp; Gas | CM Solutions</title>
+<meta name="description" content="135 ready-to-copy AI prompts mapped onto the oil and gas value chain — drilling, production, subsurface, HSE, emissions and commercial. Guardrails written for process safety. Free, no sign-up." />
 <link rel="canonical" href="https://cmsolutions.tech/oil-gas" />
 
-<meta property="og:title" content="Petro Agent OS — An AI Agent Estate for Oil &amp; Gas | CM Solutions" />
-<meta property="og:description" content="135 agents across 9 operating functions, around one operator knowledge base. Runnable skills, an honest business case, and guardrails written for process safety." />
+<meta property="og:title" content="135 AI Prompt Playbooks for Oil &amp; Gas | CM Solutions" />
+<meta property="og:description" content="135 prompts across 9 operating functions, with guardrails written for process safety." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://cmsolutions.tech/oil-gas" />
 <meta property="og:site_name" content="CM Solutions" />
 <meta property="og:locale" content="en_GB" />
 <meta property="og:image" content="https://cmsolutions.tech/og-petro.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Petro Agent OS — An AI Agent Estate for Oil &amp; Gas | CM Solutions" />
-<meta name="twitter:description" content="135 agents across 9 operating functions, around one operator knowledge base. Runnable skills and an honest business case." />
+<meta name="twitter:title" content="135 AI Prompt Playbooks for Oil &amp; Gas | CM Solutions" />
+<meta name="twitter:description" content="135 prompts across 9 operating functions, with guardrails written for process safety." />
 <meta name="twitter:image" content="https://cmsolutions.tech/og-petro.png" />
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -145,6 +145,20 @@
   .stage-title h1 { font-family: var(--serif); font-size: 1.35rem; font-weight: 400; letter-spacing: -.01em; line-height: 1.1; }
   .stage-title .sub { font-size: .8rem; color: var(--faint); }
   .stage-desc { font-size: .8rem; color: var(--dim); margin-top: .25rem; max-width: 78ch; }
+
+  /* ── what this page is ──────────────────────────────────────────────
+     Sat at the top of a page that looks like a running console, because
+     it is not one. Every entry here is a prompt you copy. Saying so once,
+     plainly, before anyone clicks, is worth more than the visual. */
+  .what-is {
+    display: flex; gap: .6rem; align-items: flex-start;
+    margin: .7rem 0 .1rem; padding: .55rem .7rem;
+    border: 1px solid var(--line); border-left: 2px solid var(--gold, #e0a33c);
+    border-radius: 3px; background: rgba(212,175,106,.05);
+    font-size: .78rem; line-height: 1.45; color: var(--dim); max-width: 78ch;
+  }
+  .what-is b { color: var(--ink, #e8e6df); font-weight: 500; }
+
 
   .cmd { display: flex; align-items: center; gap: .55rem; margin-top: .8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: .5rem .7rem; transition: border-color .2s; }
   .cmd:focus-within { border-color: var(--line-2); }
@@ -590,10 +604,10 @@
           <h2>Industry</h2>
           <span class="note">Built for a sector</span>
           <ul>
-          <li><a href="/oil-gas" aria-current="page">Oil &amp; gas<span class="blurb">Agents for upstream and trading</span></a></li>
+          <li><a href="/oil-gas" aria-current="page">Oil &amp; gas playbooks<span class="blurb">135 prompts across the value chain</span></a></li>
           <li><a href="/methane-readiness">Methane readiness<span class="blurb">EU 2024/1787, cargo and contracts</span></a></li>
           <li><a href="/fueleu-calculator">FuelEU calculator<span class="blurb">Compliance balance and penalties</span></a></li>
-          <li><a href="/agent-map">Agent OS map<span class="blurb">137 agents, wired together</span></a></li>
+          <li><a href="/agent-map">Agent playbooks<span class="blurb">137 prompts, ready to copy</span></a></li>
           </ul>
         </div>
         <div class="sitenav-group in-panel"><ul><li><a href="/#services">What I build</a></li></ul></div>
@@ -613,11 +627,11 @@
   <header class="topbar">
     <a class="brand" href="/">
       <span class="mark">CM</span>
-      <b>Petro Agent&nbsp;OS</b>
+      <b>Oil&nbsp;&amp;&nbsp;Gas Playbooks</b>
     </a>
     <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
     <div class="top-right">
-      <span class="pill"><span class="live-dot"></span><span id="live-count">—</span></span>
+      <span class="pill"><span id="live-count">—</span></span>
       <a class="pill" href="/methane-readiness">Methane Check</a>
       <a class="pill" href="/#contact">Contact</a>
     </div>
@@ -665,6 +679,13 @@
         <span class="sub" id="stage-sub"></span>
       </div>
       <p class="stage-desc" id="stage-desc"></p>
+      <p class="what-is">
+        <span aria-hidden="true">◆</span>
+        <span><b>These are prompts, not running software.</b> Nothing on this page
+        executes and nothing connects to your systems. Open any entry, fill in the
+        blanks, and copy the prompt into Claude, ChatGPT or whichever model you
+        already use. It is a library to build from — free, no sign-up.</span>
+      </p>
 
       <div class="cmd">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -721,7 +742,7 @@
 
 <div class="toast" id="toast">Copied</div>
 
-<script src="/og-agents-data.js"></script>
+<script src="/og-agents-data.js?v=2"></script>
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
    HELPERS
@@ -1086,28 +1107,28 @@ function paintChrome() {
   el("crumbs").querySelectorAll("[data-crumb]").forEach(b =>
     b.addEventListener("click", () => trail[+b.dataset.crumb].act()));
 
-  let h1 = "Agent OS", sub = "", desc = "", foot = "Click a department to drill in";
+  let h1 = "Oil & Gas Playbooks", sub = "", desc = "", foot = "Click a department to drill in";
   if (VIEW.level === "overview") {
-    h1 = "Petro Agent OS";
-    sub = `${AGENTS.length} agents · ${DEPTS.length} functions · ${BRANCHES.length} job trees`;
-    desc = "An agent estate mapped onto the oil and gas value chain, around one operator knowledge base. Click a function to open its trees, a tree to open its agents, or any agent for the runnable skill, the hours it gives back and the KPI it moves.";
+    h1 = "Oil & Gas Playbooks";
+    sub = `${AGENTS.length} prompts · ${DEPTS.length} functions · ${BRANCHES.length} job trees`;
+    desc = "Prompts, not running software — you copy one and paste it into whichever model you use. Mapped onto the oil and gas value chain, around one operator knowledge base. Click a function to open its trees, a tree to open its playbooks, or any playbook to read the prompt, the hours it gives back and the KPI it moves.";
   } else if (VIEW.level === "brain") {
     h1 = "Company Brain";
     sub = `${BRAIN.length} documents`;
-    desc = `Build these ${BRAIN.length} documents first. They are what stop ${AGENTS.length} agents inventing your well stock, your rates and your rules. Click a document for its template.`;
+    desc = `Write these ${BRAIN.length} documents first. They are what stop the prompts inventing your well stock, your rates and your rules — most of the value is here, not in the prompts. Click a document for the fields it should contain.`;
     foot = "Click a document to open its template";
   } else if (VIEW.level === "dept") {
     const d = byId(DEPTS, VIEW.dept);
     h1 = d.e + " " + d.n;
     sub = `${branchesIn(d.i).length} trees · ${agentsInDept(d.i).length} agents`;
     desc = d.d;
-    foot = "Click a tree to open it, or an agent for its skill";
+    foot = "Click a tree to open it, or a playbook for its prompt";
   } else if (VIEW.level === "branch") {
     const b = byId(BRANCHES, VIEW.branch), d = byId(DEPTS, b.d);
     h1 = b.n;
     sub = `${d.n} · ${agentsIn(b.i).length} agents`;
     desc = b.d2;
-    foot = "Click an agent for its runnable skill";
+    foot = "Click one to read and copy its prompt";
   }
   el("stage-h1").textContent = h1;
   el("stage-sub").textContent = sub;
@@ -1182,7 +1203,7 @@ function renderPanels() {
     return `<button class="dir-item${state.sel === a.i ? " sel" : ""}" data-agent="${a.i}" style="--c:${d.c}">
       <span class="sw"></span>
       <span class="n">${state.built.has(a.i) ? "✓ " : ""}${esc(a.n)}</span>
-      <span class="t">${esc(TIERS[a.t].label.slice(0, 4))}</span>
+      <span class="t">${esc(TIERS[a.t].short ?? TIERS[a.t].label)}</span>
     </button>`;
   }).join("") : `<p class="dir-empty">Nothing matches. Clear the search or re-enable a layer.</p>`;
 
@@ -1243,7 +1264,7 @@ function renderAgentDetail(a) {
     <div class="sect" style="border-bottom:none">
       <button class="built" id="built-btn" aria-pressed="${isBuilt}">
         <span class="bx">${isBuilt ? "✓" : ""}</span>
-        <span>${isBuilt ? "Built — running in your stack" : "Mark as built"}</span>
+        <span>${isBuilt ? "Marked as built" : "Mark as built"}</span>
       </button>
 
       <div class="fld"><h4>Replaces</h4><p>${esc(a.r)}</p></div>
@@ -1264,7 +1285,7 @@ function renderAgentDetail(a) {
         <p style="font-size:.74rem;color:var(--faint);margin-top:.4rem">No separate operational upside claimed for this one. The value is the time it gives back.</p>`}
       </div>
 
-      <div class="fld"><h4>Autonomy — ${esc(t.label)}</h4><p style="color:var(--dim);font-size:.78rem">${esc(t.hint)}</p></div>
+      <div class="fld"><h4>How far you could take it — ${esc(t.label)}</h4><p style="color:var(--dim);font-size:.78rem">${esc(t.hint)}</p></div>
       <div class="fld"><h4>Needs</h4><p style="font-size:.78rem">${esc(a.in)}</p></div>
       <div class="fld"><h4>Returns</h4><p style="font-size:.78rem">${esc(a.out)}</p></div>
       <div class="fld"><h4>Reads from the brain</h4>
@@ -1275,8 +1296,8 @@ function renderAgentDetail(a) {
       </div>
 
       <div class="fld">
-        <h4>Run it</h4>
-        <p style="color:var(--dim);font-size:.76rem;margin-bottom:.6rem">Fill the gold fields, copy, paste into whichever model you use.</p>
+        <h4>Copy the prompt</h4>
+        <p style="color:var(--dim);font-size:.76rem;margin-bottom:.6rem">Fill the gold fields below, copy, and paste into Claude, ChatGPT or whichever model you use. Nothing runs here.</p>
         ${vars.map(v => {
           const key = v.slice(2, -2);
           return `<div class="var">
@@ -1286,7 +1307,7 @@ function renderAgentDetail(a) {
         }).join("")}
         <div class="skill">
           <div class="skill-bar">
-            <span>The skill</span>
+            <span>The prompt</span>
             <button class="mini" id="copy-raw">Raw</button>
             <button class="mini go" id="copy-filled">Copy</button>
           </div>
@@ -1303,7 +1324,7 @@ function renderAgentDetail(a) {
     const btn = el("built-btn");
     btn.setAttribute("aria-pressed", on);
     btn.querySelector(".bx").textContent = on ? "✓" : "";
-    btn.querySelector("span:last-child").textContent = on ? "Built — running in your stack" : "Mark as built";
+    btn.querySelector("span:last-child").textContent = on ? "Marked as built" : "Mark as built";
     renderLadder();
   });
   el("copy-raw").addEventListener("click", () => copy(a.s, "Raw skill copied"));
@@ -1553,7 +1574,7 @@ function paintCounts() {
   el("rc-built").textContent = state.built.size;
   const v = el("rc-val");
   if (v) v.textContent = money(valueModel().labour).replace("$", "");
-  el("live-count").textContent = AGENTS.length + " agents";
+  el("live-count").textContent = AGENTS.length + " playbooks";
 }
 
 function setTab(which) {
@@ -1681,11 +1702,12 @@ if (!opened) syncHash();
 </script>
 <!-- AGENT-INDEX:START — generated by scripts/build-agent-index.mjs; do not edit by hand -->
 <section class="agent-index" id="agent-index" aria-labelledby="agent-index-h">
-  <h2 id="agent-index-h">Every agent in the estate</h2>
+  <h2 id="agent-index-h">Every playbook, in full</h2>
   <p class="agent-index-lede">
-    135 agents across 9 departments. Each one is a job a
-    competent person does today. The map above is the same estate, arranged by
-    where the work sits in the value chain.
+    135 prompts across 9 departments. Each one covers a job a
+    competent person does today, and each is a prompt you copy into your own
+    model — nothing on this page runs by itself. The map above is the same list,
+    arranged by where the work sits in the value chain.
   </p>
   <div class="ai-dept">
     <h3>Drilling &amp; Wells <span class="ai-count">18 agents</span></h3>

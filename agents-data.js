@@ -24,10 +24,22 @@
        knowledge base that every later agent reads.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/*
+  How much review the output needs before it has effect — a build
+  recommendation, not a description of something running.
+
+  These used to read "Manual / Assisted / Autonomous", which described a
+  deployment that does not exist. Nothing on this page executes: every entry
+  is a prompt you copy. The tier tells you how far you could safely take it
+  if you did wire it up.
+*/
 const TIERS = {
-  manual:     { label: "Manual",     hint: "You run it. It drafts, you decide and ship.", c: "#8c8a80" },
-  assisted:   { label: "Assisted",   hint: "Fires on a trigger. A human approves before it leaves the building.", c: "#d4af6a" },
-  autonomous: { label: "Autonomous", hint: "Runs on schedule with no human in the loop. Exceptions escalate.", c: "#a8b878" }
+  manual:     { label: "Draft only",   short: "Draft",  c: "#8c8a80",
+                hint: "Run it when you need it. It drafts; you read everything and decide." },
+  assisted:   { label: "Review first", short: "Review", c: "#d4af6a",
+                hint: "Fine to put on a trigger, but a person signs off before it leaves the building." },
+  autonomous: { label: "Low risk",     short: "Low",    c: "#a8b878",
+                hint: "Stakes low enough to leave unattended once you trust it. Nothing here runs on its own today — wiring that up is your build." }
 };
 
 const PHASES = {

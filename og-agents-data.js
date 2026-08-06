@@ -40,10 +40,22 @@
       capped at assisted, no matter how good the prompt is.
    ═══════════════════════════════════════════════════════════════════════════ */
 
+/*
+  How much review the output needs before it has effect — a build
+  recommendation, not a description of something running.
+
+  These used to read "Manual / Assisted / Autonomous", which described a
+  deployment that does not exist. Nothing on this page executes: every entry
+  is a prompt you copy. The tier tells you how far you could safely take it
+  if you did wire it up — and in this sector that ceiling is low on purpose.
+*/
 const TIERS = {
-  manual:     { label: "Manual",     hint: "An engineer runs it when needed. It drafts, they decide.", c: "#8c8a80" },
-  assisted:   { label: "Assisted",   hint: "Runs on a trigger. A competent person reviews and signs before it has effect.", c: "#e0a33c" },
-  autonomous: { label: "Autonomous", hint: "Runs on schedule with no human in the loop. Reporting and monitoring only — never barrier or safety decisions.", c: "#5bbf8a" }
+  manual:     { label: "Draft only",   short: "Draft",  c: "#8c8a80",
+                hint: "An engineer runs it when needed. It drafts; they read everything and decide." },
+  assisted:   { label: "Review first", short: "Review", c: "#e0a33c",
+                hint: "Fine to put on a trigger, but a competent person reviews and signs before it has effect." },
+  autonomous: { label: "Low risk",     short: "Low",    c: "#5bbf8a",
+                hint: "Reporting and monitoring only — never barrier, well control or safety decisions. Nothing here runs on its own today; wiring that up is your build, and it needs your own assurance process." }
 };
 
 const PHASES = {
