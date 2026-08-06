@@ -14,6 +14,26 @@ const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://cmsolutions.tech";
 
   Turns a description of a brand into a complete scroll-film website.
 
+  ── which skill this implements ──
+
+  .claude/skills/scroll-film-studio is the source of the technique, and it
+  defines two lanes that this endpoint exposes as tiers:
+
+    Lane A, pure-code   → "Standard"  — GSAP/Lenis motion, free, runs here
+    Lane B, footage     → "Premium"   — generated video, chained and gated,
+                                        built by scripts/build-film.mjs
+
+  The skill is not loaded at request time and cannot be: it is an interactive
+  procedure that interviews, pitches concepts and iterates, and this is one
+  serverless call on a fixed budget. What runs here is the skill's Lane A
+  encoded — its motion vocabulary in the system prompt, and its ordering law
+  ("create ambient ScrollTriggers after pinned scenes", violating which
+  silently mis-positions everything below a pin spacer) enforced in
+  lib/sitegen/render.mjs where it cannot be forgotten.
+
+  Saying that plainly because the difference matters: this tool applies the
+  skill's technique, it does not run the skill.
+
   ── the division of labour, again ──
 
   The model is never asked to write HTML. It returns a design spec — concept,
@@ -195,20 +215,20 @@ export default async function handler(req, res) {
 
     if (!mediaAvailable()) {
       return res.status(503).json({
-        error: "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free.",
+        error: "The Premium tier needs a connected image-to-video engine, and none is configured on this deployment. Standard is fully available and free.",
         code: "no_video_engine",
         engineConnected: false,
       });
     }
     if (!CINEMATIC_PIPELINE_READY) {
       return res.status(503).json({
-        error: "The cinematic tier is not built on this deployment. The scroll-film tier below is fully available and free.",
+        error: "The Premium tier is not built on this deployment. Standard is fully available and free.",
         code: "pipeline_not_built",
         engineConnected: true,
       });
     }
     return res.status(503).json({
-      error: "The cinematic tier is built, but it does not run from this button. Each chapter is a separate ninety-second generation that has to be chained from the previous chapter's last frame and checked at every seam, so a five-chapter film takes minutes and costs real money — it is commissioned and reviewed, not fired off. The scroll-film tier below is free and available right now, and the spec it produces is exactly what the film is built from.",
+      error: "Premium is built, but it does not run from this button. Each chapter is a separate generation chained from the previous chapter's last frame and checked at every seam, so a five-shot film takes minutes and costs real money — it is commissioned and reviewed, not fired off. Standard is free and available right now, and the spec it produces is exactly what the film is built from. Ask us and we will quote the Premium build.",
       code: "not_self_serve",
       engineConnected: true,
       wouldCost: perClip ? `about ${perClip.credits} credits per 5-second chapter` : null,
