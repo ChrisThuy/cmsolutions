@@ -149,6 +149,15 @@ const CARDS = [
     dots: [[8, "accent"], [23, "ready"], [37, "accent"], [52, "unsure"], [68, "accent"], [85, "ready"]],
   },
   {
+    output: "og-social.png",
+    section: "Social Content Planner",
+    claim: 'A month of posts, and <em>not one over the limit</em>.',
+    sub: 'A brand kit, a vector logo, and a dated calendar written separately per platform. Every caption <b>measured in code</b> against the real limit before you schedule it.',
+    url: "cmsolutions.tech/ai-social-media-content-planner",
+    note: "Your brief is written from, then discarded.",
+    dots: [[9, "ready"], [21, "ready"], [33, "accent"], [46, "ready"], [58, "unsure"], [71, "ready"], [86, "accent"]],
+  },
+  {
     output: "og-tools.png",
     section: "AI Tools",
     claim: 'Working software you can use right now. <em>No signup, nothing stored</em>.',

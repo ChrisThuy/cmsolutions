@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>AI Social Media Content Planner | CM Solutions</title>
+<meta name="description" content="A brand kit and a dated month of posts written per platform, with captions checked against the real character limits. Approve what you want and export it." />
+<link rel="canonical" href="https://cmsolutions.tech/ai-social-media-content-planner" />
+
+<meta property="og:title" content="AI Social Media Content Planner | CM Solutions" />
+<meta property="og:description" content="A brand kit, a logo, and a month of posts written per platform — every caption measured against the real limit before you schedule it." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/ai-social-media-content-planner" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:image" content="https://cmsolutions.tech/og-social.png" />
+<meta property="og:image:secure_url" content="https://cmsolutions.tech/og-social.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="2400" />
+<meta property="og:image:height" content="1260" />
+<meta property="og:image:alt" content="A brand kit and a month of posts written per platform, every caption measured against the real limit." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="AI Social Media Content Planner | CM Solutions" />
+<meta name="twitter:description" content="A month of posts, checked against the real limits before you schedule it." />
+<meta name="twitter:image" content="https://cmsolutions.tech/og-social.png" />
+<meta name="twitter:image:alt" content="A brand kit and a month of posts written per platform, every caption measured against the real limit." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --ink:#e8e6df;--ink-dim:#a09d93;--ink-faint:#6b6960;--void:#07080c;
+    --hairline:rgba(232, 230, 223, 0.12);
+    --accent:#7ab8d4;--warn:#d4af6a;--stop:#d98b6a;--go:#a8b878;
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;
+    --sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--void);color:var(--ink);font-family:var(--sans);font-weight:300;line-height:1.65;-webkit-font-smoothing:antialiased}
+  .wrap{width:min(1180px,100% - 3rem);margin-inline:auto}
+  a{color:var(--accent)}
+
+  .skip{position:absolute;left:-9999px}
+  .skip:focus{left:1rem;top:1rem;position:fixed;background:var(--ink);color:var(--void);padding:.75rem 1rem;z-index:99}
+
+  .site-head{border-bottom:1px solid var(--hairline);padding-block:1.1rem}
+  .site-head .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .wordmark{font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-decoration:none}
+  .site-head nav{display:flex;gap:1.6rem;font-size:.9rem;flex-wrap:wrap}
+  .site-head nav a{color:var(--ink-dim);text-decoration:none}
+  .site-head nav a:hover{color:var(--ink)}
+
+  .crumbs{padding-top:2.2rem;font-size:.8rem;color:var(--ink-faint)}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem}
+  .crumbs a{color:var(--ink-dim);text-decoration:none}
+  .crumbs li+li::before{content:"/";margin-right:.5rem}
+
+  .hero{padding-block:3rem 2rem}
+  .kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,3.2rem);line-height:1.12;letter-spacing:-.02em;max-width:20ch}
+  h1 em{font-style:italic;color:var(--warn)}
+  .lede{margin-top:1.5rem;max-width:66ch;font-size:clamp(1rem,2.2vw,1.1rem);color:var(--ink-dim)}
+  .lede+.lede{margin-top:.9rem}
+  .lede b{color:var(--ink);font-weight:400}
+
+  h2{font-family:var(--serif);font-weight:400;font-size:1.35rem;margin-bottom:.9rem}
+  h3{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:1.8rem 0 .7rem}
+  .privacy{font-size:.82rem;color:var(--ink-faint);margin-top:.6rem}
+
+  .field{margin-bottom:1.2rem}
+  .field label{display:block;font-size:.92rem;margin-bottom:.3rem}
+  .field .hint{display:block;font-size:.78rem;color:var(--ink-faint);margin-bottom:.45rem}
+  textarea,select,input[type=number],input[type=date]{width:100%;background:rgba(232,230,223,.04);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem .7rem;font-family:var(--sans);font-size:.92rem;min-height:44px}
+  #brief{min-height:9rem;resize:vertical;line-height:1.6}
+  textarea:focus,select:focus,input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  select{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a09d93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .85rem center;padding-right:2.4rem}
+  select option{background:#12141b;color:#e8e6df}
+  input[type=number]{-moz-appearance:textfield;appearance:textfield}
+  input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .pair{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+  @media(max-width:560px){.pair{grid-template-columns:1fr}}
+
+  .btn{background:rgba(232,230,223,.06);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem 1.1rem;font-family:var(--sans);font-size:.9rem;cursor:pointer;min-height:44px}
+  .btn:hover{background:rgba(232,230,223,.12)}
+  .btn:disabled{cursor:not-allowed}
+  .btn--primary{background:var(--ink);color:var(--void);border-color:var(--ink);font-weight:500;width:100%;margin-top:.5rem}
+  .btn--primary:disabled{background:transparent;color:var(--ink-faint);border-color:var(--hairline);font-weight:400}
+  .btn--primary:disabled:hover{background:transparent}
+  .btn:not(.btn--primary):disabled{opacity:.45}
+  .btn--small{font-size:.8rem;padding:.4rem .75rem;min-height:36px}
+
+  .examples{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
+  .examples button{background:none;border:1px solid var(--hairline);color:var(--ink-dim);border-radius:100px;padding:.35rem .8rem;font-family:var(--sans);font-size:.78rem;cursor:pointer;min-height:32px}
+  .examples button:hover{color:var(--ink);border-color:var(--ink-faint)}
+
+  .plats{display:grid;gap:.5rem}
+  .plat{display:flex;align-items:flex-start;gap:.7rem;border:1px solid var(--hairline);border-radius:4px;padding:.75rem .9rem;cursor:pointer;transition:border-color .2s,background .2s}
+  .plat:has(input:checked){border-color:var(--accent);background:rgba(122,184,212,.05)}
+  .plat input{margin-top:.28rem;accent-color:var(--accent);width:16px;height:16px;flex:none}
+  .plat-name{font-size:.92rem}
+  .plat-meta{font-size:.75rem;color:var(--ink-faint);display:block;margin-top:.15rem}
+
+  .status{margin-top:1rem;font-size:.88rem;color:var(--ink-dim);min-height:1.4rem}
+  .status--error{color:var(--stop)}
+
+  /* ── the result ── */
+  .out{border-top:1px solid var(--hairline);padding-top:1.8rem;margin-top:2.4rem}
+  .brandbar{display:flex;gap:1.4rem;align-items:flex-start;flex-wrap:wrap}
+  .logo{border:1px solid var(--hairline);border-radius:6px;padding:1rem 1.2rem;background:rgba(232,230,223,.03);flex:none}
+  .logo svg{display:block;height:56px;width:auto;max-width:240px}
+  .brandtext{flex:1;min-width:min(100%,280px)}
+  .positioning{font-family:var(--serif);font-size:clamp(1.05rem,2.3vw,1.28rem);line-height:1.45;font-weight:300}
+  .swatches{display:flex;gap:.35rem;margin-top:.9rem}
+  .sw{width:26px;height:26px;border-radius:4px;border:1px solid var(--hairline)}
+  .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.9rem}
+  .chip{font-size:.74rem;border:1px solid var(--hairline);border-radius:100px;padding:.25rem .7rem;color:var(--ink-dim)}
+
+  .toolbar{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;margin-top:1.6rem;padding-block:.9rem;border-block:1px solid var(--hairline)}
+  .toolbar .count{font-size:.82rem;color:var(--ink-dim);margin-right:auto}
+  .toolbar .count b{color:var(--go);font-weight:400}
+
+  .posts{list-style:none;margin-top:1.2rem}
+  .post{border:1px solid var(--hairline);border-left:2px solid var(--hairline);border-radius:4px;padding:1rem 1.1rem;margin-bottom:.7rem;transition:border-color .2s,opacity .2s}
+  .post--approved{border-left-color:var(--go)}
+  .post--rejected{opacity:.42;border-left-color:var(--stop)}
+  .post--over{border-left-color:var(--stop)}
+  .post-head{display:flex;gap:.8rem;align-items:baseline;flex-wrap:wrap;font-size:.76rem;color:var(--ink-faint)}
+  .post-when{font-family:var(--mono);color:var(--ink-dim)}
+  .post-plat{letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .post-len{margin-left:auto;font-family:var(--mono)}
+  .post-len.over{color:var(--stop)}
+  .post-hook{font-size:.98rem;color:var(--ink);margin-top:.5rem}
+  .post-caption{font-size:.89rem;color:var(--ink-dim);margin-top:.4rem;white-space:pre-wrap}
+  .post-tags{font-size:.8rem;color:var(--accent);margin-top:.5rem;word-break:break-word}
+  .post-media{font-size:.79rem;color:var(--ink-faint);margin-top:.6rem;padding-left:.8rem;border-left:1px solid var(--hairline)}
+  .post-acts{display:flex;gap:.45rem;margin-top:.8rem;flex-wrap:wrap}
+
+  .warnbox{margin-top:1.2rem;border:1px solid var(--hairline);border-left:2px solid var(--warn);padding:1rem 1.1rem;font-size:.86rem;color:var(--ink-dim)}
+  .warnbox b{color:var(--ink);font-weight:400}
+
+  .conns{display:grid;gap:.6rem;margin-top:.7rem}
+  .conn{border:1px solid var(--hairline);border-radius:4px;padding:.9rem 1rem}
+  .conn-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;flex-wrap:wrap}
+  .conn-name{font-size:.92rem}
+  .conn-state{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--stop)}
+  .conn p{font-size:.82rem;color:var(--ink-dim);margin-top:.45rem}
+  .conn .effort{font-size:.78rem;color:var(--ink-faint);margin-top:.3rem}
+
+  .caveat{margin-top:2rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--warn);font-size:.86rem;color:var(--ink-dim)}
+  .caveat b{color:var(--ink);font-weight:400}
+
+  .section{border-top:1px solid var(--hairline);padding-block:3rem}
+  .cards{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:1.5rem}
+  .card{border:1px solid var(--hairline);padding:1.2rem}
+  .card h4{font-family:var(--serif);font-weight:400;font-size:1.05rem;margin-bottom:.5rem}
+  .card p{font-size:.88rem;color:var(--ink-dim)}
+
+  .site-foot{border-top:1px solid var(--hairline);padding-block:2rem;margin-top:2rem;font-size:.82rem;color:var(--ink-faint)}
+  .site-foot .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+  .site-foot a{color:var(--ink-dim);text-decoration:none}
+
+  [hidden]{display:none!important}
+
+  @media(max-width:720px){
+    .wrap{width:min(1180px,100% - 2.5rem)}
+    .site-head .wrap{flex-direction:column;align-items:flex-start;gap:.9rem}
+    .site-head nav a,.wordmark{min-height:44px;display:inline-flex;align-items:center}
+    .crumbs a,.site-foot a{min-height:32px;display:inline-flex;align-items:center}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="wordmark" href="/">CM Solutions</a>
+    <nav aria-label="Primary">
+      <a href="/ai-tools">AI Tools</a>
+      <a href="/ai-website-builder">Website Builder</a>
+      <a href="/#services">What I build</a>
+      <a href="/#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<nav class="crumbs wrap" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="/">Home</a></li>
+    <li><a href="/ai-tools">AI Tools</a></li>
+    <li aria-current="page">Social content planner</li>
+  </ol>
+</nav>
+
+<main id="main">
+  <section class="hero wrap">
+    <p class="kicker">Brand kit · logo · a month of posts</p>
+    <h1>A month of posts, and <em>not one over the limit</em>.</h1>
+    <p class="lede">
+      Describe a business and get a brand kit, a vector logo, and a dated
+      calendar of posts written <b>separately for each platform</b> — the same
+      idea said differently, not one caption pasted five times. Approve what you
+      want, bin what you don't, export the rest.
+    </p>
+    <p class="lede">
+      The captions are measured in code against the real limits before you ever
+      see them. A 340-character X post reads perfectly well and is rejected by
+      the API — and finding that out across thirty scheduled posts is a bad
+      afternoon. <b>Every date is computed too</b>, because a month worked out
+      by a language model is right almost every time.
+    </p>
+  </section>
+
+  <div class="wrap">
+    <form id="form" aria-labelledby="form-h">
+      <h2 id="form-h">The business</h2>
+      <p class="privacy">
+        Your brief is used to write the plan and then discarded. Nothing is
+        stored and the text is never logged.
+      </p>
+
+      <div class="examples" id="examples"></div>
+
+      <div class="field">
+        <label for="brief">What is it, who is it for, and how should it sound?</label>
+        <span class="hint">
+          The more specific you are — scale, place, what you actually make —
+          the less generic the writing. Mention anything it must never say.
+        </span>
+        <textarea id="brief" spellcheck="true"
+          placeholder="Saltmarsh — a two-person gin distillery on the Norfolk coast. Botanicals foraged within a mile of the sea wall…"></textarea>
+      </div>
+
+      <h3>Where it posts</h3>
+      <div class="plats" id="plats"></div>
+
+      <h3>The schedule</h3>
+      <div class="pair">
+        <div class="field">
+          <label for="cadence">How often</label>
+          <select id="cadence"></select>
+        </div>
+        <div class="field">
+          <label for="days">Over how many days</label>
+          <input type="number" id="days" min="7" max="60" step="1" value="30" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="start">Starting</label>
+        <input type="date" id="start" />
+      </div>
+
+      <button type="submit" class="btn btn--primary" id="run">Write the month</button>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <section class="out" id="out" hidden aria-labelledby="positioning">
+      <div class="brandbar">
+        <div class="logo" id="logo" hidden></div>
+        <div class="brandtext">
+          <p class="positioning" id="positioning"></p>
+          <div class="swatches" id="swatches"></div>
+          <div class="chips" id="voice"></div>
+        </div>
+      </div>
+
+      <div class="warnbox" id="avoid" hidden>
+        <b>What this brand never says</b>
+        <p id="avoid-text"></p>
+      </div>
+
+      <div class="toolbar">
+        <span class="count" id="count"></span>
+        <button type="button" class="btn btn--small" id="approve-all">Approve all</button>
+        <button type="button" class="btn btn--small" id="export-csv">Export approved as CSV</button>
+        <button type="button" class="btn btn--small" id="export-json">Export as JSON</button>
+      </div>
+
+      <ul class="posts" id="posts"></ul>
+
+      <h3>Posting it automatically</h3>
+      <div class="conns" id="conns"></div>
+
+      <p class="caveat">
+        <b>Why nothing is connected.</b> These are approvals, not integrations.
+        Instagram publishing needs a Meta app through App Review plus business
+        verification; TikTok needs an audit before it will accept a direct post;
+        X needs a paid API tier. Building the buttons before those exist would
+        give you something that looks connected and silently isn't, so the
+        calendar exports instead — and posting becomes a switch to flip once the
+        approvals land.
+      </p>
+    </section>
+  </div>
+
+  <section class="section" aria-labelledby="how">
+    <div class="wrap">
+      <h2 id="how">What is written, and what is counted</h2>
+      <div class="cards">
+        <div class="card">
+          <h4>The model writes</h4>
+          <p>Positioning, voice, pillars, hooks, captions, hashtags, media briefs, and the logo as vector SVG — crisp at any size and editable, because that is what a logo should be.</p>
+        </div>
+        <div class="card">
+          <h4>Code counts</h4>
+          <p>Every caption measured against its platform's real limit with hashtags included, because that is how the platforms count them. Over the limit is flagged, not shipped.</p>
+        </div>
+        <div class="card">
+          <h4>Code schedules</h4>
+          <p>Dates and times are computed, spread across the week, and weekday-only means weekday-only. Times vary so a month does not all land at 09:00.</p>
+        </div>
+        <div class="card">
+          <h4>Nothing is projected</h4>
+          <p>No reach estimates, no engagement predictions, no best-time-to-post. Those would be invented, and a plan that opens with a fabricated number is one you cannot trust the rest of.</p>
+        </div>
+      </div>
+      <p class="lede">
+        The logo is vector because SVG stays sharp at any size and needs no
+        image service. Photographic images and video for the posts are a
+        separate, paid capability that needs a generation engine connected —
+        <a href="/#contact">worth a conversation</a> if you want the whole
+        pipeline rather than the plan.
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> CM Solutions</span>
+    <span><a href="/ai-tools">AI Tools</a> · <a href="mailto:contact@cmsolutions.tech">contact@cmsolutions.tech</a></span>
+  </div>
+</footer>
+
+<script type="module">
+  import { CADENCES, PLATFORMS, sanitiseSvg } from "/lib/social/brand.mjs";
+
+  const $ = (id) => document.getElementById(id);
+  $("year").textContent = new Date().getFullYear();
+  $("start").value = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+
+  const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+
+  $("cadence").innerHTML = CADENCES
+    .map((c) => `<option value="${c.id}"${c.id === "three" ? " selected" : ""}>${esc(c.label)}</option>`).join("");
+
+  $("plats").innerHTML = PLATFORMS.map((p, i) => `
+    <label class="plat">
+      <input type="checkbox" value="${p.id}"${i < 3 ? " checked" : ""} />
+      <span>
+        <span class="plat-name">${esc(p.name)}</span>
+        <span class="plat-meta">${p.captionLimit.toLocaleString("en-GB")} characters · up to ${p.hashtagLimit} hashtags</span>
+      </span>
+    </label>`).join("");
+
+  const EXAMPLES = [
+    { label: "Coastal distillery", text: "Saltmarsh — a two-person gin distillery on the Norfolk coast. Botanicals foraged within a mile of the sea wall: samphire, sea buckthorn, marsh rosemary. One still, about 400 bottles a month, sold through independent bottle shops and three farmers markets. Quiet, briny, unhurried — nothing shouty. We want people to understand that the place is the product. Never use the word premium." },
+    { label: "Structural engineers", text: "Harrow & Vane — structural engineers who work on listed buildings. Founded 1974, eleven people, based in York. We do the unglamorous, difficult half of conservation: making a Georgian roof safe without anyone being able to tell we were there. Audience is conservation architects and heritage bodies. Sound careful and precise. Never sound like a marketing department." },
+    { label: "Sleep clinic", text: "Somnus — a sleep clinic in Edinburgh run by two consultants. We treat insomnia with CBT-I rather than medication. Calm and clinical but human; absolutely not wellness-fluffy. Audience is people who have not slept properly in years and are sceptical of clinics. Never promise outcomes and never use before-and-after language." },
+    { label: "Bike workshop", text: "Cog & Fettle — a two-person bike workshop under a railway arch in Sheffield. Repairs, wheel building, and a lot of bringing dead bikes back. Blunt, funny, practical. Audience is commuters and people who ride old steel. Never sound corporate and never talk about 'the cycling community'." },
+  ];
+  $("examples").innerHTML = EXAMPLES
+    .map((e, i) => `<button type="button" data-i="${i}">${esc(e.label)}</button>`).join("");
+  $("examples").addEventListener("click", (e) => {
+    const i = e.target.closest("button")?.dataset.i;
+    if (i === undefined) return;
+    $("brief").value = EXAMPLES[Number(i)].text;
+    $("brief").focus();
+  });
+
+  function say(message, isError = false) {
+    $("status").textContent = message;
+    $("status").className = `status${isError ? " status--error" : ""}`;
+  }
+
+  let plan = null;
+
+  $("form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const brief = $("brief").value.trim();
+    if (brief.length < 40) { say("Say a little more about the business first.", true); return; }
+
+    const platforms = [...$("plats").querySelectorAll("input:checked")].map((i) => i.value);
+    if (!platforms.length) { say("Choose at least one platform.", true); return; }
+
+    $("run").disabled = true;
+    say("Writing the brand kit, the logo and the month. This takes a couple of minutes.");
+
+    try {
+      const res = await fetch("/api/social-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          brief, platforms,
+          days: Number($("days").value) || 30,
+          cadenceId: $("cadence").value,
+          startDate: $("start").value,
+          wantVideo: false,
+        }),
+      });
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) { say(payload?.error ?? "That did not work. Try again.", true); return; }
+      render(payload);
+      say(payload.planProblems?.length ? `Note: ${payload.planProblems.join("; ")}.` : "");
+    } catch (cause) {
+      say(cause?.message ?? "That did not work. Try again.", true);
+    } finally {
+      $("run").disabled = false;
+    }
+  });
+
+  function render(p) {
+    plan = p;
+    // Approval is the default-off state. Nothing is scheduled until a person
+    // says so, which is the whole point of the step.
+    plan.posts.forEach((post) => { post.approved = false; });
+
+    const b = p.brand;
+
+    /*
+      The logo is sanitised on the server and sanitised again here. Two passes
+      because this one is the one that matters — it is the only place the
+      markup is actually inserted into a live document, and a defence that
+      lives only on the other side of a network call is a defence you are
+      trusting rather than applying.
+    */
+    const safe = sanitiseSvg(b.logoSvg).svg;
+    $("logo").hidden = !safe;
+    $("logo").innerHTML = safe;
+
+    $("positioning").textContent = b.positioning;
+    $("swatches").innerHTML = Object.values(b.palette)
+      .map((c) => `<span class="sw" style="background:${esc(c)}" title="${esc(c)}"></span>`).join("");
+    $("voice").innerHTML = [...b.voice, ...b.pillars.map((x) => x.name)]
+      .map((v) => `<span class="chip">${esc(v)}</span>`).join("");
+
+    $("avoid").hidden = !b.avoid?.length;
+    $("avoid-text").textContent = (b.avoid ?? []).join(" · ");
+
+    $("conns").innerHTML = p.connections.map((c) => `
+      <div class="conn">
+        <div class="conn-head">
+          <span class="conn-name">${esc(c.name)}</span>
+          <span class="conn-state">Not connected</span>
+        </div>
+        <p>${esc(c.needs)}</p>
+        <p class="effort">${esc(c.effort)}</p>
+      </div>`).join("");
+
+    drawPosts();
+
+    // The whole result section was populated and left hidden — the request
+    // succeeded, the status cleared, and nothing appeared. Found by running it.
+    $("out").hidden = false;
+    $("out").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function drawPosts() {
+    $("posts").innerHTML = plan.posts.map((post) => {
+      const tags = (post.hashtags ?? []).map((t) => `#${t.replace(/^#/, "")}`).join(" ");
+      const cls = post.approved ? "post--approved" : post.approved === false && post.rejected ? "post--rejected" : "";
+      return `
+      <li class="post ${cls} ${post.fits ? "" : "post--over"}" data-id="${esc(post.id)}">
+        <div class="post-head">
+          <span class="post-when">${esc(post.date ?? "")} ${esc(post.weekday ?? "")} ${esc(post.time ?? "")}</span>
+          <span class="post-plat">${esc(post.platform)}</span>
+          <span>${esc(post.intent)}</span>
+          <span class="post-len ${post.fits ? "" : "over"}">${post.length}/${post.limit}</span>
+        </div>
+        <p class="post-hook">${esc(post.hook)}</p>
+        <p class="post-caption">${esc(post.caption)}</p>
+        ${tags ? `<p class="post-tags">${esc(tags)}</p>` : ""}
+        <p class="post-media">${esc(post.mediaType === "video" ? "Video" : "Image")} — ${esc(post.mediaBrief)}</p>
+        ${post.fits ? "" : `<p class="post-media" style="border-left-color:var(--stop);color:var(--stop)">${esc(post.fitProblems.join("; "))}</p>`}
+        <div class="post-acts">
+          <button type="button" class="btn btn--small" data-act="approve" data-id="${esc(post.id)}">${post.approved ? "Approved ✓" : "Approve"}</button>
+          <button type="button" class="btn btn--small" data-act="reject" data-id="${esc(post.id)}">${post.rejected ? "Binned" : "Bin it"}</button>
+        </div>
+      </li>`;
+    }).join("");
+
+    const approved = plan.posts.filter((p) => p.approved).length;
+    const over = plan.posts.filter((p) => !p.fits).length;
+    $("count").innerHTML =
+      `<b>${approved}</b> of ${plan.posts.length} approved` +
+      (over ? ` · ${over} over the limit and need trimming` : "") +
+      ` · limits reviewed ${esc(plan.limitsReviewed)}`;
+  }
+
+  $("posts").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn || !plan) return;
+    const post = plan.posts.find((p) => p.id === btn.dataset.id);
+    if (!post) return;
+    if (btn.dataset.act === "approve") { post.approved = !post.approved; post.rejected = false; }
+    else { post.rejected = !post.rejected; post.approved = false; }
+    drawPosts();
+  });
+
+  $("approve-all").addEventListener("click", () => {
+    if (!plan) return;
+    // Only what actually fits. Approving an over-limit post in bulk is how a
+    // rejected post reaches a schedule.
+    plan.posts.forEach((p) => { if (p.fits) { p.approved = true; p.rejected = false; } });
+    drawPosts();
+  });
+
+  const csvCell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+
+  function download(name, text, type) {
+    const url = URL.createObjectURL(new Blob([text], { type }));
+    const a = document.createElement("a");
+    a.href = url; a.download = name; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  $("export-csv").addEventListener("click", () => {
+    if (!plan) return;
+    const approved = plan.posts.filter((p) => p.approved);
+    if (!approved.length) { say("Approve at least one post before exporting.", true); return; }
+    const rows = [
+      ["Date", "Time", "Platform", "Intent", "Hook", "Caption", "Hashtags", "Media type", "Media brief"].map(csvCell).join(","),
+      ...approved.map((p) => [
+        p.date, p.time, p.platform, p.intent, p.hook, p.caption,
+        (p.hashtags ?? []).map((t) => `#${t}`).join(" "), p.mediaType, p.mediaBrief,
+      ].map(csvCell).join(",")),
+    ];
+    download("content-plan.csv", rows.join("\n"), "text/csv");
+    say(`Exported ${approved.length} approved post${approved.length === 1 ? "" : "s"}.`);
+  });
+
+  $("export-json").addEventListener("click", () => {
+    if (!plan) return;
+    download("content-plan.json", JSON.stringify(plan, null, 2), "application/json");
+  });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://cmsolutions.tech/ai-social-media-content-planner#software",
+      "name": "CM Social Content Planner",
+      "url": "https://cmsolutions.tech/ai-social-media-content-planner",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any modern browser",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+      "description": "Produces a brand kit, a vector logo and a dated month of social posts written separately for each platform, with every caption measured against the platform's real character and hashtag limits before scheduling.",
+      "publisher": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://cmsolutions.tech/ai-social-media-content-planner#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://cmsolutions.tech/" },
+        { "@type": "ListItem", "position": 2, "name": "AI Tools", "item": "https://cmsolutions.tech/ai-tools" },
+        { "@type": "ListItem", "position": 3, "name": "Social Content Planner" }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>

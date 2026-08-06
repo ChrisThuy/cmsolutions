@@ -32,5 +32,13 @@
       "destination": "/free-website-audit-tool",
       "permanent": true
     }
-  ]
+  ],
+  "functions": {
+    "api/social-plan.mjs": {
+      "maxDuration": 300
+    },
+    "api/site-build.mjs": {
+      "maxDuration": 300
+    }
+  }
 }
