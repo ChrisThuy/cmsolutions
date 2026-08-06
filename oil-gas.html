@@ -1337,19 +1337,57 @@ function renderAgentDetail(a) {
     c.addEventListener("click", () => { go({ level: "brain" }); selectKb(c.dataset.kb); }));
 }
 
+/*
+  Turns a document's field list into something you can actually start
+  writing in.
+
+  The playbooks all hand you their prompt on the clipboard; these used to
+  hand you a bullet list to retype by hand, which made the most valuable
+  content on the page the least usable. Same affordance, same place.
+*/
+const SITE_NAME = "CM Solutions";
+const SITE_URL = "cmsolutions.tech/oil-gas";
+function ordinal(n) {
+  const teens = n % 100;
+  if (teens >= 11 && teens <= 13) return n + "th";
+  return n + (["th", "st", "nd", "rd"][n % 10] ?? "th");
+}
+
+function kbAsMarkdown(k, readers) {
+  const fields = String(k.t).split(" · ").map(f => `- **${f.trim()}:**`).join("\n");
+  return [
+    `# ${k.n}`, "",
+    k.d, "",
+    `Needed by ${readers} of the ${AGENTS.length} playbooks on ${SITE_NAME}.`, "",
+    "## What goes in it", "",
+    fields, "",
+    "---", `Template from ${SITE_URL}`,
+  ].join("\n");
+}
+
 function renderKbDetail(k) {
   const readers = AGENTS.filter(a => a.k.includes(k.i));
+  /* Ranked, because "write this first" is the question someone staring at
+     fourteen empty documents actually has. */
+  const rank = [...BRAIN]
+    .map(d => AGENTS.filter(a => a.k.includes(d.i)).length)
+    .sort((a, b) => b - a)
+    .indexOf(readers.length) + 1;
   el("insp").innerHTML = `
     <div class="det-head">
       <p class="pth"><button class="mini" id="back-dir">← Brain</button></p>
       <p class="pth" style="margin-top:.5rem;color:var(--gold)">Knowledge document</p>
       <h2>${esc(k.n)}</h2>
-      <div class="badges"><span class="badge">${readers.length} agents read this</span></div>
+      <div class="badges">
+        <span class="badge">${readers.length} playbooks need it</span>
+        <span class="badge">${rank === 1 ? "Write this first" : `${ordinal(rank)} by demand`}</span>
+      </div>
     </div>
     <div class="sect" style="border-bottom:none">
       <div class="fld"><p>${esc(k.d)}</p></div>
       <div class="fld"><h4>What goes in it</h4>
         <div class="kbdoc"><div class="tpl">${esc(k.t).split(" · ").map(x => "· " + x).join("<br>")}</div></div>
+        <button class="mini go" id="copy-kb" style="margin-top:.55rem">Copy as a document</button>
       </div>
       <div class="fld"><h4>Read by</h4>
         <div class="chiprow">${readers.slice(0, 24).map(a =>
@@ -1359,6 +1397,7 @@ function renderKbDetail(k) {
       </div>
     </div>`;
   el("back-dir").addEventListener("click", () => { state.selKb = null; applyDimming(); renderInspector(); });
+  el("copy-kb").addEventListener("click", () => copy(kbAsMarkdown(k, readers.length), "Document copied — paste it in"));
   el("insp").querySelectorAll("[data-agent]").forEach(c =>
     c.addEventListener("click", () => { go({ level: "overview" }); selectAgent(c.dataset.agent); }));
 }
