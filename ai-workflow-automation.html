@@ -33,8 +33,8 @@
     --ink:#e8e6df;--ink-dim:#a09d93;--ink-faint:#6b6960;--void:#07080c;
     --hairline:rgba(232,230,223,0.12);
     --auto:#a8b878;--assist:#7ab8d4;--human:#d4af6a;--risk:#d98b6a;
-    --serif:"Fraunces",Georgia,serif;--sans:"Inter",-apple-system,sans-serif;
-    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+    --serif:"Fraunces", Georgia, "Times New Roman", serif;--sans:"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -84,7 +84,20 @@
 
   .btn{background:rgba(232,230,223,.06);color:var(--ink);border:1px solid var(--hairline);border-radius:3px;padding:.6rem 1.1rem;font-family:var(--sans);font-size:.9rem;cursor:pointer;min-height:44px}
   .btn:hover{background:rgba(232,230,223,.12)}
-  .btn:disabled{opacity:.45;cursor:not-allowed}
+  /*
+    A disabled primary button was a filled cream block at 45 % opacity, which
+    on a near-black page renders as a solid grey slab — it reads as broken
+    rather than as not-yet-available. Disabled now drops the fill entirely and
+    keeps a hairline and dim text, so the control is visibly waiting for
+    something instead of visibly wrong.
+  */
+  .btn:disabled{cursor:not-allowed;opacity:1}
+  .btn--primary:disabled{
+    background:transparent;color:var(--ink-faint);
+    border-color:var(--hairline);font-weight:400;
+  }
+  .btn--primary:disabled:hover{background:transparent}
+  .btn:not(.btn--primary):disabled{opacity:.45}
   .btn--primary{background:var(--ink);color:var(--void);border-color:var(--ink);font-weight:500;width:100%;margin-top:.5rem}
 
   .examples{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1rem}
