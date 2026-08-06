@@ -16,7 +16,8 @@
     "maritime:test": "node scripts/test-maritime.mjs",
     "maritime:verify": "node scripts/verify-maritime.mjs",
     "verify": "node scripts/verify-methane.mjs; node scripts/verify-maritime.mjs",
-    "links": "node scripts/test-links.mjs --external"
+    "links": "node scripts/test-links.mjs --external",
+    "sitegen:test": "node scripts/test-sitegen.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

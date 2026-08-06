@@ -1,0 +1,215 @@
+/*
+  Tests the scroll-film site generator.
+
+    node scripts/test-sitegen.mjs
+
+  The renderer exists so that the mechanically unforgiving parts of a scroll
+  film are correct every time rather than most of the time. These tests are
+  about those parts — the ones that fail silently.
+
+  The load-bearing one is ScrollTrigger creation order. Creation order is
+  refresh order: an ambient trigger created before a pinned scene is measured
+  against a layout that does not yet include that pin's spacer, and every
+  trigger after it lands in the wrong place. Nothing errors. The page just
+  scrolls wrong, in a way that takes an afternoon to trace.
+*/
+
+import { MOTIONS, contrast, validateSpec } from "../lib/sitegen/spec.mjs";
+import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
+
+let failures = 0;
+function check(name, condition, detail = "") {
+  if (condition) console.log(`  PASS  ${name}`);
+  else { failures++; console.error(`  FAIL  ${name}${detail ? ` — ${detail}` : ""}`); }
+}
+
+const chapter = (over = {}) => ({
+  name: "Descent", kicker: "0300 hours", headline: "Down through the dark",
+  body: "The camera falls. Nothing below but water.", motion: "pin-zoom",
+  visual: "A black sea from above", counterTo: null, counterLabel: "",
+  ...over,
+});
+
+const spec = (over = {}) => ({
+  brandName: "VOLTA", tagline: "An electric race team.",
+  conceptName: "Night Circuit", journey: "From the dark into the light of the grid.",
+  palette: { bg: "#07080c", surface: "#11131b", ink: "#eceae4", dim: "#9a978f",
+             accent: "#d4af6a", accent2: "#7ab8d4" },
+  type: { display: "Fraunces", displayWeights: "300;400", body: "Inter", bodyWeights: "300;400;500" },
+  chapters: [
+    chapter(),
+    chapter({ name: "Ignition", motion: "char-reveal", headline: "Then everything at once" }),
+    chapter({ name: "The Run", motion: "horizontal", body: "First corner. Second corner. The straight." }),
+    chapter({ name: "Result", motion: "counter", counterTo: 1420, counterLabel: "kilometres" }),
+  ],
+  sections: [{ title: "The team", body: "Who we are.", items: [{ heading: "Drivers", text: "Two." }] }],
+  cta: { heading: "Come to a race", body: "Tickets open in March.", label: "Join the list" },
+  footerNote: "Built by CM Solutions",
+  ...over,
+});
+
+console.log("\nPinned scenes are created before ambient triggers");
+{
+  const html = renderSite(spec());
+  const script = html.slice(html.lastIndexOf("<script>"));
+
+  const pinBlock = script.indexOf("PINNED SCENES FIRST");
+  const ambientBlock = script.indexOf("AMBIENT TRIGGERS");
+  check("both blocks exist and are labelled", pinBlock > -1 && ambientBlock > -1);
+  check("the pinned block comes first", pinBlock < ambientBlock, `${pinBlock} vs ${ambientBlock}`);
+
+  // The specific failure: a hero drift trigger created before the scene pins.
+  const firstPin = script.indexOf("pin: true");
+  const firstDrift = script.indexOf("data-drift");
+  check("the first pin is created before the first ambient scrub",
+    firstPin > -1 && firstDrift > firstPin, `pin@${firstPin} drift@${firstDrift}`);
+}
+
+console.log("\nLenis and ScrollTrigger are wired to each other, not competing");
+{
+  const html = renderSite(spec());
+  check("Lenis pushes scroll into ScrollTrigger", html.includes("lenis.on('scroll', ScrollTrigger.update)"));
+  check("Lenis is driven from the gsap ticker", html.includes("gsap.ticker.add"));
+  check("lag smoothing is off, or the scrub jumps after a stall",
+    html.includes("lagSmoothing(0)"));
+}
+
+console.log("\nEvery motion in the vocabulary is actually implemented");
+{
+  for (const motion of MOTIONS) {
+    const html = renderSite(spec({
+      chapters: [chapter({ motion, counterTo: motion === "counter" ? 10 : null })],
+    }));
+    check(`${motion} renders a scene`, html.includes(`data-motion="${motion}"`));
+    if (motion !== "layer-parallax") {
+      const script = html.slice(html.lastIndexOf("<script>"));
+      check(`${motion} is handled in the timeline`, script.includes(`'${motion}'`) || motion === "pin-zoom");
+    }
+  }
+}
+
+console.log("\nReduced motion keeps the content and drops only the movement");
+{
+  const html = renderSite(spec());
+  const i = html.indexOf("prefers-reduced-motion");
+  const block = html.slice(i, i + 700);
+  check("a reduced-motion block exists", i > -1);
+  check("it forces content visible rather than hiding it",
+    block.includes("opacity:1!important"), block.slice(0, 120));
+  check("it un-clips the clip-reveal scenes", block.includes("clip-path:none"));
+  check("the horizontal run wraps instead of scrolling sideways", block.includes("flex-wrap:wrap"));
+  // And the script bails before building any of it.
+  check("the script exits early under reduced motion",
+    html.includes("if (reduced || !window.gsap"), "");
+}
+
+console.log("\nUser text cannot break out of the document");
+{
+  const nasty = spec({
+    brandName: '</script><script>alert(1)</script>',
+    tagline: '"><img src=x onerror=alert(1)>',
+    sections: [{ title: "<svg onload=alert(1)>", body: "&", items: [] }],
+  });
+  const html = renderSite(nasty);
+  /*
+    What matters is that no TAG is formed and no attribute is broken out of.
+    The literal characters of an attempted payload surviving as inert text is
+    correct — it is what the user typed and it cannot execute. An earlier
+    version of this test searched for the substring "onerror=alert" and failed
+    on output that was perfectly safe, which is the kind of check people learn
+    to switch off.
+  */
+  /*
+    Counted, not searched. The renderer legitimately emits four script tags —
+    three CDN libraries and one inline — so searching the whole document for
+    "<script" matches its own output. An injection would push the count above
+    four; nothing else can.
+  */
+  const clean = renderSite(spec());
+  const scriptCount = (html.match(/<script\b/gi) || []).length;
+  check("user text adds no script tag",
+    scriptCount === (clean.match(/<script\b/gi) || []).length, `${scriptCount}`);
+  check("user text adds no img or svg tag", !/<(img|svg)\b/i.test(html),
+    (html.match(/<(img|svg)\b[^>]*/i) || [""])[0]);
+  check("no attribute is broken out of",
+    !/content="[^"]*"[^>]*\son\w+=/i.test(html));
+  check("angle brackets are encoded", html.includes("&lt;") && html.includes("&gt;"));
+  check("quotes are encoded inside attributes", html.includes("&quot;"));
+  check("the ampersand is encoded", html.includes("&amp;"));
+}
+
+console.log("\nA spec that would render badly is rejected before it renders");
+{
+  check("a sound spec passes", validateSpec(spec()).ok, JSON.stringify(validateSpec(spec()).problems));
+
+  const oneNote = validateSpec(spec({
+    chapters: [chapter(), chapter({ name: "B" }), chapter({ name: "C" }), chapter({ name: "D" })],
+  }));
+  check("four chapters on one motion is called a slideshow",
+    !oneNote.ok && oneNote.problems.some((p) => /slideshow/.test(p)), JSON.stringify(oneNote.problems));
+
+  const tooShort = validateSpec(spec({ chapters: [chapter(), chapter({ name: "B" })] }));
+  check("two chapters is not a journey", !tooShort.ok);
+
+  const unreadable = validateSpec(spec({
+    palette: { ...spec().palette, ink: "#0a0b0f" },   // near-black on black
+  }));
+  check("an unreadable palette is rejected",
+    !unreadable.ok && unreadable.problems.some((p) => /4\.5:1/.test(p)),
+    JSON.stringify(unreadable.problems));
+
+  const badHex = validateSpec(spec({ palette: { ...spec().palette, accent: "gold" } }));
+  check("a colour that is not a hex is rejected", !badHex.ok);
+
+  const noFigure = validateSpec(spec({
+    chapters: [chapter(), chapter({ name: "B", motion: "char-reveal" }),
+               chapter({ name: "C", motion: "counter", counterTo: null })],
+  }));
+  check("a counter chapter with nothing to count to is rejected",
+    !noFigure.ok && noFigure.problems.some((p) => /count to/.test(p)));
+}
+
+console.log("\nContrast maths matches the WCAG definition");
+{
+  check("black on white is 21:1", Math.round(contrast("#000000", "#ffffff")) === 21);
+  check("a colour against itself is 1:1", Math.round(contrast("#3d5a80", "#3d5a80")) === 1);
+  check("order does not matter",
+    Math.abs(contrast("#111111", "#eeeeee") - contrast("#eeeeee", "#111111")) < 1e-9);
+}
+
+console.log("\nThe document is complete and self-contained");
+{
+  const html = renderSite(spec());
+  check("it is a full document", html.startsWith("<!doctype html>") && html.trim().endsWith("</html>"));
+  check("it declares a language", html.includes('<html lang="en">'));
+  check("it has a title and a description", /<title>.+<\/title>/.test(html) && html.includes('name="description"'));
+  check("it carries a skip link past the film", html.includes('class="skip"') && html.includes('href="#after"'));
+  check("both fonts are requested", html.includes("Fraunces") && html.includes("Inter"));
+  check("the dev contract is present", html.includes("__ready") && html.includes("jump"));
+  /*
+    Browsers throttle requestAnimationFrame in background tabs and hidden
+    iframes — precisely where a screenshot harness or a preview pane runs the
+    page. A ready signal that depends on rAF alone never resolves there, and
+    the harness waits forever for a page that is fine.
+  */
+  check("readiness does not depend on rAF alone", html.includes("setTimeout(markReady"));
+  check("and it is idempotent", html.includes("if (settled) return"));
+
+  // Every chapter must reach the page — a dropped one is a silent content loss.
+  for (const c of spec().chapters) {
+    check(`chapter "${c.name}" is in the output`, html.includes(c.name));
+  }
+}
+
+console.log("\nThe summary reflects the spec");
+{
+  const d = describeSpec(spec());
+  check("it names the concept", d.concept === "Night Circuit");
+  check("it lists every chapter with its motion", d.chapters.length === 4 && d.chapters[2].motion === "horizontal");
+  check("it reports both fonts", d.fonts.length === 2);
+}
+
+console.log(
+  failures === 0 ? "\nAll site-generator tests passed.\n" : `\n${failures} test(s) failed.\n`,
+);
+process.exit(failures === 0 ? 0 : 1);

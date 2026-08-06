@@ -140,6 +140,15 @@ const CARDS = [
     dots: [[9, "accent"], [21, "ready"], [34, "accent"], [47, "ready"], [60, "unsure"], [73, "ready"], [88, "accent"]],
   },
   {
+    output: "og-sitebuilder.png",
+    section: "Website Builder",
+    claim: 'Describe a brand. Get <em>one continuous film</em> that scrolls.',
+    sub: 'Concept, palette, type pairing and copy, art-directed for that brand — delivered as <b>one self-contained file you own</b>. No account, no builder to learn.',
+    url: "cmsolutions.tech/ai-website-builder",
+    note: "Your brief is designed from, then discarded.",
+    dots: [[8, "accent"], [23, "ready"], [37, "accent"], [52, "unsure"], [68, "accent"], [85, "ready"]],
+  },
+  {
     output: "og-tools.png",
     section: "AI Tools",
     claim: 'Working software you can use right now. <em>No signup, nothing stored</em>.',
