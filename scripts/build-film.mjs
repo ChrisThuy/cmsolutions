@@ -27,6 +27,7 @@ import { resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { buildFilm, quoteChain } from "../lib/film/pipeline.mjs";
 import { mediaAvailable } from "../lib/media/provider.mjs";
+import { accountStatus, higgsfieldAvailable } from "../lib/media/higgsfield.mjs";
 
 const args = process.argv.slice(2);
 
@@ -43,6 +44,7 @@ if (!args.length || has("help")) {
     node scripts/build-film.mjs <spec.json> --out <dir> [options]
 
     --out <dir>        where clips, frames and the film go   (required)
+    --engine fal|higgsfield  which generator                 (default fal)
     --tier cheap|chain which video model                     (default cheap)
     --seconds <n>      length of each clip                   (default 5)
     --resolution <r>   480p | 720p | 1080p                   (default 480p)
@@ -119,7 +121,32 @@ if (quote.total > ceiling) {
   process.exit(1);
 }
 
-if (!mediaAvailable()) {
+/*
+  Which engine, and can it actually run.
+
+  Checked before the confirmation prompt rather than after, because being
+  asked "generate this?" by a tool that then discovers it has no credits is
+  a worse experience than being told up front.
+*/
+const engine = flag("engine", process.env.FILM_ENGINE ?? "fal");
+
+if (engine === "higgsfield") {
+  if (!(await higgsfieldAvailable())) {
+    console.error("  The higgsfield CLI is not logged in. Run: higgsfield auth login\n");
+    process.exit(1);
+  }
+  const account = await accountStatus();
+  console.log(`  engine: Higgsfield Seedance 2.0 — ${account.text}`);
+  if (account.credits === 0) {
+    console.error("\n  That account has no credits, so this run would fail at the first clip.");
+    console.error("  Top up at higgsfield.ai, then run this again.\n");
+    process.exit(1);
+  }
+  /* Both ends of every clip are pinned on this engine, which is the reason
+     to use it — the junction is a frame both neighbours were handed, rather
+     than a drift that gets measured afterwards and hoped about. */
+  console.log("  seams: both ends pinned\n");
+} else if (!mediaAvailable()) {
   console.error("  FAL_KEY is not set, so nothing can be generated.\n");
   process.exit(1);
 }
