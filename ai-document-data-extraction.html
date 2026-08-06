@@ -225,6 +225,27 @@
     tr,.warn-box,.caveat{break-inside:avoid}
     @page{margin:16mm 14mm}
   }
+
+  /*
+    Selects, drawn rather than inherited.
+
+    Without appearance:none a <select> renders the operating system's own
+    widget: a rounded control on macOS, a grey box with a system arrow on
+    Windows. The page then looks different depending on who is reading it,
+    which is the same problem the file input had. The chevron below is drawn
+    in the page's own dim ink and the right padding leaves room for it.
+  */
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a09d93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    padding-right: 2.4rem;
+  }
+  /* The option list itself is drawn by the OS and cannot be styled, but its
+     colours can be set so it is not white-on-white in a dark context. */
+  select option { background: #12141b; color: #e8e6df; }
 </style>
 </head>
 <body>

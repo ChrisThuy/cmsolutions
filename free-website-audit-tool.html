@@ -331,6 +331,22 @@
     .site-head nav a { min-height: 44px; display: inline-flex; align-items: center; }
     .crumbs a, .site-foot a { min-height: 32px; display: inline-flex; align-items: center; }
   }
+
+  /*
+    These pages disabled buttons in JavaScript but styled no disabled state,
+    so a dead control looked identical to a live one — same fill, same pointer
+    cursor, and nothing happening on click. Disabled now drops the fill and
+    dims, which is the same treatment the other tools use.
+  */
+  .btn:disabled, button:disabled { cursor: not-allowed; }
+  .btn--primary:disabled {
+    background: transparent;
+    color: var(--ink-faint);
+    border-color: var(--hairline);
+    font-weight: 400;
+  }
+  .btn--primary:disabled:hover { background: transparent; }
+  .btn:not(.btn--primary):disabled { opacity: 0.45; }
 </style>
 </head>
 <body>
