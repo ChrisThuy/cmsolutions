@@ -602,6 +602,8 @@
         </div>
       </div>
 
+      <div class="dash-stats" id="stats"></div>
+
       <div class="warnbox" id="avoid" hidden>
         <b>What this brand never says</b>
         <p id="avoid-text"></p>
@@ -887,6 +889,20 @@ window.CMProgress = (function () {
     $("logo").innerHTML = safe;
 
     $("positioning").textContent = b.positioning;
+
+    /* What was actually produced, before the month of cards below it. Nothing
+       is scheduled until a person approves it, so "awaiting approval" is the
+       honest count to lead with rather than "scheduled". */
+    const platforms = new Set(p.posts.map((x) => x.platform));
+    const weeks = new Set(p.posts.map((x) => x.week ?? x.slot ?? "")).size;
+    $("stats").innerHTML = [
+      { n: p.posts.length, l: "posts written", tone: "accent" },
+      { n: platforms.size, l: `platform${platforms.size === 1 ? "" : "s"}` },
+      { n: weeks || "—", l: "weeks planned" },
+      { n: p.posts.length, l: "awaiting your approval", tone: "warn" },
+    ].map((t) =>
+      `<div class="dash-stat"${t.tone ? ` data-tone="${t.tone}"` : ""}>` +
+      `<span class="n">${t.n}</span><span class="l">${t.l}</span></div>`).join("");
     $("swatches").innerHTML = Object.values(b.palette)
       .map((c) => `<span class="sw" style="background:${esc(c)}" title="${esc(c)}"></span>`).join("");
     $("voice").innerHTML = [...b.voice, ...b.pillars.map((x) => x.name)]

@@ -671,6 +671,8 @@
         <p class="doctype" id="doctype"></p>
         <p class="meta" id="meta"></p>
 
+        <div class="dash-stats" id="stats"></div>
+
         <div class="warn-box" id="warnings" hidden>
           <b>Worth checking before you use this</b>
           <ul id="warning-list"></ul>
@@ -1030,7 +1032,22 @@ window.CMProgress = (function () {
       ` · nothing stored`;
     $("print-sub").textContent = `${result.documentType || "Document"} · prepared by CM Solutions`;
 
+    /* The counts a person actually wants first: how much was found, how much
+       was not, and whether anything needs a second look. "Absent" is a real
+       outcome here, not a failure — the tool is built to say "not in the
+       document" rather than invent a value, so it is worth showing. */
+    const absent = result.fields.filter((f) => f.confidence === "absent").length;
+    const found = result.fields.length - absent;
     const warnings = result.warnings ?? [];
+    $("stats").innerHTML = [
+      { n: found, l: `field${found === 1 ? "" : "s"} read`, tone: "good" },
+      { n: absent, l: "not in the document", tone: absent ? "warn" : null },
+      { n: result.rows?.length ?? 0, l: "line items" },
+      { n: warnings.length, l: `thing${warnings.length === 1 ? "" : "s"} to check`, tone: warnings.length ? "warn" : null },
+    ].map((t) =>
+      `<div class="dash-stat"${t.tone ? ` data-tone="${t.tone}"` : ""}>` +
+      `<span class="n">${t.n}</span><span class="l">${t.l}</span></div>`).join("");
+
     $("warnings").hidden = warnings.length === 0;
     $("warning-list").innerHTML = warnings.map((w) => `<li>${escapeHtml(w)}</li>`).join("");
 
