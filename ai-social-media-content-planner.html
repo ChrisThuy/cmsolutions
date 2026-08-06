@@ -928,11 +928,19 @@ window.CMProgress = (function () {
        is scheduled until a person approves it, so "awaiting approval" is the
        honest count to lead with rather than "scheduled". */
     const platforms = new Set(p.posts.map((x) => x.platform));
-    const weeks = new Set(p.posts.map((x) => x.week ?? x.slot ?? "")).size;
+    /* Posts carry an ISO `date`, not a week number — an earlier version of
+       this counted distinct values of a field that does not exist, so every
+       post collapsed to the same key and it always reported one week. The
+       span is the honest measure: first scheduled day to last. */
+    const days = p.posts.map((x) => x.date).filter(Boolean).sort();
+    const spanDays = days.length
+      ? Math.round((Date.parse(days[days.length - 1]) - Date.parse(days[0])) / 86400000) + 1
+      : 0;
+    const weeks = spanDays ? Math.ceil(spanDays / 7) : 0;
     $("stats").innerHTML = [
       { n: p.posts.length, l: "posts written", tone: "accent" },
       { n: platforms.size, l: `platform${platforms.size === 1 ? "" : "s"}` },
-      { n: weeks || "—", l: "weeks planned" },
+      { n: weeks || "—", l: `week${weeks === 1 ? "" : "s"} planned` },
       { n: p.posts.length, l: "awaiting your approval", tone: "warn" },
     ].map((t) =>
       `<div class="dash-stat"${t.tone ? ` data-tone="${t.tone}"` : ""}>` +
