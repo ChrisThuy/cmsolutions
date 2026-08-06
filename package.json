@@ -2,7 +2,7 @@
   "name": "cmsolutions",
   "version": "1.0.0",
   "private": true,
-  "description": "CM Solutions — a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
+  "description": "CM Solutions \u2014 a portfolio of selected work. Psychart, Agrimakis Estate, Huddle, Father's Voice UK.",
   "scripts": {
     "dev": "npx serve .",
     "start": "npx serve .",
@@ -19,7 +19,8 @@
     "links": "node scripts/test-links.mjs --external",
     "sitegen:test": "node scripts/test-sitegen.mjs",
     "media:test": "node scripts/test-media.mjs",
-    "film": "node scripts/build-film.mjs"
+    "film": "node scripts/build-film.mjs",
+    "nav": "node scripts/build-nav.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

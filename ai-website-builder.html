@@ -149,22 +149,210 @@
   }
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
+<!-- nav:css — generated, do not edit by hand -->
+<style>
+  /* ══ site navigation ══════════════════════════════════════════ */
+  :root { --sitenav-h: 3.75rem; }
+
+  .sitenav {
+    position: fixed; inset-inline: 0; top: 0; z-index: 50;
+    font-family: var(--sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    font-weight: 300;
+    transition: transform 0.45s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+                background 0.35s ease, border-color 0.35s ease;
+    border-bottom: 1px solid transparent;
+  }
+  /* Over the hero it is a few words on the film; once you have scrolled past
+     it needs its own ground so the links stay legible on any frame. */
+  .sitenav[data-state="up"], .sitenav[data-state="down"] {
+    background: color-mix(in srgb, var(--void, #07080c) 82%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--hairline, rgba(232, 230, 223, 0.12));
+  }
+  @supports not (backdrop-filter: blur(2px)) {
+    .sitenav[data-state="up"], .sitenav[data-state="down"] { background: var(--void, #07080c); }
+  }
+  /* Reading downward is reading; the bar gets out of the way until you look
+     for it. It never hides while the panel is open or focus is inside it. */
+  .sitenav[data-state="down"] { transform: translateY(-100%); }
+  .sitenav:focus-within, .sitenav:has([open]) { transform: none !important; }
+
+  .sitenav-gap { height: var(--sitenav-h); }
+
+  .sitenav-in {
+    width: min(1080px, 100% - 3rem); margin-inline: auto;
+    height: var(--sitenav-h);
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+
+  .sitenav-mark {
+    font-family: var(--serif, Georgia, "Times New Roman", serif);
+    font-size: 1.05rem; letter-spacing: -0.01em;
+    text-decoration: none; white-space: nowrap;
+    color: var(--ink, #e8e6df); margin-inline-end: auto;
+  }
+
+  .sitenav-bar { display: flex; align-items: center; gap: 1.5rem; }
+
+  .sitenav-bar a, .sitenav-toggle {
+    color: var(--ink-dim, #a09d93); text-decoration: none; white-space: nowrap;
+    font-size: 0.9rem; font-family: inherit; font-weight: inherit;
+    transition: color 0.3s var(--ease-out, ease);
+    /* 2.5.8 floor without making a text link look like a button */
+    display: inline-flex; align-items: center; min-height: 1.5rem;
+  }
+  .sitenav-bar a:hover, .sitenav-toggle:hover { color: var(--ink, #e8e6df); }
+  .sitenav-cta { color: var(--ink, #e8e6df) !important; }
+
+  /* ── the disclosure ── */
+  .sitenav-tools { position: relative; }
+  .sitenav-toggle {
+    list-style: none; cursor: pointer; gap: 0.4rem;
+    background: none; border: 0; padding: 0;
+  }
+  .sitenav-toggle::-webkit-details-marker { display: none; }
+  .sitenav-toggle .chev {
+    width: 0.55rem; height: 0.55rem; flex: none;
+    border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.3s var(--ease-out, ease);
+  }
+  .sitenav-tools[open] > .sitenav-toggle { color: var(--ink, #e8e6df); }
+  .sitenav-tools[open] > .sitenav-toggle .chev { transform: translateY(1px) rotate(-135deg); }
+
+  .sitenav-panel {
+    position: absolute; top: calc(100% + 0.9rem); right: 0;
+    width: min(41rem, calc(100vw - 3rem));
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    padding: 1.6rem;
+    /* Thirteen destinations need 640px of viewport. That fits a laptop but
+       not a short window, and a panel whose last three tools are simply
+       unreachable is worse than one that scrolls. */
+    max-height: calc(100dvh - var(--sitenav-h) - 2rem); overflow-y: auto;
+    background: color-mix(in srgb, var(--void, #07080c) 96%, transparent);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border: 1px solid var(--hairline, rgba(232, 230, 223, 0.12));
+    border-radius: 4px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+  @supports not (backdrop-filter: blur(2px)) { .sitenav-panel { background: #0b0d12; } }
+  .sitenav-tools[open] > .sitenav-panel { animation: sitenav-in 0.32s var(--ease-out, ease) both; }
+  @keyframes sitenav-in { from { opacity: 0; transform: translateY(-0.5rem); } }
+
+  .sitenav-group h2 {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.13em;
+    color: var(--ink-faint, #6b6960); font-weight: 400; margin-bottom: 0.15rem;
+  }
+  .sitenav-group .note {
+    font-size: 0.72rem; color: var(--ink-faint, #6b6960);
+    margin-bottom: 0.9rem; display: block;
+  }
+  .sitenav-group ul { list-style: none; margin: 0; padding: 0; }
+
+  .sitenav-panel li a {
+    display: block; padding: 0.5rem 0.6rem; margin-inline: -0.6rem;
+    border-radius: 3px; text-decoration: none;
+    color: var(--ink, #e8e6df); font-size: 0.88rem; line-height: 1.35;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .sitenav-panel li a .blurb {
+    display: block; font-size: 0.76rem; color: var(--ink-faint, #6b6960);
+    margin-top: 0.1rem;
+  }
+  .sitenav-panel li a:hover { background: rgba(232, 230, 223, 0.05); }
+  .sitenav-panel li a:hover .blurb { color: var(--ink-dim, #a09d93); }
+  .sitenav-panel li a[aria-current="page"] { color: var(--accent, #d4af6a); }
+  .sitenav-panel li a[aria-current="page"] .blurb { color: var(--ink-dim, #a09d93); }
+  .sitenav-lead a { border-bottom: 1px solid var(--hairline, rgba(232,230,223,0.12)); padding-bottom: 0.7rem; margin-bottom: 0.3rem; }
+
+  .sitenav-panel .in-panel { display: none; }
+
+  .sitenav :is(a, summary, button):focus-visible {
+    outline: 2px solid var(--accent, #7ab8d4); outline-offset: 3px; border-radius: 2px;
+  }
+
+  /* ── narrow ── */
+  @media (max-width: 46rem) {
+    .sitenav-in { width: min(1080px, 100% - 2.5rem); gap: 1.1rem; }
+    .sitenav-bar { gap: 1.1rem; }
+    .sitenav-bar .desktop-only { display: none; }
+    .sitenav-tools { position: static; }
+    .sitenav-panel {
+      position: fixed; inset: var(--sitenav-h) 0 auto 0;
+      width: auto; max-height: calc(100dvh - var(--sitenav-h)); overflow-y: auto;
+      grid-template-columns: 1fr; gap: 1.5rem;
+      padding: 1.4rem clamp(1.25rem, 6vw, 2rem) 2rem;
+      border-inline: 0; border-radius: 0;
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8);
+      /* Solid, not translucent. A sheet this size lets enough of the page
+         through that the headline behind it competes with the links — on
+         desktop the panel is small enough for the blur to carry it. */
+      background: var(--void, #07080c);
+      overscroll-behavior: contain;
+    }
+    .sitenav-panel .in-panel { display: block; }
+    .sitenav-panel li a { padding-block: 0.6rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sitenav, .sitenav-toggle .chev, .sitenav-panel li a { transition: none; }
+    .sitenav-tools[open] > .sitenav-panel { animation: none; }
+    .sitenav[data-state="down"] { transform: none; }
+  }
+
+  @media print { .sitenav, .sitenav-gap { display: none; } }
+</style>
+<!-- /nav:css -->
 </head>
 <body>
 
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="site-head">
-  <div class="wrap">
-    <a class="wordmark" href="/">CM Solutions</a>
-    <nav aria-label="Primary">
-      <a href="/ai-tools">AI Tools</a>
-      <a href="/ai-workflow-automation">Workflow Planner</a>
-      <a href="/#services">What I build</a>
-      <a href="/#contact">Contact</a>
+<!-- nav:start — generated by scripts/build-nav.mjs, do not edit by hand -->
+<header class="sitenav" data-state="top">
+  <div class="sitenav-in">
+    <a class="sitenav-mark" href="/">CM Solutions</a>
+    <nav class="sitenav-bar" aria-label="Primary">
+      <details class="sitenav-tools">
+        <summary class="sitenav-toggle" aria-label="Tools and pages">Tools<span class="chev" aria-hidden="true"></span></summary>
+        <div class="sitenav-panel">
+        <div class="sitenav-group">
+          <h2>Tools</h2>
+          <span class="note">Free, no sign-up</span>
+          <ul>
+          <li class="sitenav-lead"><a href="/ai-tools">All tools<span class="blurb">Every tool in one place</span></a></li>
+          <li><a href="/ai-proposal-generator">Proposal generator<span class="blurb">Scoped proposals from a brief</span></a></li>
+          <li><a href="/free-website-audit-tool">Website check<span class="blurb">SEO and accessibility, measured</span></a></li>
+          <li><a href="/schema-generator">Schema generator<span class="blurb">Valid JSON-LD, no invention</span></a></li>
+          <li><a href="/ai-document-data-extraction">Document extraction<span class="blurb">Invoices and forms into fields</span></a></li>
+          <li><a href="/ai-customer-service-software">Support agent<span class="blurb">Answers only from your policy</span></a></li>
+          <li><a href="/ai-workflow-automation">Workflow planner<span class="blurb">What to automate, and what not to</span></a></li>
+          <li><a href="/ai-website-builder" aria-current="page">Website builder<span class="blurb">A scroll-film site from a prompt</span></a></li>
+          <li><a href="/ai-social-media-content-planner">Social planner<span class="blurb">Posts, captions and a schedule</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group">
+          <h2>Industry</h2>
+          <span class="note">Built for a sector</span>
+          <ul>
+          <li><a href="/oil-gas">Oil &amp; gas<span class="blurb">Agents for upstream and trading</span></a></li>
+          <li><a href="/methane-readiness">Methane readiness<span class="blurb">EU 2024/1787, cargo and contracts</span></a></li>
+          <li><a href="/fueleu-calculator">FuelEU calculator<span class="blurb">Compliance balance and penalties</span></a></li>
+          <li><a href="/agent-map">Agent OS map<span class="blurb">137 agents, wired together</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group in-panel"><ul><li><a href="/#services">What I build</a></li></ul></div>
+        </div>
+      </details>
+      <a href="/#services" class="desktop-only">What I build</a>
+      <a href="/#contact" class="sitenav-cta">Contact</a>
     </nav>
   </div>
 </header>
+<div class="sitenav-gap" aria-hidden="true"></div>
+<!-- nav:end -->
+
 
 <nav class="crumbs wrap" aria-label="Breadcrumb">
   <ol>
@@ -450,5 +638,50 @@
   ]
 }
 </script>
+<!-- nav:js — generated, do not edit by hand -->
+<script>
+(function () {
+  var bar = document.querySelector('.sitenav');
+  if (!bar) return;
+  var tools = bar.querySelector('.sitenav-tools');
+
+  /* ── show on the way up, hide on the way down ── */
+  var last = window.pageYOffset || 0, ticking = false;
+  function apply() {
+    ticking = false;
+    var y = window.pageYOffset || 0;
+    if (tools && tools.open) { bar.dataset.state = 'up'; last = y; return; }
+    if (y < 24) bar.dataset.state = 'top';
+    else if (y > last + 6 && y > 160) bar.dataset.state = 'down';
+    else if (y < last - 6) bar.dataset.state = 'up';
+    last = y;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+  }, { passive: true });
+  apply();
+
+  if (!tools) return;
+
+  /* ── closing ──
+     A disclosure that only closes by clicking its own summary is a trap on a
+     phone, where the panel covers the page it is navigating. */
+  function close() { tools.open = false; }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && tools.open) { close(); tools.querySelector('summary').focus(); }
+  });
+  document.addEventListener('click', function (e) {
+    if (tools.open && !tools.contains(e.target)) close();
+  });
+  // Same-page anchors do not navigate, so the panel would stay over the target.
+  tools.addEventListener('click', function (e) {
+    if (e.target.closest('a')) close();
+  });
+  // A panel left open across a back-navigation restores in the wrong state.
+  window.addEventListener('pageshow', function (e) { if (e.persisted) close(); });
+})();
+</script>
+<!-- /nav:js -->
 </body>
 </html>
