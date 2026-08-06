@@ -936,6 +936,20 @@ window.CMProgress = (function () {
     var host = typeof mount === "string" ? document.querySelector(mount) : mount;
     if (!host) return noop();
 
+    /*
+      Stop whatever was running here before.
+
+      Two runs can overlap — a second submit while the first is still in
+      flight, or the website builder's Rebuild button, which calls the same
+      function again. Without this, the previous controller's interval keeps
+      painting into the same element, and you get the older run's percentage
+      fighting the newer run's label: a bar that reads "done" at 71%.
+
+      Found by accident, by submitting twice. The disabled button makes it
+      rare rather than impossible, and "rare" is not a fix.
+    */
+    if (host.__cmStop) { try { host.__cmStop(); } catch (e) {} }
+
     host.innerHTML =
       '<div class="prog-top">' +
         '<span class="prog-step"><span></span></span>' +
@@ -958,9 +972,13 @@ window.CMProgress = (function () {
       acc += s.w || 1;
     });
 
-    var i = -1, timer = null, enteredAt = 0, shown = 0;
+    var i = -1, timer = null, enteredAt = 0, shown = 0, dead = false;
+
+    // Registered so the next attach() on this element can shut this one down.
+    host.__cmStop = function () { dead = true; clearInterval(timer); };
 
     function paint(p) {
+      if (dead) return;                      // superseded by a later run
       shown = Math.max(shown, p);            // never runs backwards
       fill.style.width = (shown * 100).toFixed(1) + "%";
       pct.textContent = Math.round(shown * 100);
@@ -979,6 +997,7 @@ window.CMProgress = (function () {
     }
 
     function enter(n) {
+      if (dead) return;
       i = n;
       var b = bands[i];
       if (!b) return;
@@ -997,6 +1016,7 @@ window.CMProgress = (function () {
       /* The only place 100% is written. */
       done: function (msg) {
         clearInterval(timer);
+        if (dead) return this;
         host.dataset.state = "done";
         label.textContent = msg || "Done";
         shown = 1; fill.style.width = "100%"; pct.textContent = "100";
@@ -1004,12 +1024,14 @@ window.CMProgress = (function () {
       },
       fail: function (msg) {
         clearInterval(timer);
+        if (dead) return this;
         host.dataset.state = "fail";
         label.textContent = msg || "That did not work";
         return this;
       },
       reset: function () {
         clearInterval(timer);
+        if (dead) return this;
         host.dataset.state = "idle";
         shown = 0; fill.style.width = "0%"; pct.textContent = "0";
         return this;
