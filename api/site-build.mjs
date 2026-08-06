@@ -38,6 +38,16 @@ import { quote } from "../lib/media/credits.mjs";
   rather than quietly downgraded to the free one and charged for.
 */
 
+/*
+  Whether the footage pipeline exists — storyboard, keyframe, chained clips
+  with junction gating, assembly, canvas scrub. It does not. The adapter that
+  would drive it does, and those are not the same thing; treating them as the
+  same is what let this endpoint sell the free tier as the premium one.
+
+  Flip this when the pipeline lands, not when a key does.
+*/
+const CINEMATIC_PIPELINE_READY = false;
+
 const BUILDS_PER_IP_HOUR = 5;
 const MODEL = "claude-opus-5";
 const MAX_BRIEF = 1500;
@@ -144,18 +154,33 @@ export default async function handler(req, res) {
     for a premium tier and delivering the free one is the single worst thing
     this endpoint could do, so the absence of an engine is stated plainly.
   */
-  if (body?.tier === "cinematic" && !mediaAvailable()) {
+  if (body?.tier === "cinematic") {
     /*
-      Checked against the real adapter rather than a placeholder flag, so this
-      tier switches on the moment a FAL_KEY exists and no code has to change.
-      Until then it refuses with the reason instead of quietly building the
-      free tier and charging for the premium one.
+      Two separate things have to be true for this tier, and conflating them
+      was a real bug: gating only on mediaAvailable() meant that the moment a
+      FAL_KEY appeared, this endpoint happily built the FREE tier and returned
+      it under the cinematic label. No footage, no canvas, premium name. That
+      is the single worst thing this endpoint can do and it shipped for one
+      deploy.
+
+      An engine being reachable is necessary and nowhere near sufficient. The
+      cinematic tier is a pipeline — storyboard the journey into chapters,
+      generate an opening keyframe, chain each clip from the previous clip's
+      last frame, gate every junction on measured similarity, assemble, and
+      drive it with a canvas scrub engine. The adapter in lib/media exists.
+      That pipeline does not.
+
+      So the gate is the pipeline, and the engine is reported separately, and
+      neither is allowed to stand in for the other.
     */
     const perClip = quote("video.chain", { seconds: 5 });
     return res.status(503).json({
-      error: "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free.",
-      code: "no_video_engine",
-      wouldCost: perClip ? `${perClip.credits} credits per 5-second clip once connected` : null,
+      error: CINEMATIC_PIPELINE_READY
+        ? "The cinematic tier needs a connected image-to-video engine, and none is configured on this deployment. The scroll-film tier below is fully available and free."
+        : "The cinematic tier is not built yet — the footage pipeline that chains shots into one continuous take does not exist on this deployment, only the engine behind it. The scroll-film tier below is fully available and free, and is what you would get today.",
+      code: CINEMATIC_PIPELINE_READY ? "no_video_engine" : "pipeline_not_built",
+      engineConnected: mediaAvailable(),
+      wouldCost: perClip ? `${perClip.credits} credits per 5-second clip once built` : null,
     });
   }
 
