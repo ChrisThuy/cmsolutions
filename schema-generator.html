@@ -574,6 +574,18 @@
     display: block; margin-top: .3rem; font-size: .72rem;
     color: var(--ink-faint, #6b6960); line-height: 1.35;
   }
+  /* An optional second line. The workflow planner's figures carried three
+     pieces — value, label and a qualifier like "per month · 109h a year" —
+     and a shared tile that could only hold two would have thrown the
+     qualifier away to gain consistency. That is a bad trade. */
+  .dash-stat .s {
+    display: block; margin-top: .35rem; font-size: .68rem; line-height: 1.4;
+    color: var(--ink-faint, #6b6960); opacity: .85;
+  }
+  /* A tile that spans the row, for a note that belongs with the figures
+     rather than under them. */
+  .dash-stat--wide { grid-column: 1 / -1; }
+  .dash-stat--wide .l { margin-top: 0; }
   .dash-stat[data-tone="good"] .n { color: var(--go, #a8b878); }
   .dash-stat[data-tone="warn"] .n { color: var(--warn, #d4af6a); }
   .dash-stat[data-tone="bad"]  .n { color: var(--stop, #d98b6a); }

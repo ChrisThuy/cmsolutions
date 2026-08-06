@@ -108,11 +108,6 @@
   .flow{font-family:var(--serif);font-size:clamp(1.05rem,2.3vw,1.3rem);line-height:1.45;font-weight:300}
   .flow .arrow{color:var(--ink-faint);margin:0 .5rem}
 
-  .figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--hairline);border:1px solid var(--hairline);margin-top:1.6rem}
-  .fig{background:var(--void);padding:1rem}
-  .fig .k{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
-  .fig .v{font-family:var(--mono);font-size:1.3rem;margin-top:.35rem;letter-spacing:-.02em}
-  .fig .u{font-size:.72rem;color:var(--ink-faint);margin-top:.2rem}
 
   .noestimate{margin-top:1.6rem;border:1px solid var(--hairline);border-left:2px solid var(--human);padding:1rem 1.1rem;font-size:.88rem;color:var(--ink-dim)}
   .noestimate b{color:var(--ink);font-weight:400}
@@ -176,17 +171,16 @@
     .print-head .t{font-family:var(--serif);font-size:1.25rem}
     .print-head .s{font-size:.82rem;color:#666;margin-top:.3rem}
     .plan{border-top:0;padding-top:0}
-    .flow,.fig .v,.startwith .v{color:#111}
-    .figures,.fig,.caveat,.startwith,.noestimate,ol.steps li,ul.plain li{border-color:#ddd}
-    .fig{background:#fff} .figures{background:#ddd}
-    .fig .k,.fig .u,.s-meta,ul.plain li{color:#555}
+    .flow,.startwith .v{color:#111}
+    .caveat,.startwith,.noestimate,ol.steps li,ul.plain li{border-color:#ddd}
+    .s-meta,ul.plain li{color:#555}
     .s-detail{color:#444}
     .h--automated .s-tag{color:#4a6b1f}.h--assisted .s-tag{color:#1f5a6b}.h--human .s-tag{color:#8a6a1f}
     .caveat,.noestimate{color:#444}
     .plan[hidden]~.print-foot,.print-head:has(~.plan[hidden]){display:none}
     .print-foot{display:block;margin-top:1.6rem;padding-top:.8rem;border-top:1px solid #ccc;font-size:.74rem;color:#555}
     .print-foot b{color:#111}
-    ol.steps li,.figures,.caveat,.startwith{break-inside:avoid}
+    ol.steps li,.caveat,.startwith{break-inside:avoid}
     @page{margin:16mm 14mm}
   }
 
@@ -486,6 +480,18 @@
     display: block; margin-top: .3rem; font-size: .72rem;
     color: var(--ink-faint, #6b6960); line-height: 1.35;
   }
+  /* An optional second line. The workflow planner's figures carried three
+     pieces — value, label and a qualifier like "per month · 109h a year" —
+     and a shared tile that could only hold two would have thrown the
+     qualifier away to gain consistency. That is a bad trade. */
+  .dash-stat .s {
+    display: block; margin-top: .35rem; font-size: .68rem; line-height: 1.4;
+    color: var(--ink-faint, #6b6960); opacity: .85;
+  }
+  /* A tile that spans the row, for a note that belongs with the figures
+     rather than under them. */
+  .dash-stat--wide { grid-column: 1 / -1; }
+  .dash-stat--wide .l { margin-top: 0; }
   .dash-stat[data-tone="good"] .n { color: var(--go, #a8b878); }
   .dash-stat[data-tone="warn"] .n { color: var(--warn, #d4af6a); }
   .dash-stat[data-tone="bad"]  .n { color: var(--stop, #d98b6a); }
@@ -647,7 +653,7 @@
       <section class="plan" id="plan" hidden aria-labelledby="flow">
         <p class="flow" id="flow"></p>
 
-        <div class="figures" id="figures" hidden></div>
+        <div class="dash-stats" id="figures" hidden></div>
         <div class="noestimate" id="noestimate" hidden>
           <b>No hours estimated.</b> You did not give a frequency and a
           duration, so there is nothing to multiply. Add them above and the
@@ -952,16 +958,17 @@ window.CMProgress = (function () {
     if (s) {
       const figs = [
         { k: "Hours now", v: fmt(s.hoursNowMonthly, 1), u: "per month, as you described it" },
-        { k: "Hours saved", v: fmt(s.hoursSavedMonthly, 1), u: `per month · ${fmt(s.hoursSavedYearly, 0)} a year` },
+        { k: "Hours saved", v: fmt(s.hoursSavedMonthly, 1), u: `per month · ${fmt(s.hoursSavedYearly, 0)} a year`, tone: "good" },
       ];
       if (s.costSavedMonthly !== null) {
         figs.push({ k: "At your rate", v: "£" + fmt(s.costSavedMonthly), u: `per month · £${fmt(s.costSavedYearly)} a year` });
       }
       figs.push({ k: "Steps", v: `${p.tally.automated}/${p.tally.total}`, u: `automated · ${p.tally.human} stay human` });
       $("figures").innerHTML = figs.map((f) =>
-        `<div class="fig"><p class="k">${esc(f.k)}</p><p class="v">${esc(f.v)}</p><p class="u">${esc(f.u)}</p></div>`).join("")
-        + `<div class="fig" style="grid-column:1/-1"><p class="k">Worked out from</p><p class="u" style="margin-top:.4rem">${
-          s.assumptions.map(esc).join(" · ")}</p></div>`;
+        `<div class="dash-stat"${f.tone ? ` data-tone="${f.tone}"` : ""}><span class="n">${esc(f.v)}</span>` +
+        `<span class="l">${esc(f.k)}</span><span class="s">${esc(f.u)}</span></div>`).join("")
+        + `<div class="dash-stat dash-stat--wide"><span class="l">Worked out from</span>` +
+          `<span class="s">${s.assumptions.map(esc).join(" · ")}</span></div>`;
     }
 
     $("steps").innerHTML = p.steps.map((st) => `

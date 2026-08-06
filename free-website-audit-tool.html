@@ -143,14 +143,6 @@
   .report[hidden] { display: none; }
   .report-head { border-top: 1px solid var(--hairline); padding-top: 1.8rem; }
   .report-url { font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 1.6rem); word-break: break-all; }
-  .tally { display: flex; flex-wrap: wrap; gap: 1.4rem; margin-top: 1rem; font-size: 0.9rem; }
-  .tally span { color: var(--ink-dim); }
-  .tally b { font-weight: 500; color: var(--ink); }
-  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.45rem; vertical-align: 0.05em; }
-  .dot--pass { background: var(--c-olive); }
-  .dot--warn { background: var(--c-psychart); }
-  .dot--fail { background: #e08a7a; }
-  .dot--info { background: var(--ink-faint); }
 
   .results { list-style: none; margin-top: 2rem; }
   .results li { border-top: 1px solid var(--hairline); padding-block: 1.2rem; }
@@ -244,7 +236,6 @@
     .print-head .when { font-size: 0.8rem; color: #777; margin-top: 0.4rem; }
 
     .report-url { display: none; }   /* already in the print header */
-    .tally span, .tally b { color: #111; }
     .results li { border-color: #ddd; break-inside: avoid; page-break-inside: avoid; }
     .result-label { color: #111; }
     .result-finding { color: #333; }
@@ -255,10 +246,6 @@
     .result-status--warn { color: #8a6a1f; }
     .result-status--fail { color: #a33; }
     .result-status--info { color: #666; }
-    .dot--pass { background: #4a6b1f; }
-    .dot--warn { background: #8a6a1f; }
-    .dot--fail { background: #a33; }
-    .dot--info { background: #666; }
   }
 
   /* ── sections ───────────────────────────────────────── */
@@ -612,6 +599,18 @@
     display: block; margin-top: .3rem; font-size: .72rem;
     color: var(--ink-faint, #6b6960); line-height: 1.35;
   }
+  /* An optional second line. The workflow planner's figures carried three
+     pieces — value, label and a qualifier like "per month · 109h a year" —
+     and a shared tile that could only hold two would have thrown the
+     qualifier away to gain consistency. That is a bad trade. */
+  .dash-stat .s {
+    display: block; margin-top: .35rem; font-size: .68rem; line-height: 1.4;
+    color: var(--ink-faint, #6b6960); opacity: .85;
+  }
+  /* A tile that spans the row, for a note that belongs with the figures
+     rather than under them. */
+  .dash-stat--wide { grid-column: 1 / -1; }
+  .dash-stat--wide .l { margin-top: 0; }
   .dash-stat[data-tone="good"] .n { color: var(--go, #a8b878); }
   .dash-stat[data-tone="warn"] .n { color: var(--warn, #d4af6a); }
   .dash-stat[data-tone="bad"]  .n { color: var(--stop, #d98b6a); }
@@ -767,7 +766,7 @@
 
         <div class="report-head">
           <p class="report-url" id="report-url"></p>
-          <p class="tally" id="tally"></p>
+          <div class="dash-stats" id="tally"></div>
         </div>
 
         <!--
@@ -998,19 +997,25 @@ window.CMProgress = (function () {
     reportUrl.textContent = data.site;
 
     tally.replaceChildren();
-    const pill = (count, label, kind) => {
-      if (!count) return;
-      const span = document.createElement("span");
-      const dot = document.createElement("span");
-      dot.className = `dot dot--${kind}`;
-      const strong = document.createElement("b");
-      strong.textContent = String(count);
-      span.append(dot, strong, document.createTextNode(` ${label}`));
-      tally.append(span);
+    /* Tiles rather than inline pills, so this reads the same as every other
+       tool's summary. A zero is worth showing here — "0 to fix" is the good
+       news the pills used to hide by omitting the pill entirely. */
+    const tile = (count, label, tone) => {
+      const box = document.createElement("div");
+      box.className = "dash-stat";
+      if (tone) box.dataset.tone = tone;
+      const n = document.createElement("span");
+      n.className = "n";
+      n.textContent = String(count);
+      const l = document.createElement("span");
+      l.className = "l";
+      l.textContent = label;
+      box.append(n, l);
+      tally.append(box);
     };
-    pill(data.counts.fail, "to fix", "fail");
-    pill(data.counts.warn, "worth a look", "warn");
-    pill(data.counts.pages, data.counts.pages === 1 ? "page checked" : "pages checked", "info");
+    tile(data.counts.fail, "to fix", data.counts.fail ? "bad" : "good");
+    tile(data.counts.warn, "worth a look", data.counts.warn ? "warn" : null);
+    tile(data.counts.pages, data.counts.pages === 1 ? "page checked" : "pages checked", null);
 
     results.replaceChildren();
 
