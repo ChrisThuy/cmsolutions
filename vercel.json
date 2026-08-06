@@ -39,6 +39,15 @@
     },
     "api/site-build.mjs": {
       "maxDuration": 300
+    },
+    "api/demo.mjs": {
+      "maxDuration": 15
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/demo/:slug",
+      "destination": "/api/demo?slug=:slug"
+    }
+  ]
 }

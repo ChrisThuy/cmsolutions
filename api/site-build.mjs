@@ -6,6 +6,9 @@ import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
 import { mediaAvailable } from "../lib/media/provider.mjs";
 import { quote } from "../lib/media/credits.mjs";
 
+// Set in Vercel; falls back so a preview deployment still builds a usable link.
+const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://cmsolutions.tech";
+
 /*
   POST /api/site-build  { brief, tier }
 
@@ -281,6 +284,35 @@ export default async function handler(req, res) {
 
   const html = renderSite(spec);
 
+  /*
+    Publish it, and hand back a link rather than a file.
+
+    The builder used to return the document for download, which gave away the
+    product and left nothing to sell. A demo on our own origin is something a
+    prospect can open and forward, and it keeps "on your own domain, hosted by
+    us" as a real upgrade.
+
+    Publishing must never fail the build. The page in the response is already
+    good; if storage is down the visitor still gets their site in the preview
+    and only loses the shareable link, so this is caught and reported as an
+    absent demoUrl rather than thrown.
+  */
+  let demo = null;
+  try {
+    const slug = await rpc("publish_site_demo", {
+      p_stem: spec.brandName,
+      p_brand_name: spec.brandName,
+      p_concept: spec.conceptName,
+      p_html: html,
+      p_created_by: null,
+    }, { withSecret: false });
+    if (typeof slug === "string" && slug) {
+      demo = { slug, url: `${SITE_ORIGIN}/demo/${slug}`, expiresInDays: 30 };
+    }
+  } catch (cause) {
+    console.error("[sitegen] could not publish the demo:", cause?.message);
+  }
+
   console.info(
     `[sitegen] ${spec.conceptName} · ${spec.chapters.length} chapters · ` +
     `${Math.round(html.length / 1024)} KB · ` +
@@ -292,7 +324,8 @@ export default async function handler(req, res) {
     html,
     summary: describeSpec(spec),
     spec,
-    stored: false,
+    demo,
+    stored: demo !== null,
     model: MODEL,
   });
 }

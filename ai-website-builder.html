@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <title>AI Website Builder | CM Solutions</title>
-<meta name="description" content="Describe a brand and get a complete scroll-film website — one continuous cinematic journey, art-directed, written and built. Download the file and host it anywhere." />
+<meta name="description" content="Describe a brand and get a complete scroll-film website — one continuous cinematic journey, art-directed, written and built. Free, and live on a link you can share." />
 <link rel="canonical" href="https://cmsolutions.tech/ai-website-builder" />
 
 <meta property="og:title" content="AI Website Builder | CM Solutions" />
-<meta property="og:description" content="A brief in, a complete scroll-film site out — art-directed, written, and built as one self-contained file you own." />
+<meta property="og:description" content="A brief in, a complete scroll-film site out — art-directed, written, built, and live on a link you can share." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://cmsolutions.tech/ai-website-builder" />
 <meta property="og:site_name" content="CM Solutions" />
@@ -125,6 +125,28 @@
   .frame iframe{display:block;width:100%;height:min(70vh,620px);border:0;background:#000}
 
   .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.2rem}
+
+  /* ── the live link ─────────────────────────────────────────────────
+     Given its own block above the buttons rather than sitting among
+     them, because it is the thing the visitor came for and the thing
+     they will send to somebody else. */
+  .demo-live{margin-top:1.4rem;padding:1rem 1.1rem;border:1px solid var(--hairline);
+             border-left:2px solid var(--go,#a8b878);border-radius:3px;background:rgba(168,184,120,.04)}
+  .demo-eyebrow{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+                color:var(--go,#a8b878);margin-bottom:.5rem}
+  .demo-row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}
+  /* A URL is the one thing here that must break anywhere rather than
+     push the page sideways on a phone. */
+  .demo-url{font-family:var(--mono,ui-monospace,SFMono-Regular,Menlo,monospace);
+            font-size:.86rem;color:var(--ink);word-break:break-all;min-width:0}
+  .demo-note{margin-top:.55rem;font-size:.74rem;color:var(--ink-faint)}
+
+  /* ── the offer ── */
+  .golive{margin-top:1.6rem;padding:1.3rem 1.25rem;border:1px solid var(--hairline);border-radius:3px}
+  .golive h3{font-family:var(--serif,Georgia,serif);font-weight:400;font-size:1.15rem;margin-bottom:.6rem}
+  .golive p{font-size:.88rem;color:var(--ink-dim);line-height:1.6;margin-bottom:.8rem}
+  .golive-terms{font-size:.78rem;color:var(--ink-faint)}
+  @media print{.demo-live,.golive{display:none}}
 
   .caveat{margin-top:1.8rem;padding:1rem 1.1rem;border:1px solid var(--hairline);border-left:2px solid var(--warn);font-size:.86rem;color:var(--ink-dim)}
   .caveat b{color:var(--ink);font-weight:400}
@@ -523,8 +545,8 @@
     <p class="lede">
       Not a page with animations bolted on — a single journey from top to
       bottom, with a concept, a palette, a type pairing and copy written for
-      that brand. It comes out as <b>one self-contained file</b> you download
-      and host anywhere. No account, no builder to learn, no lock-in.
+      that brand. You get a <b>live link you can send to anyone</b>, running
+      for 30 days. No account, no builder to learn, nothing to install.
     </p>
     <p class="lede">
       The part worth knowing: the model art-directs and writes, and the page
@@ -598,19 +620,41 @@
                   sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
 
+        <div class="demo-live" id="demo-live" hidden>
+          <p class="demo-eyebrow">Your site is live</p>
+          <div class="demo-row">
+            <a class="demo-url" id="demo-url" href="#" target="_blank" rel="noopener"></a>
+            <button type="button" class="btn btn--small" id="demo-copy">Copy link</button>
+          </div>
+          <p class="demo-note" id="demo-note"></p>
+        </div>
+
         <div class="actions">
-          <button type="button" class="btn" id="download">Download the file</button>
           <button type="button" class="btn" id="open">Open full screen</button>
           <button type="button" class="btn btn--small" id="rebuild">Build it again, differently</button>
         </div>
 
+        <div class="golive">
+          <h3>Go live with us</h3>
+          <p>
+            The link above is a demo — it runs for 30 days and then it stops.
+            If you want this as your actual website, we do the rest: your own
+            domain, hosting that stays up, the copy tightened, your photography
+            in place of the generated world, analytics, and the search basics
+            done properly.
+          </p>
+          <p class="golive-terms">
+            Fixed price, quoted before anything starts. You own the result.
+          </p>
+          <a class="btn btn--primary" id="golive-cta" href="/#contact">Get a price for this site</a>
+        </div>
+
         <p class="caveat">
-          <b>What you get.</b> One HTML file, self-contained apart from Google
-          Fonts and the animation libraries it loads from a CDN. Put it on any
-          host. It is a real starting point built to a real standard — reduced
+          <b>What this is.</b> A real page built to a real standard — reduced
           motion respected, a skip link past the film, contrast checked before
-          it renders — and it is a starting point rather than a finished site.
-          The words are yours to edit.
+          it renders. It is a starting point rather than a finished site: the
+          words are generated and worth rewriting, and the imagery is colour
+          and motion rather than photographs of your actual work.
         </p>
       </section>
     </div>
@@ -885,18 +929,33 @@ window.CMProgress = (function () {
 
     $("frame-size").textContent = `${Math.round(payload.html.length / 1024)} KB`;
 
+    /* The build is useful without a demo link — storage could be down — so
+       the block only appears when there is genuinely something to click,
+       rather than showing a dead URL. */
+    const demo = payload.demo;
+    $("demo-live").hidden = !demo;
+    if (demo) {
+      $("demo-url").href = demo.url;
+      $("demo-url").textContent = demo.url;
+      $("demo-note").textContent =
+        `Live for ${demo.expiresInDays} days, then it stops. Send it to anyone — nothing to install.`;
+    }
+
     $("result").hidden = false;
     $("result").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  $("download").addEventListener("click", () => {
-    if (!lastHtml) return;
-    const a = document.createElement("a");
-    const url = URL.createObjectURL(new Blob([lastHtml], { type: "text/html" }));
-    a.href = url;
-    a.download = `${lastName}.html`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  $("demo-copy").addEventListener("click", async () => {
+    const url = $("demo-url").href;
+    if (!url || url.endsWith("#")) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      $("demo-copy").textContent = "Copied";
+      setTimeout(() => { $("demo-copy").textContent = "Copy link"; }, 1600);
+    } catch {
+      // Clipboard is permission-gated; the link is on screen and selectable.
+      $("demo-note").textContent = "Copy blocked by the browser — select the link above.";
+    }
   });
 
   $("open").addEventListener("click", () => {
