@@ -311,7 +311,28 @@ export default async function handler(req, res) {
 
   let spec = null, usage = null, ranOn = null, lastError = null;
 
-  for (const studio of order) {
+  /*
+    A real clock, not a hope.
+
+    The function is killed at FUNCTION_BUDGET_MS whatever we think, so each
+    studio gets a slice of what is actually left rather than an open-ended
+    call. Without this the first studio can spend the entire budget and the
+    fallback never runs — which is precisely what turned one recoverable
+    JSON-parsing failure into a failed build for a visitor.
+  */
+  const startedAt = Date.now();
+  const FUNCTION_BUDGET_MS = 280_000;
+  const remaining = () => FUNCTION_BUDGET_MS - (Date.now() - startedAt);
+
+  for (const [attempt, studio] of order.entries()) {
+    // Leave the last studio the lot; give earlier ones room for a retry.
+    const isLast = attempt === order.length - 1;
+    const slice = isLast ? remaining() - 15_000 : Math.floor(remaining() * 0.6);
+    if (slice < 20_000) {
+      console.warn(`[sitegen] skipping ${studio.label} — only ${Math.round(remaining() / 1000)}s left`);
+      break;
+    }
+
     try {
       const result = await artDirect({
         system: SYSTEM,
@@ -319,6 +340,7 @@ export default async function handler(req, res) {
         zodSchema: SiteSpecSchema,
         jsonSchema: SPEC_JSON_SCHEMA,
         maxTokens: 16000,
+        budgetMs: slice,
         studio,
       });
       spec = result.spec; usage = result.usage; ranOn = studio;
