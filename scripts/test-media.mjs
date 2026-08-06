@@ -15,8 +15,8 @@
 */
 
 import {
-  MODELS, MODELS_REVIEWED, ProviderError, generateImage, generateVideo,
-  isRetryable, mediaAvailable, withRetry,
+  MODELS, MODELS_REVIEWED, ProviderError, buildVideoInput, generateImage,
+  generateVideo, isRetryable, mediaAvailable, withRetry,
 } from "../lib/media/provider.mjs";
 import {
   PRICES, PRICES_REVIEWED, alreadyRefunded, balanceOf, canAfford, debitEntry,
@@ -186,6 +186,46 @@ console.log("\nRetry backs off, gives up, and does not retry what it should not"
   await withRetry(async (n) => { if (n < 3) throw new ProviderError("x", { retryable: true }); return 1; },
     { baseMs: 100, onRetry: (_n, _e, ms) => waits.push(ms) });
   check("backoff grows between attempts", waits.length === 2 && waits[1] > waits[0], JSON.stringify(waits));
+}
+
+console.log("\nEach model gets the input shape it actually declares");
+{
+  /*
+    fal accepts unknown keys and drops them, so a wrong parameter name fails
+    silently. The chain model takes start_image_url; it was being sent
+    image_url, which meant a "chained" clip was generated from nothing and the
+    continuity the cinematic tier depends on was absent with no error. Only a
+    live call surfaced it, so it is pinned here.
+  */
+  const chain = buildVideoInput({
+    chaining: true, prompt: "drift left", startImage: "https://x/a.jpg",
+    endImage: "https://x/b.jpg", seconds: 5, resolution: "480p",
+  });
+  check("the chain model gets start_image_url", chain.start_image_url === "https://x/a.jpg");
+  check("and end_image_url", chain.end_image_url === "https://x/b.jpg");
+  check("and never image_url, which it would silently ignore",
+    chain.image_url === undefined, JSON.stringify(chain));
+  check("nor image_tail", chain.image_tail === undefined);
+
+  const noEnd = buildVideoInput({ chaining: true, prompt: "p", startImage: "https://x/a.jpg", seconds: 5 });
+  check("no end frame means the key is absent rather than null",
+    !("end_image_url" in noEnd), JSON.stringify(noEnd));
+
+  const cheap = buildVideoInput({
+    chaining: false, prompt: "p", startImage: "https://x/a.jpg", seconds: 5, resolution: "480p",
+  });
+  check("the cheap model gets image_url", cheap.image_url === "https://x/a.jpg");
+  check("and never start_image_url", cheap.start_image_url === undefined);
+  check("resolution is sent, or it defaults to full price",
+    cheap.resolution === "480p", JSON.stringify(cheap));
+
+  // wan-25 has no generate_audio parameter; passing it did nothing except
+  // look like cost control.
+  check("no invented parameters are sent",
+    !("generate_audio" in cheap) && !("generate_audio" in chain));
+
+  check("duration is a string, as both schemas declare",
+    typeof cheap.duration === "string" && typeof chain.duration === "string");
 }
 
 console.log("\nWith no engine configured, it refuses cleanly");
