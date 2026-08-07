@@ -4,6 +4,7 @@ import {
   readReference, referenceBrief, referenceAvailable,
   readOwnSite, ownSiteBrief, summariseOwnSite,
 } from "../lib/sitegen/reference.mjs";
+import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
@@ -446,6 +447,35 @@ export default async function handler(req, res) {
     — a hallucinated digit has no route onto the page because the page never
     asks the model for one.
   */
+  /*
+    A hero image, only if they have none of their own.
+
+    Their photographs always win — a generated approximation of a barbershop
+    is never better than a photograph of the barbershop. This is what happens
+    when there is nothing to inherit, so the first screen is a picture rather
+    than a gradient.
+
+    Stored before the page is rendered, because the renderer needs the URL and
+    the URL needs the id. Doing it the other way round would need the demo's
+    slug before the demo exists.
+  */
+  let generatedHero = null;
+  if (!ownSite?.images?.length && imageGenAvailable()) {
+    const image = await generateHero(spec);
+    if (image) {
+      try {
+        const id = await rpc("store_site_image", { p_data: image.data, p_mime: image.mime }, { withSecret: false });
+        if (typeof id === "string" && id) {
+          generatedHero = `${SITE_ORIGIN}/api/demo?img=${id}`;
+          spec.images = [generatedHero];
+          console.info(`[sitegen] generated hero ${id} — $${image.cost ?? "?"}`);
+        }
+      } catch (cause) {
+        console.error("[sitegen] could not store the generated hero:", cause?.message);
+      }
+    }
+  }
+
   if (ownSite?.images?.length) {
     /* Hotlinked to their own server, deliberately. A thirty-day demo does
        not justify copying somebody's photographs onto our storage, and if
@@ -520,6 +550,7 @@ export default async function handler(req, res) {
       ? { url: reference.url, title: reference.title, palette: reference.palette.map((c) => c.hex), fonts: reference.fonts }
       : null,
     referenceProblem,
+    generatedHero: Boolean(generatedHero),
     ownSite: ownSite ? { url: ownSite.url, found: summariseOwnSite(ownSite), images: ownSite.images.slice(0, 12) } : null,
     ownSiteProblem,
     stored: demo !== null,

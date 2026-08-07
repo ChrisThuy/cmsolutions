@@ -139,6 +139,29 @@ async function handleUpdate(req, res) {
 
 
 
+async function handleImage(req, res) {
+  const id = String(req.query?.img ?? "").trim().toLowerCase();
+  if (!/^[a-z0-9]{16,48}$/.test(id)) return res.status(404).end();
+
+  try {
+    const rows = await rpc("read_site_image", { p_id: id }, { withSecret: false });
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    if (!row?.data) return res.status(404).end();
+
+    const buffer = Buffer.from(row.data, "base64");
+    res.setHeader("Content-Type", row.mime || "image/png");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    // Immutable: the id is content-addressed by randomness and the row is
+    // never rewritten, so this can be cached hard for the demo's whole life.
+    res.setHeader("Cache-Control", "public, max-age=2592000, immutable");
+    res.setHeader("X-Robots-Tag", "noindex");
+    return res.status(200).send(buffer);
+  } catch (cause) {
+    console.error("[demo] image read failed:", cause?.message);
+    return res.status(502).end();
+  }
+}
+
 async function handleSpec(req, res) {
   res.setHeader("Cache-Control", "no-store");
   const slug = String(req.query?.slug ?? "").trim().toLowerCase();
@@ -197,6 +220,9 @@ export default async function handler(req, res) {
      load an existing demo into its editor. Same slug-as-credential model as
      everything else here: holding the link is the only claim anyone has, and
      it is what already lets them overwrite the page. */
+  // Folded in rather than given its own route: Vercel's Hobby plan allows
+  // twelve functions and this project sits at exactly twelve.
+  if (req.query?.img) return handleImage(req, res);
   if (req.query?.spec) return handleSpec(req, res);
 
   const slug = String(req.query?.slug ?? "").trim().toLowerCase();
