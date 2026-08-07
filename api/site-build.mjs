@@ -5,6 +5,7 @@ import {
   readOwnSite, ownSiteBrief, summariseOwnSite,
 } from "../lib/sitegen/reference.mjs";
 import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
+import { EditOpsSchema, EDIT_SYSTEM, applyOps, describeForEditing } from "../lib/sitegen/edit.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
@@ -112,11 +113,15 @@ function clientIp(req) {
   return typeof real === "string" && real.trim() ? real.trim() : null;
 }
 
-async function consumeAllowance(key) {
+/* Two buckets, because a build and an edit are not the same expense: a build
+   is 7 cents and two minutes, an edit is well under one and a few seconds.
+   Sharing one allowance would ration the cheap thing to protect the dear
+   one. */
+async function consumeAllowance(key, bucket = "sitegen:ip", max = BUILDS_PER_IP_HOUR) {
   try {
     const row = await rpc(
       "consume_rate_limit",
-      { p_bucket: "sitegen:ip", p_key: key, p_max: BUILDS_PER_IP_HOUR, p_window: "1 hour" },
+      { p_bucket: bucket, p_key: key, p_max: max, p_window: "1 hour" },
       { withSecret: false },
     );
     return row?.allowed === true;
@@ -202,6 +207,68 @@ Rules:
   in one sentence — it drives the generated world, and later the shot prompt
   if real footage is added.`;
 
+const EDIT_SCHEMA = z.toJSONSchema(EditOpsSchema, { target: "draft-7", io: "output" });
+
+async function handleEdit(req, res, body) {
+  const spec = body?.spec;
+  const instruction = String(body?.instruction ?? "").trim().slice(0, 600);
+  if (!spec || typeof spec !== "object") return res.status(400).json({ error: "No design to edit." });
+  if (instruction.length < 2) return res.status(400).json({ error: "Say what you would like changed." });
+
+  const ip = clientIp(req);
+  if (!ip) return res.status(400).json({ error: "We could not process that request." });
+  if (!(await consumeAllowance(ip, "sitegen:edit:ip", 60))) {
+    return res.status(429).json({ error: "That is a lot of edits from one connection this hour. The fields below still work, and they are free." });
+  }
+
+  const order = [chosenStudio(), ...Object.values(STUDIOS).filter((st) => st !== chosenStudio())]
+    .filter((st) => process.env[st.keyVar]);
+  if (!order.length) return res.status(503).json({ error: "This is not configured correctly." });
+
+  let result = null, lastError = null;
+  for (const studio of order) {
+    try {
+      const r = await artDirect({
+        system: EDIT_SYSTEM,
+        user: `Here is the design, one editable path per line:\n\n${describeForEditing(spec)}\n\n` +
+              `They asked for: ${instruction}`,
+        zodSchema: EditOpsSchema,
+        jsonSchema: EDIT_SCHEMA,
+        maxTokens: 2000,
+        budgetMs: 60_000,
+        studio,
+      });
+      result = r; break;
+    } catch (cause) {
+      lastError = cause;
+      console.error(`[sitegen:edit] ${studio.label} failed: ${cause?.message}`);
+    }
+  }
+  if (!result) {
+    return res.status(lastError?.status === 429 ? 429 : 502).json({ error: "That change could not be worked out. Try saying it another way." });
+  }
+
+  const plan = result.spec;
+  if (plan.refused) return res.status(200).json({ refused: plan.refused, summary: plan.summary });
+
+  const { spec: edited, applied, rejected } = applyOps(spec, plan.ops ?? []);
+
+  /* The same gate a fresh build passes. An edit that pushes text under 4.5:1
+     is exactly as unreadable as a bad palette from the studio, and this is
+     where someone is most likely to ask for "a lighter grey". */
+  const sound = validateSpec(edited);
+  if (!sound.ok) {
+    return res.status(200).json({
+      refused: `That would break the design — ${sound.problems.join("; ")}. Nothing was changed.`,
+      summary: plan.summary,
+    });
+  }
+
+  console.info(`[sitegen:edit] ${result.studio.label} · ${applied.length} applied · ${result.usage?.input_tokens ?? "?"} in / ${result.usage?.output_tokens ?? "?"} out`);
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ spec: edited, summary: plan.summary, applied, rejected });
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -219,6 +286,15 @@ export default async function handler(req, res) {
   } catch {
     return res.status(400).json({ error: "That request could not be read." });
   }
+
+  /*
+    Editing by asking, rather than by finding the right box among forty.
+
+    Folded into this endpoint because the project sits at twelve of the
+    twelve serverless functions Hobby allows, and because it is the same act:
+    a design goes in, a better one comes out.
+  */
+  if (body?.mode === "edit") return handleEdit(req, res, body);
 
   const brief = String(body?.brief ?? "").trim();
   if (brief.length < MIN_BRIEF) {

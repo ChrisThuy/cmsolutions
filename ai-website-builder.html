@@ -126,6 +126,23 @@
 
   .tier-note{margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--hairline);font-size:.78rem;color:var(--ink-faint);line-height:1.55}
   .tier-note b{color:var(--ink-dim);font-weight:400}
+  .ask{margin-top:1.4rem;padding:1.1rem 1.15rem;border:1px solid var(--hairline);
+    border-left:2px solid var(--accent);border-radius:3px}
+  .ask h3{font-family:var(--serif,Georgia,serif);font-weight:400;font-size:1.05rem;margin-bottom:.4rem}
+  .ask-note{font-size:.78rem;color:var(--ink-faint);line-height:1.55;margin-bottom:.9rem}
+  .ask-note em{color:var(--ink-dim);font-style:normal}
+  .ask-form{display:flex;gap:.5rem}
+  .ask-form input{flex:1;min-width:0;padding:.6rem .7rem;background:var(--void);color:var(--ink);
+    border:1px solid var(--hairline);border-radius:3px;font-family:inherit;font-size:.88rem}
+  .ask-form input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .ask-log{list-style:none;margin:0 0 .9rem;padding:0;display:flex;flex-direction:column;gap:.5rem}
+  .ask-log li{font-size:.8rem;line-height:1.5;padding:.5rem .65rem;border-radius:3px;
+    background:rgba(232,230,223,.04);border-left:2px solid var(--hairline)}
+  .ask-log li.you{background:none;border-left-color:var(--accent);color:var(--ink-dim)}
+  .ask-log li.no{border-left-color:var(--warn,#d4af6a)}
+  .ask-log li .what{display:block;margin-top:.3rem;font-size:.72rem;color:var(--ink-faint)}
+  .ask-log li.busy{opacity:.6}
+
   .tweak{margin-top:1.4rem;border:1px solid var(--hairline);border-radius:3px;padding:.9rem 1rem}
   .tweak > summary{cursor:pointer;font-size:.9rem;list-style:none}
   .tweak > summary::-webkit-details-marker{display:none}
@@ -718,12 +735,28 @@
                   sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
 
+        <div class="ask" id="ask" hidden>
+          <h3>Ask for a change</h3>
+          <p class="ask-note">
+            Say it however you like — <em>“warmer colours”</em>,
+            <em>“the second headline is too long”</em>,
+            <em>“put the workshop chapter first”</em>. It changes only what you
+            asked for, and shows you what it touched.
+          </p>
+          <ol class="ask-log" id="ask-log"></ol>
+          <form class="ask-form" id="ask-form">
+            <input type="text" id="ask-input" autocomplete="off"
+                   placeholder="What would you like changed?" aria-label="Describe the change" />
+            <button type="submit" class="btn btn--primary btn--small" id="ask-go">Apply</button>
+          </form>
+        </div>
+
         <details class="tweak" id="tweak" hidden>
-          <summary>Change something and rebuild</summary>
+          <summary>Or edit the fields yourself</summary>
           <p class="tweak-note">
-            Edits render here instantly — no waiting, nothing spent. The film
-            is rebuilt by the same code the server uses, so what you see is
-            what you get.
+            Every field, in both languages. These are free and instant — no
+            model involved — so this is the place for exact wording and exact
+            colours.
           </p>
 
           <div class="tweak-langbar" id="t-langbar" hidden></div>
@@ -1154,6 +1187,7 @@ window.CMProgress = (function () {
     originalSpec = JSON.parse(JSON.stringify(payload.spec));
     buildTweakPanel();
     $("tweak").hidden = false;
+    $("ask").hidden = false;
 
     const demo = payload.demo;
     $("demo-live").hidden = !demo;
@@ -1378,6 +1412,66 @@ window.CMProgress = (function () {
     });
   }
 
+  /*
+    Asking for a change.
+
+    The model returns operations rather than a rewritten design: a tenth of
+    the cost, and it cannot quietly drop a chapter it was not asked about.
+    What it touched is listed back, because a page that is mysteriously
+    different is not a page anyone trusts.
+  */
+  function logLine(cls, html) {
+    const li = document.createElement("li");
+    li.className = cls;
+    li.innerHTML = html;
+    $("ask-log").append(li);
+    li.scrollIntoView({ block: "nearest" });
+    return li;
+  }
+
+  $("ask-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const instruction = $("ask-input").value.trim();
+    if (!instruction || !spec) return;
+
+    logLine("you", esc(instruction));
+    $("ask-input").value = "";
+    $("ask-go").disabled = true;
+    const pending = logLine("busy", "Working that out…");
+
+    try {
+      const res = await fetch("/api/site-build", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "edit", spec, instruction }),
+      });
+      const payload = await res.json().catch(() => null);
+      pending.remove();
+
+      if (!res.ok) { logLine("no", esc(payload?.error ?? "That did not work.")); return; }
+
+      if (payload.refused) {
+        logLine("no", esc(payload.refused));
+        return;
+      }
+
+      spec = payload.spec;
+      buildTweakPanel();
+      await repaint();
+
+      const what = (payload.applied ?? []).length
+        ? `<span class="what">Changed: ${esc(payload.applied.join(", "))}</span>` : "";
+      const no = (payload.rejected ?? []).length
+        ? `<span class="what">Could not: ${esc(payload.rejected.join("; "))}</span>` : "";
+      logLine("", esc(payload.summary ?? "Done.") + what + no);
+    } catch {
+      pending.remove();
+      logLine("no", "Could not reach the server.");
+    } finally {
+      $("ask-go").disabled = false;
+    }
+  });
+
   $("t-reset").addEventListener("click", () => {
     spec = JSON.parse(JSON.stringify(originalSpec));
     buildTweakPanel();
@@ -1439,7 +1533,7 @@ window.CMProgress = (function () {
       $("result").hidden = false;
       buildTweakPanel();
       $("tweak").hidden = false;
-      $("tweak").open = true;
+      $("ask").hidden = false;
       await repaint();
 
       $("demo-live").hidden = false;
