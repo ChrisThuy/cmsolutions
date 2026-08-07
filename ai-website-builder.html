@@ -170,6 +170,8 @@
   /* what it actually read, shown back so the design is not a black box */
   .ref-read{margin-top:1rem;padding:.8rem .9rem;border:1px solid var(--hairline);
     border-left:2px solid var(--accent);border-radius:3px;font-size:.78rem}
+  .own-missing{margin-top:.55rem;color:var(--ink-faint);font-size:.74rem;line-height:1.5}
+  .ref-read ul{margin:.4rem 0 0;padding-left:1.1rem;line-height:1.6}
   .ref-read .swatches{display:flex;gap:.3rem;margin-top:.45rem;flex-wrap:wrap}
   .ref-read .sw{width:1.15rem;height:1.15rem;border-radius:2px;border:1px solid var(--hairline)}
 
@@ -629,6 +631,18 @@
 
       <h3>How it gets made</h3>
       <div class="ref-field">
+        <label for="ownsite">Already have a website? <span class="opt">optional</span></label>
+        <input type="url" id="ownsite" placeholder="https://your-current-site.com"
+               inputmode="url" autocomplete="off" />
+        <p class="ref-note">
+          We carry your real details across — phone, email, address and map,
+          opening hours, social links — and rebuild everything around them.
+          Nothing is invented: the details come from your own page, not from
+          the model.
+        </p>
+      </div>
+
+      <div class="ref-field">
         <label for="reference">Or show it a site whose look you like <span class="opt">optional</span></label>
         <input type="url" id="reference" placeholder="https://a-site-you-admire.com"
                inputmode="url" autocomplete="off" />
@@ -720,6 +734,7 @@
           </div>
         </details>
 
+        <div class="ref-read" id="own-read" hidden></div>
         <div class="ref-read" id="ref-read" hidden></div>
 
         <div class="demo-live" id="demo-live" hidden>
@@ -996,7 +1011,11 @@ window.CMProgress = (function () {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         cache: "no-store",
-        body: JSON.stringify({ brief, tier, referenceUrl: $("reference").value.trim() || undefined }),
+        body: JSON.stringify({
+        brief, tier,
+        referenceUrl: $("reference").value.trim() || undefined,
+        ownSiteUrl: $("ownsite").value.trim() || undefined,
+      }),
       });
       prog.to(2);
       const payload = await res.json().catch(() => null);
@@ -1050,6 +1069,48 @@ window.CMProgress = (function () {
        result is unexplainable and they cannot tell a good read from a bad
        one. And if the reference failed, say so rather than silently
        producing a site from the brief alone. */
+    /* What was carried across, itemised. Someone whose phone number did not
+       come through needs to see that here, not discover it on the live
+       page they just sent to a customer. */
+    const ownBox = $("own-read");
+    if (payload.ownSite) {
+      const f = payload.ownSite.found;
+      const got = [
+        f.name && `name: ${f.name}`,
+        f.phone && `phone: ${f.phone}`,
+        f.email && `email: ${f.email}`,
+        f.address && `address: ${f.address}`,
+        f.hours && `${f.hours} days of opening hours`,
+        f.social && `${f.social} social link${f.social === 1 ? "" : "s"}`,
+        f.images && `${f.images} photograph${f.images === 1 ? "" : "s"} found`,
+      ].filter(Boolean);
+      ownBox.hidden = false;
+      /* Absence is information. A missing address means no map, and the
+         person should be told that here rather than notice it later — most
+         sites simply do not publish a structured one, and we refuse to
+         guess rather than print an address that might be wrong. */
+      const missing = [
+        !f.phone && "phone",
+        !f.email && "email",
+        !f.address && "postal address (so no map)",
+        !f.hours && "opening hours",
+      ].filter(Boolean);
+
+      ownBox.innerHTML = got.length
+        ? `<b>Carried across from ${esc(new URL(payload.ownSite.url).hostname)}</b><ul>${
+            got.map((g) => `<li>${esc(g)}</li>`).join("")}</ul>` +
+          (missing.length
+            ? `<p class="own-missing">Not published on that page, so not carried: ${esc(missing.join(", "))}. Add by hand once it is live.</p>`
+            : "")
+        : `<b>Read ${esc(new URL(payload.ownSite.url).hostname)}, but found no contact details.</b> ` +
+          `Sites that render their footer in JavaScript often hide them. Add them by hand once it is live.`;
+    } else if (payload.ownSiteProblem) {
+      ownBox.hidden = false;
+      ownBox.innerHTML = `<b>Your site could not be read</b> — ${esc(payload.ownSiteProblem)} Built from your brief alone.`;
+    } else {
+      ownBox.hidden = true;
+    }
+
     const refBox = $("ref-read");
     if (payload.reference) {
       const r = payload.reference;
