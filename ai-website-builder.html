@@ -124,6 +124,39 @@
   .frame-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.55rem .8rem;border-bottom:1px solid var(--hairline);font-size:.74rem;color:var(--ink-faint)}
   .frame iframe{display:block;width:100%;height:min(70vh,620px);border:0;background:#000}
 
+  .tweak{margin-top:1.4rem;border:1px solid var(--hairline);border-radius:3px;padding:.9rem 1rem}
+  .tweak > summary{cursor:pointer;font-size:.9rem;list-style:none}
+  .tweak > summary::-webkit-details-marker{display:none}
+  .tweak > summary::before{content:"▸ ";color:var(--accent)}
+  .tweak[open] > summary::before{content:"▾ "}
+  .tweak-note{font-size:.74rem;color:var(--ink-faint);margin:.6rem 0 1rem;line-height:1.5}
+  .tweak h4{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
+    margin:1.1rem 0 .5rem;font-weight:400}
+  .tweak-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  @media(max-width:46rem){.tweak-grid{grid-template-columns:1fr}}
+  .tweak label{display:block;font-size:.74rem;color:var(--ink-faint)}
+  .tweak input[type=text]{width:100%;margin-top:.25rem;padding:.45rem .55rem;background:var(--void);
+    color:var(--ink);border:1px solid var(--hairline);border-radius:3px;font-family:inherit;font-size:.82rem}
+  .tweak select{width:100%;margin-top:.25rem;padding:.4rem .5rem;background:var(--void);color:var(--ink);
+    border:1px solid var(--hairline);border-radius:3px;font-family:inherit;font-size:.78rem}
+  .tweak-swatches{display:flex;gap:.5rem;flex-wrap:wrap}
+  .tweak-swatches label{text-align:center;font-size:.66rem}
+  .tweak-swatches input[type=color]{display:block;width:2.6rem;height:2rem;padding:0;border:1px solid var(--hairline);
+    border-radius:3px;background:none;cursor:pointer}
+  .tweak-chapters{list-style:none;margin:0;padding:0;counter-reset:ch}
+  .tweak-chapters li{border-top:1px solid var(--hairline);padding:.7rem 0}
+  .tweak-chapters .row{display:grid;grid-template-columns:1fr 10rem auto;gap:.5rem;align-items:end}
+  @media(max-width:46rem){.tweak-chapters .row{grid-template-columns:1fr}}
+  .tweak-move{display:flex;gap:.25rem}
+  .tweak-move button{background:none;border:1px solid var(--hairline);color:var(--ink-dim);
+    border-radius:3px;width:1.9rem;height:1.9rem;cursor:pointer;font-size:.8rem}
+  .tweak-move button:hover:not(:disabled){color:var(--ink);border-color:var(--hairline-strong)}
+  .tweak-move button:disabled{opacity:.3;cursor:default}
+  .tweak-actions{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-top:1.1rem;
+    padding-top:.9rem;border-top:1px solid var(--hairline)}
+  .tweak-msg{font-size:.75rem;color:var(--ink-faint)}
+  @media print{.tweak{display:none}}
+
   .ref-field{margin-top:1.4rem}
   .ref-field label{display:block;font-size:.86rem;margin-bottom:.45rem}
   .ref-field .opt{color:var(--ink-faint);font-size:.72rem;margin-left:.3rem}
@@ -645,6 +678,38 @@
                   sandbox="allow-scripts allow-same-origin"></iframe>
         </div>
 
+        <details class="tweak" id="tweak" hidden>
+          <summary>Change something and rebuild</summary>
+          <p class="tweak-note">
+            Edits render here instantly — no waiting, nothing spent. The film
+            is rebuilt by the same code the server uses, so what you see is
+            what you get.
+          </p>
+
+          <div class="tweak-grid">
+            <label>Concept <input type="text" id="t-concept" /></label>
+            <label>Tagline <input type="text" id="t-tagline" /></label>
+          </div>
+
+          <h4>Palette</h4>
+          <div class="tweak-swatches" id="t-palette"></div>
+
+          <h4>Type</h4>
+          <div class="tweak-grid">
+            <label>Display <input type="text" id="t-display" /></label>
+            <label>Body <input type="text" id="t-body" /></label>
+          </div>
+
+          <h4>Chapters</h4>
+          <ol class="tweak-chapters" id="t-chapters"></ol>
+
+          <div class="tweak-actions">
+            <button type="button" class="btn btn--small" id="t-reset">Undo my changes</button>
+            <button type="button" class="btn btn--primary btn--small" id="t-save">Save and update the live link</button>
+            <span class="tweak-msg" id="t-msg"></span>
+          </div>
+        </details>
+
         <div class="ref-read" id="ref-read" hidden></div>
 
         <div class="demo-live" id="demo-live" hidden>
@@ -886,6 +951,17 @@ window.CMProgress = (function () {
     $("status").className = `status${isError ? " status--error" : ""}`;
   }
 
+  let spec = null;
+  let currentSlug = null;
+  let originalSpec = null;
+  let renderLocally = null;   // the server's own renderer, loaded on demand
+
+  const MOTIONS = ["pin-zoom", "char-reveal", "horizontal", "clip-reveal", "layer-parallax", "counter"];
+  const PALETTE_KEYS = [
+    ["bg", "Background"], ["surface", "Surface"], ["ink", "Text"],
+    ["dim", "Muted"], ["accent", "Accent"], ["accent2", "Second"],
+  ];
+
   let lastHtml = null;
   let lastName = "site";
   let blobUrl = null;
@@ -980,9 +1056,17 @@ window.CMProgress = (function () {
       refBox.hidden = true;
     }
 
+    /* Keep the spec, and a pristine copy of it. Undo is then a fact rather
+       than a promise — the original is never mutated. */
+    spec = payload.spec;
+    originalSpec = JSON.parse(JSON.stringify(payload.spec));
+    buildTweakPanel();
+    $("tweak").hidden = false;
+
     const demo = payload.demo;
     $("demo-live").hidden = !demo;
     if (demo) {
+      currentSlug = demo.slug;
       $("demo-url").href = demo.url;
       $("demo-url").textContent = demo.url;
       $("demo-note").textContent =
@@ -992,6 +1076,128 @@ window.CMProgress = (function () {
     $("result").hidden = false;
     $("result").scrollIntoView({ behavior: "smooth", block: "start" });
   }
+
+  /*
+    The editor.
+
+    It renders with lib/sitegen/render.mjs — the same module the endpoint
+    uses, imported straight into the page. Not a copy of it: a second
+    implementation would drift, and the drift would show up as a preview
+    that does not match what gets published, which is the one thing a
+    preview must never do.
+
+    Every edit is local. No model call, no credits, no network — the render
+    is about a twentieth of a millisecond, so it can run on every keystroke.
+  */
+  async function renderer() {
+    if (!renderLocally) {
+      const mod = await import("/lib/sitegen/render.mjs");
+      renderLocally = mod.renderSite;
+    }
+    return renderLocally;
+  }
+
+  async function repaint() {
+    try {
+      const render = await renderer();
+      lastHtml = render(spec);
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      blobUrl = URL.createObjectURL(new Blob([lastHtml], { type: "text/html" }));
+      $("preview").src = blobUrl;
+      $("frame-size").textContent = `${Math.round(lastHtml.length / 1024)} KB`;
+      $("concept").textContent = spec.conceptName;
+      say("");
+    } catch (cause) {
+      // A spec edited into something the renderer cannot build should say so
+      // here, not produce a blank frame.
+      say(`That change broke the render: ${cause?.message ?? cause}`, true);
+    }
+  }
+
+  function buildTweakPanel() {
+    $("t-concept").value = spec.conceptName;
+    $("t-tagline").value = spec.tagline;
+    $("t-display").value = spec.type.display;
+    $("t-body").value = spec.type.body;
+
+    $("t-palette").innerHTML = PALETTE_KEYS.map(([k, label]) =>
+      `<label>${esc(label)}<input type="color" data-pal="${k}" value="${esc(spec.palette[k])}" /></label>`).join("");
+
+    $("t-chapters").innerHTML = spec.chapters.map((c, i) => `
+      <li>
+        <div class="row">
+          <label>Headline
+            <input type="text" data-ch="${i}" data-field="headline" value="${esc(c.headline)}" /></label>
+          <label>Motion
+            <select data-ch="${i}" data-field="motion">
+              ${MOTIONS.map((m) => `<option value="${m}"${m === c.motion ? " selected" : ""}>${m}</option>`).join("")}
+            </select></label>
+          <span class="tweak-move">
+            <button type="button" data-move="up" data-i="${i}" ${i === 0 ? "disabled" : ""} aria-label="Move up">↑</button>
+            <button type="button" data-move="down" data-i="${i}" ${i === spec.chapters.length - 1 ? "disabled" : ""} aria-label="Move down">↓</button>
+          </span>
+        </div>
+      </li>`).join("");
+
+    wireTweakInputs();
+  }
+
+  function wireTweakInputs() {
+    const bind = (id, apply) => $(id).oninput = () => { apply($(id).value); repaint(); };
+    bind("t-concept", (v) => { spec.conceptName = v; });
+    bind("t-tagline", (v) => { spec.tagline = v; });
+    bind("t-display", (v) => { spec.type.display = v; });
+    bind("t-body", (v) => { spec.type.body = v; });
+
+    $("t-palette").querySelectorAll("[data-pal]").forEach((el) => {
+      el.oninput = () => { spec.palette[el.dataset.pal] = el.value; repaint(); };
+    });
+
+    $("t-chapters").querySelectorAll("[data-ch]").forEach((el) => {
+      const handler = () => { spec.chapters[+el.dataset.ch][el.dataset.field] = el.value; repaint(); };
+      el.oninput = handler;
+      el.onchange = handler;     // <select> does not fire input in every browser
+    });
+
+    $("t-chapters").querySelectorAll("[data-move]").forEach((el) => {
+      el.onclick = () => {
+        const i = +el.dataset.i;
+        const j = el.dataset.move === "up" ? i - 1 : i + 1;
+        if (j < 0 || j >= spec.chapters.length) return;
+        [spec.chapters[i], spec.chapters[j]] = [spec.chapters[j], spec.chapters[i]];
+        buildTweakPanel();       // indices and disabled states move with them
+        repaint();
+      };
+    });
+  }
+
+  $("t-reset").addEventListener("click", () => {
+    spec = JSON.parse(JSON.stringify(originalSpec));
+    buildTweakPanel();
+    repaint();
+    $("t-msg").textContent = "Back to what the studio designed.";
+  });
+
+  $("t-save").addEventListener("click", async () => {
+    if (!lastHtml) return;
+    $("t-save").disabled = true;
+    $("t-msg").textContent = "Saving…";
+    try {
+      const res = await fetch("/api/demo-update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: currentSlug, html: lastHtml, concept: spec.conceptName }),
+      });
+      const payload = await res.json().catch(() => null);
+      $("t-msg").textContent = res.ok
+        ? "Saved — the live link now shows your version."
+        : (payload?.error ?? "That could not be saved.");
+    } catch {
+      $("t-msg").textContent = "Could not reach the server.";
+    } finally {
+      $("t-save").disabled = false;
+    }
+  });
 
   $("demo-copy").addEventListener("click", async () => {
     const url = $("demo-url").href;
