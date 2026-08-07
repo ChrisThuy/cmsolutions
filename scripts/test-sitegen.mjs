@@ -241,6 +241,51 @@ console.log("\nThe summary reflects the spec");
   }
 }
 
+/* ── bilingual output ──────────────────────────────────────────────────
+   The first version wired only the chapters, so a Chinese site toggled to
+   English and kept its Chinese tagline, sections, call to action and
+   footer. These assert that every user-facing string has both languages,
+   and that a monolingual site carries none of the machinery. */
+{
+  const zh = {
+    brandName: "醉漢理髮店", tagline: "好椅子", conceptName: "刀鋒", journey: "j", footerNote: "台北",
+    cta: { heading: "預約", body: "內文", label: "預約" },
+    palette: { bg: "#0b1620", surface: "#12222e", ink: "#eef3f6", dim: "#9db2c0", accent: "#99d3de", accent2: "#4e99bc" },
+    type: { display: "Noto Serif TC", displayWeights: "400", body: "Josefin Sans", bodyWeights: "300" },
+    chapters: Array.from({ length: 3 }, (_, i) => ({
+      name: `C${i}`, kicker: "刻", headline: "標題", body: "內文", visual: "v",
+      motion: ["pin-zoom", "clip-reveal", "counter"][i], counterTo: 1, counterLabel: "年",
+    })),
+    sections: [{ title: "服務", body: "服務內文", items: [{ heading: "剪髮", text: "說明" }] }],
+    language: { primary: "zh-hant", primaryLabel: "中文", secondary: "en", secondaryLabel: "English" },
+    alt: {
+      tagline: "A good chair", conceptName: "The Blade",
+      chapters: Array.from({ length: 3 }, () => ({ name: "C", kicker: "Cut", headline: "A headline", body: "Body", counterLabel: "years" })),
+      sections: [{ title: "Services", body: "Service body", items: [{ heading: "Cuts", text: "Detail" }] }],
+      cta: { heading: "Book", body: "CTA body", label: "Book" }, footerNote: "Taipei",
+    },
+  };
+
+  const html = renderSite(zh);
+  const english = [...html.matchAll(/data-l="b">([^<]*)</g)].map((m) => m[1]);
+
+  for (const [what, str] of [
+    ["the tagline", "A good chair"], ["a section title", "Services"], ["a section body", "Service body"],
+    ["a card heading", "Cuts"], ["a card body", "Detail"], ["the cta heading", "Book"],
+    ["the cta body", "CTA body"], ["the footer", "Taipei"], ["a chapter headline", "A headline"],
+  ]) check(`translated: ${what}`, english.includes(str));
+
+  check("the document declares the primary language", /<html lang="zh-hant"/.test(html));
+  check("a language toggle is offered", /<button class="langtog"/.test(html));
+  check("the secondary language is hidden by default", html.includes('[data-l="b"]{display:none}'));
+  check("CJK gets looser leading", /\.hero h1\{[^}]*line-height:1\.16/.test(html));
+
+  const mono = renderSite({ ...zh, language: { primary: "en", primaryLabel: "English", secondary: null, secondaryLabel: null }, alt: null });
+  check("a monolingual site carries no language spans", !/<span lang=/.test(mono));
+  check("a monolingual site offers no toggle", !/<button class="langtog"/.test(mono));
+  check("latin keeps its tight leading", /\.hero h1\{[^}]*line-height:\.94/.test(mono));
+}
+
 console.log(
   failures === 0 ? "\nAll site-generator tests passed.\n" : `\n${failures} test(s) failed.\n`,
 );
