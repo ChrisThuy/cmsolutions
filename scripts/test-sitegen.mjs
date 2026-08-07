@@ -286,6 +286,44 @@ console.log("\nThe summary reflects the spec");
   check("latin keeps its tight leading", /\.hero h1\{[^}]*line-height:\.94/.test(mono));
 }
 
+/* ── how many photographs earn a place ────────────────────────────────
+   One image round-robinned is the same picture behind every scene, top to
+   bottom. That shipped, and it looks like a bug because it is one. */
+{
+  const base = {
+    brandName: "M", tagline: "t", conceptName: "c", journey: "j", footerNote: "f",
+    cta: { heading: "h", body: "b", label: "l" },
+    palette: { bg: "#0f1210", surface: "#1b1815", ink: "#efe9df", dim: "#a09789", accent: "#b98a5e", accent2: "#7f9a8b" },
+    type: { display: "Fraunces", displayWeights: "400", body: "Karla", bodyWeights: "300" },
+    chapters: Array.from({ length: 6 }, (_, i) => ({
+      name: `C${i}`, kicker: "k", headline: "h", body: "b", visual: "v",
+      motion: ["pin-zoom", "clip-reveal", "char-reveal", "counter", "horizontal", "layer-parallax"][i],
+      counterTo: 1, counterLabel: "l",
+    })),
+    sections: [{ title: "t", body: "b", items: [{ heading: "h", text: "x" }] }],
+  };
+  const count = (imgs) => {
+    const h = renderSite({ ...base, images: imgs });
+    return {
+      hero: (h.match(/hero-photo"><img/g) ?? []).length,
+      scenes: (h.match(/class="scene-photo"><img/g) ?? []).length,
+    };
+  };
+
+  const one = count(["a.jpg"]);
+  check("a single image goes behind the hero", one.hero === 1);
+  check("a single image is NOT repeated across the scenes", one.scenes === 0);
+
+  const two = count(["a.jpg", "b.jpg"]);
+  check("two images still stay off the scenes", two.scenes === 0);
+
+  const six = count(["a", "b", "c", "d", "e", "f"].map((x) => `${x}.jpg`));
+  check("six images light every scene", six.scenes === 6 && six.hero === 1);
+
+  const none = count([]);
+  check("no images means no photo layers at all", none.hero === 0 && none.scenes === 0);
+}
+
 console.log(
   failures === 0 ? "\nAll site-generator tests passed.\n" : `\n${failures} test(s) failed.\n`,
 );
