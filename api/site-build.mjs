@@ -6,7 +6,7 @@ import {
 } from "../lib/sitegen/reference.mjs";
 import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
 import { EditOpsSchema, EDIT_SYSTEM, applyOps, describeForEditing } from "../lib/sitegen/edit.mjs";
-import { ShotListSchema, SHOTLIST_SYSTEM, shotlistRequest, toFilmSpec, faceCount } from "../lib/film/shotlist.mjs";
+import { ShotListSchema, SHOTLIST_SYSTEM, shotlistRequest, toFilmSpec, faceCount, audienceFromSpec } from "../lib/film/shotlist.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
@@ -228,6 +228,10 @@ async function handleFilm(req, res, body) {
   const spec = body?.spec;
   const slug = String(body?.slug ?? "").trim().toLowerCase();
   const resolution = ["480p", "720p", "1080p"].includes(body?.resolution) ? body.resolution : "480p";
+  /* Where the shop is, if the visitor told us. Only ever reaches the studio
+     as prose describing a place, so it is length-capped and otherwise
+     untrusted like any other typed-in field. */
+  const place = typeof body?.place === "string" ? body.place : null;
 
   if (!spec?.chapters?.length) return res.status(400).json({ error: "No design to film." });
   if (!/^[a-z0-9][a-z0-9-]{2,63}$/.test(slug)) return res.status(400).json({ error: "That demo link is not valid." });
@@ -242,11 +246,23 @@ async function handleFilm(req, res, body) {
   try {
     const r = await artDirect({
       system: SHOTLIST_SYSTEM,
-      user: shotlistRequest(spec),
+      user: shotlistRequest(spec, {
+        place: typeof place === "string" && place.trim() ? place.trim().slice(0, 120) : null,
+        customers: audienceFromSpec(spec),
+      }),
       zodSchema: ShotListSchema,
       jsonSchema: SHOTLIST_SCHEMA,
       maxTokens: 4000,
       budgetMs: 200_000,
+      /*
+        Pinned, rather than chosenStudio(). Everywhere else an OpenRouter
+        outage falling through to Claude is better than a failed build, but
+        a film is thirty-five minutes and fifty credits of Higgsfield time
+        committed off the back of this one call, and Chris asked for Kimi to
+        be the studio. Failing here costs a retry; failing quietly costs the
+        film being directed by a model he did not choose.
+      */
+      studio: STUDIOS.kimi,
     });
     shotlist = r.spec;
   } catch (cause) {
