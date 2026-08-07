@@ -139,8 +139,26 @@ What you decide:
    pull back and you are inside the bottle" is a journey. "A modern site
    showcasing our values" is not.
 
-2. THE WORLD. An exact palette and a type pairing with real character. Never
-   default system fonts — reach for expressive display faces on Google Fonts
+2. THE WORLD. An exact palette and a type pairing with real character.
+
+   CONTRAST IS NOT NEGOTIABLE, and a spec that fails it is rejected before it
+   renders — costing the visitor the whole wait. Every one of these must hold:
+
+     ink     on bg       >= 4.5:1     body text
+     dim     on bg       >= 4.5:1     secondary text, and it is used a lot
+     accent  on bg       >= 4.5:1     kickers are small, so they need the full ratio
+     ink     on surface  >= 4.5:1     card text
+     dim     on surface  >= 4.5:1
+     bg      on accent   >= 4.5:1     the button label sits on the accent
+     accent2 on bg       >= 3.0:1
+
+   The trap is a beautiful accent that is too close in luminance to the
+   background — a soft gold on cream, a dusty blue on slate. It looks
+   considered in your head and is unreadable on the page. Pick the accent for
+   the world, then darken or lighten it until it clears the ratio, rather
+   than picking a pretty value and hoping.
+
+   Never default system fonts — reach for expressive display faces on Google Fonts
    (Fraunces, Instrument Serif, Bodoni Moda, Syne, Unbounded, Playfair
    Display, DM Serif Display, Cormorant, Space Grotesk…) paired with a clean
    body face. Two brands must never look like the same site.

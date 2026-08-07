@@ -209,6 +209,38 @@ console.log("\nThe summary reflects the spec");
   check("it reports both fonts", d.fonts.length === 2);
 }
 
+/* ── contrast, on every pair the renderer actually paints ──────────────
+   The gate used to check one pair and pass palettes whose secondary text
+   was unreadable. These cases lock that shut: two palettes that shipped
+   must keep passing, and each failure mode must still be caught. */
+{
+  const chapters = Array.from({ length: 5 }, (_, i) => ({
+    name: `C${i}`,
+    motion: ["pin-zoom", "char-reveal", "counter", "clip-reveal", "horizontal"][i],
+    counterTo: 5,
+  }));
+
+  const shipped = {
+    "light palette that shipped": { bg: "#f4efe6", surface: "#e8e0d2", ink: "#221c14", dim: "#6b6053", accent: "#9c3b23", accent2: "#7f8a6b" },
+    "dark palette that shipped": { bg: "#141210", surface: "#1b1815", ink: "#efe9df", dim: "#a09789", accent: "#b98a5e", accent2: "#7f9a8b" },
+  };
+  for (const [name, palette] of Object.entries(shipped)) {
+    const r = validateSpec({ chapters, palette });
+    check(`${name} still passes`, r.ok, r.problems.join("; "));
+  }
+
+  const bad = {
+    "unreadable secondary text": { bg: "#141210", surface: "#1b1815", ink: "#efe9df", dim: "#3a352e", accent: "#b98a5e", accent2: "#7f9a8b" },
+    "pale accent on a light background": { bg: "#f4efe6", surface: "#e8e0d2", ink: "#221c14", dim: "#6b6053", accent: "#e8c9a0", accent2: "#7f8a6b" },
+    "text the same colour as its card": { bg: "#141210", surface: "#1b1815", ink: "#1c1916", dim: "#a09789", accent: "#b98a5e", accent2: "#7f9a8b" },
+  };
+  for (const [name, palette] of Object.entries(bad)) {
+    const r = validateSpec({ chapters, palette });
+    check(`rejected: ${name}`, !r.ok);
+    check(`  ...and says which pair`, r.problems.some((p) => p.includes(":1")));
+  }
+}
+
 console.log(
   failures === 0 ? "\nAll site-generator tests passed.\n" : `\n${failures} test(s) failed.\n`,
 );
