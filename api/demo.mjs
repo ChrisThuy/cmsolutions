@@ -22,7 +22,121 @@
   the one that holds if the first is wrong.
 */
 
+import { rpc } from "../lib/audit/watch-store.mjs";
+
 const CACHE_SECONDS = 300;
+
+/*
+  Updating a demo lives here rather than in its own function.
+
+  Not tidiness: Vercel's Hobby plan allows twelve serverless functions and
+  this would have been the thirteenth, so the deploy failed outright. Reading
+  and replacing the same resource through one route is the better shape
+  anyway — GET returns the page, POST replaces it.
+
+  ── what this must not become ──
+
+  It takes a slug and a document and writes the document. Left open that is a
+  way to overwrite anyone's demo with anything, on our origin, at a URL they
+  are currently sending to clients. Three things stop it: the row must
+  already exist and not have expired, so this can only replace and never
+  plant a page at a chosen address; the same per-IP allowance as building;
+  and the size cap, checked before the body crosses the network.
+
+  It does not verify the caller built the demo, because there are no
+  accounts. The slug is unguessable and holding it is the only claim anyone
+  has — honest for a thirty-day sales artefact, not enough for anything that
+  mattered more.
+*/
+const MAX_HTML = 400_000;
+const SAVES_PER_IP_HOUR = 40;
+
+function clientIp(req) {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (typeof forwarded === "string" && forwarded.length) return forwarded.split(",")[0].trim();
+  return req.socket?.remoteAddress ?? null;
+}
+
+async function consumeAllowance(key) {
+  const url = process.env.AUDIT_SUPABASE_URL;
+  const anonKey = process.env.AUDIT_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) {
+    console.error("[demo-update] rate limiting is not configured; refusing");
+    return false;
+  }
+  try {
+    const response = await fetch(`${url}/rest/v1/rpc/consume_rate_limit`, {
+      method: "POST",
+      headers: {
+        apikey: anonKey,
+        Authorization: `Bearer ${anonKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        p_bucket: "sitegen:demo-update:ip",
+        p_key: key,
+        p_max: SAVES_PER_IP_HOUR,
+        p_window: "1 hour",
+      }),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) return false;
+    const rows = await response.json();
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    return row?.allowed === true;
+  } catch {
+    // Fail closed, same rule as everywhere else: a database blip must not
+    // turn this into an unlimited write endpoint.
+    return false;
+  }
+}
+
+async function handleUpdate(req, res) {
+  let body;
+  try {
+    body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+  } catch {
+    return res.status(400).json({ error: "That request could not be read." });
+  }
+
+  const slug = String(body?.slug ?? "").trim().toLowerCase();
+  if (!/^[a-z0-9][a-z0-9-]{2,63}$/.test(slug)) {
+    return res.status(400).json({ error: "That demo link is not valid." });
+  }
+
+  const html = String(body?.html ?? "");
+  if (!html.startsWith("<!doctype html")) {
+    return res.status(400).json({ error: "That does not look like a page." });
+  }
+  if (html.length > MAX_HTML) {
+    return res.status(413).json({ error: "That page is larger than a demo can hold." });
+  }
+
+  const ip = clientIp(req);
+  if (!ip) return res.status(400).json({ error: "We could not process that request." });
+  if (!(await consumeAllowance(ip))) {
+    return res.status(429).json({ error: "That is a lot of saves from one connection. Try again shortly." });
+  }
+
+  try {
+    const updated = await rpc("update_site_demo", {
+      p_slug: slug,
+      p_html: html,
+      p_concept: String(body?.concept ?? "").slice(0, 200) || null,
+    }, { withSecret: false });
+    if (updated !== true) {
+      return res.status(404).json({ error: "That demo has expired or never existed." });
+    }
+  } catch (cause) {
+    console.error("[demo] update failed:", cause?.message);
+    return res.status(502).json({ error: "That could not be saved. Try again." });
+  }
+
+  res.setHeader("Cache-Control", "no-store");
+  return res.status(200).json({ ok: true, slug });
+}
+
+
 
 function bad(res, status, message) {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -49,9 +163,11 @@ your own domain permanently, get in touch and we will sort it.</p>
 }
 
 export default async function handler(req, res) {
+  if (req.method === "POST") return handleUpdate(req, res);
+
   if (req.method !== "GET" && req.method !== "HEAD") {
-    res.setHeader("Allow", "GET, HEAD");
-    return res.status(405).json({ error: "Use GET." });
+    res.setHeader("Allow", "GET, HEAD, POST");
+    return res.status(405).json({ error: "Use GET to read a demo, POST to replace one." });
   }
 
   const slug = String(req.query?.slug ?? "").trim().toLowerCase();
