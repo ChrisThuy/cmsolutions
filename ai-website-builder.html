@@ -204,7 +204,9 @@
      push the page sideways on a phone. */
   .demo-url{font-family:var(--mono,ui-monospace,SFMono-Regular,Menlo,monospace);
             font-size:.86rem;color:var(--ink);word-break:break-all;min-width:0}
-  .demo-note{margin-top:.55rem;font-size:.74rem;color:var(--ink-faint)}
+  .demo-note{margin-top:.55rem;font-size:.74rem;color:var(--ink-faint);line-height:1.6}
+  .demo-note b{color:var(--ink-dim);font-weight:400}
+  .edit-link{color:var(--accent);word-break:break-all}
 
   /* ── the offer ── */
   .golive{margin-top:1.6rem;padding:1.3rem 1.25rem;border:1px solid var(--hairline);border-radius:3px}
@@ -1159,8 +1161,10 @@ window.CMProgress = (function () {
       currentSlug = demo.slug;
       $("demo-url").href = demo.url;
       $("demo-url").textContent = demo.url;
-      $("demo-note").textContent =
-        `Live for ${demo.expiresInDays} days, then it stops. Send it to anyone — nothing to install.`;
+      $("demo-note").innerHTML =
+        `Live for ${demo.expiresInDays} days, then it stops. Send it to anyone — nothing to install.` +
+        `<br /><b>Keep this to edit it later:</b> ` +
+        `<a class="edit-link" href="${esc(location.pathname)}?edit=${esc(demo.slug)}">${esc(location.host + location.pathname)}?edit=${esc(demo.slug)}</a>`;
     }
 
     $("result").hidden = false;
@@ -1389,7 +1393,7 @@ window.CMProgress = (function () {
       const res = await fetch("/api/demo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: currentSlug, html: lastHtml, concept: spec.conceptName }),
+        body: JSON.stringify({ slug: currentSlug, html: lastHtml, concept: spec.conceptName, spec }),
       });
       const payload = await res.json().catch(() => null);
       $("t-msg").textContent = res.ok
@@ -1401,6 +1405,44 @@ window.CMProgress = (function () {
       $("t-save").disabled = false;
     }
   });
+
+  /*
+    Opening a demo that already exists.
+
+    ?edit=<slug> loads the stored design straight into the editor, so someone
+    can come back a week later, change a headline and save, without
+    regenerating anything. The slug is the credential — the same one that
+    already lets the holder overwrite the page — because there are no
+    accounts and a thirty-day sales artefact does not warrant inventing them.
+  */
+  (async function openForEditing() {
+    const slug = new URLSearchParams(location.search).get("edit");
+    if (!slug) return;
+    say("Loading that design…");
+    try {
+      const res = await fetch(`/api/demo?spec=1&slug=${encodeURIComponent(slug)}`);
+      const payload = await res.json().catch(() => null);
+      if (!res.ok) { say(payload?.error ?? "That design could not be loaded.", true); return; }
+
+      spec = payload.spec;
+      originalSpec = JSON.parse(JSON.stringify(payload.spec));
+      currentSlug = payload.slug;
+
+      $("result").hidden = false;
+      buildTweakPanel();
+      $("tweak").hidden = false;
+      $("tweak").open = true;
+      await repaint();
+
+      $("demo-live").hidden = false;
+      $("demo-url").href = `/demo/${payload.slug}`;
+      $("demo-url").textContent = `${location.origin}/demo/${payload.slug}`;
+      $("demo-note").textContent = "Editing the live version. Save when you are happy and this link updates.";
+      say("");
+    } catch {
+      say("That design could not be loaded.", true);
+    }
+  })();
 
   $("demo-copy").addEventListener("click", async () => {
     const url = $("demo-url").href;

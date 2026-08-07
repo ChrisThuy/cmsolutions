@@ -490,6 +490,10 @@ export default async function handler(req, res) {
       p_concept: spec.conceptName,
       p_html: html,
       p_created_by: null,
+      // The design, kept with the page. Without it the demo can be read and
+      // never edited again, which throws away the expensive part the moment
+      // somebody closes the tab.
+      p_spec: spec,
     }, { withSecret: false });
     if (typeof slug === "string" && slug) {
       demo = { slug, url: `${SITE_ORIGIN}/demo/${slug}`, expiresInDays: 30 };

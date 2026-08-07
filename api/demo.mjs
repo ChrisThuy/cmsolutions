@@ -123,6 +123,7 @@ async function handleUpdate(req, res) {
       p_slug: slug,
       p_html: html,
       p_concept: String(body?.concept ?? "").slice(0, 200) || null,
+      p_spec: body?.spec ?? null,
     }, { withSecret: false });
     if (updated !== true) {
       return res.status(404).json({ error: "That demo has expired or never existed." });
@@ -137,6 +138,28 @@ async function handleUpdate(req, res) {
 }
 
 
+
+async function handleSpec(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+  const slug = String(req.query?.slug ?? "").trim().toLowerCase();
+  if (!/^[a-z0-9][a-z0-9-]{2,63}$/.test(slug)) {
+    return res.status(400).json({ error: "That demo link is not valid." });
+  }
+  try {
+    const rows = await rpc("read_site_demo_spec", { p_slug: slug }, { withSecret: false });
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    if (!row) return res.status(404).json({ error: "That demo has expired or never existed." });
+    if (!row.spec) {
+      // Built before the design was kept. Readable, not editable, and saying
+      // so is better than opening an editor with nothing in it.
+      return res.status(409).json({ error: "This demo was built before designs were saved, so it cannot be edited. Building it again will produce an editable one." });
+    }
+    return res.status(200).json({ slug, brandName: row.brand_name, spec: row.spec, expiresAt: row.expires_at });
+  } catch (cause) {
+    console.error("[demo] spec read failed:", cause?.message);
+    return res.status(502).json({ error: "That could not be loaded." });
+  }
+}
 
 function bad(res, status, message) {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -169,6 +192,12 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "GET, HEAD, POST");
     return res.status(405).json({ error: "Use GET to read a demo, POST to replace one." });
   }
+
+  /* ?spec=1 hands back the design rather than the page, so the builder can
+     load an existing demo into its editor. Same slug-as-credential model as
+     everything else here: holding the link is the only claim anyone has, and
+     it is what already lets them overwrite the page. */
+  if (req.query?.spec) return handleSpec(req, res);
 
   const slug = String(req.query?.slug ?? "").trim().toLowerCase();
   // Validated here as well as in the database. A slug that cannot match is
