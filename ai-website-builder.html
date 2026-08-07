@@ -134,6 +134,20 @@
   .tweak-note{font-size:.74rem;color:var(--ink-faint);margin:.6rem 0 1rem;line-height:1.5}
   .tweak h4{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
     margin:1.1rem 0 .5rem;font-weight:400}
+  .tweak-langbar{display:flex;gap:.4rem;margin-bottom:1rem}
+  .tweak-langbar button{background:none;border:1px solid var(--hairline);color:var(--ink-dim);
+    border-radius:2rem;padding:.3rem .9rem;font:inherit;font-size:.76rem;cursor:pointer;min-height:32px}
+  .tweak-langbar button.on{border-color:var(--accent);color:var(--ink);background:rgba(232,230,223,.05)}
+  .tweak textarea{width:100%;margin-top:.25rem;padding:.45rem .55rem;background:var(--void);color:var(--ink);
+    border:1px solid var(--hairline);border-radius:3px;font-family:inherit;font-size:.82rem;line-height:1.5;resize:vertical}
+  .tweak .subitem{margin-top:.5rem;padding-left:.7rem;border-left:1px solid var(--hairline)}
+  .tweak .shots{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+  .tweak .shot{position:relative;width:4.5rem;height:3rem;border-radius:3px;overflow:hidden;border:1px solid var(--hairline)}
+  .tweak .shot img{width:100%;height:100%;object-fit:cover}
+  .tweak .shot button{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;
+    border:0;background:rgba(7,8,12,.82);color:#fff;cursor:pointer;font-size:.72rem;line-height:1}
+  .tweak .shot button:hover{background:var(--stop,#d98b6a)}
+
   .tweak-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
   @media(max-width:46rem){.tweak-grid{grid-template-columns:1fr}}
   .tweak label{display:block;font-size:.74rem;color:var(--ink-faint)}
@@ -710,22 +724,27 @@
             what you get.
           </p>
 
-          <div class="tweak-grid">
-            <label>Concept <input type="text" id="t-concept" /></label>
-            <label>Tagline <input type="text" id="t-tagline" /></label>
-          </div>
+          <div class="tweak-langbar" id="t-langbar" hidden></div>
+
+          <h4>Brand</h4>
+          <div class="tweak-grid" id="t-brand"></div>
 
           <h4>Palette</h4>
           <div class="tweak-swatches" id="t-palette"></div>
 
           <h4>Type</h4>
-          <div class="tweak-grid">
-            <label>Display <input type="text" id="t-display" /></label>
-            <label>Body <input type="text" id="t-body" /></label>
-          </div>
+          <div class="tweak-grid" id="t-type"></div>
 
           <h4>Chapters</h4>
           <ol class="tweak-chapters" id="t-chapters"></ol>
+
+          <h4>Content sections</h4>
+          <ol class="tweak-chapters" id="t-sections"></ol>
+
+          <h4>Call to action</h4>
+          <div class="tweak-grid" id="t-cta"></div>
+
+          <div id="t-images" hidden></div>
 
           <div class="tweak-actions">
             <button type="button" class="btn btn--small" id="t-reset">Undo my changes</button>
@@ -1185,22 +1204,70 @@ window.CMProgress = (function () {
     }
   }
 
+  /*
+    The editor.
+
+    Everything the studio wrote is editable here, in both languages, and
+    nothing costs anything: the render is local and takes under a
+    millisecond, so a person can change a word two hundred times and the
+    only thing spent is their afternoon. The point is that the expensive
+    part — the concept, the copy, the photographs, the translation — is
+    produced once and then owned.
+
+    Fields are generated from the spec rather than hand-listed, so a schema
+    that grows does not silently leave new fields uneditable. That is
+    exactly how the first version ended up exposing headlines and hiding
+    every body paragraph.
+  */
+  let editLang = "primary";   // which language the text boxes are editing
+
+  const bilingual = () => Boolean(spec?.language?.secondary && spec?.alt);
+
+  /* Where a given field lives, in whichever language is being edited. */
+  function target(path) {
+    if (editLang === "primary" || !bilingual()) return spec;
+    return spec.alt;
+  }
+
+  const field = (label, value, attrs) =>
+    `<label>${esc(label)}<input type="text" value="${esc(value ?? "")}" ${attrs} /></label>`;
+
+  const area = (label, value, attrs) =>
+    `<label>${esc(label)}<textarea rows="2" ${attrs}>${esc(value ?? "")}</textarea></label>`;
+
   function buildTweakPanel() {
-    $("t-concept").value = spec.conceptName;
-    $("t-tagline").value = spec.tagline;
-    $("t-display").value = spec.type.display;
-    $("t-body").value = spec.type.body;
+    const bi = bilingual();
+    const alt = editLang === "alt" ? spec.alt : null;
+    const T = alt ?? spec;                       // the object holding text right now
+
+    $("t-langbar").hidden = !bi;
+    if (bi) {
+      $("t-langbar").innerHTML =
+        `<button type="button" data-el="primary" class="${editLang === "primary" ? "on" : ""}">${esc(spec.language.primaryLabel)}</button>` +
+        `<button type="button" data-el="alt" class="${editLang === "alt" ? "on" : ""}">${esc(spec.language.secondaryLabel)}</button>`;
+    }
+
+    /* Brand and framing. brandName has no translation — a business is
+       called what it is called in either language. */
+    $("t-brand").innerHTML =
+      (editLang === "primary" ? field("Business name", spec.brandName, 'data-p="brandName"') : "") +
+      field("Tagline", T.tagline, 'data-p="tagline"') +
+      field("Concept name", T.conceptName, 'data-p="conceptName"');
 
     $("t-palette").innerHTML = PALETTE_KEYS.map(([k, label]) =>
       `<label>${esc(label)}<input type="color" data-pal="${k}" value="${esc(spec.palette[k])}" /></label>`).join("");
 
-    $("t-chapters").innerHTML = spec.chapters.map((c, i) => `
-      <li>
+    $("t-type").innerHTML =
+      field("Display font", spec.type.display, 'data-t="display"') +
+      field("Body font", spec.type.body, 'data-t="body"');
+
+    $("t-chapters").innerHTML = spec.chapters.map((c, i) => {
+      const tc = (alt ? alt.chapters[i] : c) ?? c;
+      return `<li>
         <div class="row">
-          <label>Headline
-            <input type="text" data-ch="${i}" data-field="headline" value="${esc(c.headline)}" /></label>
+          ${field("Kicker", tc.kicker, `data-ch="${i}" data-f="kicker"`)}
           <label>Motion
-            <select data-ch="${i}" data-field="motion">
+            <select data-ch="${i}" data-f="motion" ${alt ? "disabled title='Motion is the same in both languages'" : ""}>
               ${MOTIONS.map((m) => `<option value="${m}"${m === c.motion ? " selected" : ""}>${m}</option>`).join("")}
             </select></label>
           <span class="tweak-move">
@@ -1208,37 +1275,102 @@ window.CMProgress = (function () {
             <button type="button" data-move="down" data-i="${i}" ${i === spec.chapters.length - 1 ? "disabled" : ""} aria-label="Move down">↓</button>
           </span>
         </div>
-      </li>`).join("");
+        ${field("Headline", tc.headline, `data-ch="${i}" data-f="headline"`)}
+        ${area("Body", tc.body, `data-ch="${i}" data-f="body"`)}
+        ${c.motion === "counter" ? field("Counter label", tc.counterLabel, `data-ch="${i}" data-f="counterLabel"`) : ""}
+      </li>`;
+    }).join("");
+
+    $("t-sections").innerHTML = spec.sections.map((sec, i) => {
+      const ts = (alt ? alt.sections[i] : sec) ?? sec;
+      return `<li>
+        ${field("Heading", ts.title, `data-sec="${i}" data-f="title"`)}
+        ${area("Body", ts.body, `data-sec="${i}" data-f="body"`)}
+        ${(sec.items ?? []).map((it, j) => {
+          const ti = (alt ? alt.sections[i]?.items?.[j] : it) ?? it;
+          return `<div class="subitem">
+            ${field(`Card ${j + 1} title`, ti.heading, `data-sec="${i}" data-item="${j}" data-f="heading"`)}
+            ${area(`Card ${j + 1} text`, ti.text, `data-sec="${i}" data-item="${j}" data-f="text"`)}
+          </div>`;
+        }).join("")}
+      </li>`;
+    }).join("");
+
+    const tc = alt ? alt.cta : spec.cta;
+    $("t-cta").innerHTML =
+      field("Heading", tc.heading, 'data-cta="heading"') +
+      area("Body", tc.body, 'data-cta="body"') +
+      field("Button", tc.label, 'data-cta="label"') +
+      field("Footer note", T.footerNote, 'data-p="footerNote"');
+
+    /* Their own photographs, removable. A picture that is wrong for the
+       page is worse than no picture, and re-running the build to drop one
+       would cost a generation. */
+    const imgs = spec.images ?? [];
+    $("t-images").hidden = imgs.length === 0;
+    $("t-images").innerHTML = imgs.length
+      ? `<h4>Photographs from your site</h4><div class="shots">${imgs.map((src, i) =>
+          `<span class="shot"><img src="${esc(src)}" alt="" loading="lazy" />` +
+          `<button type="button" data-img="${i}" aria-label="Remove this photograph">×</button></span>`).join("")}</div>`
+      : "";
 
     wireTweakInputs();
   }
 
   function wireTweakInputs() {
-    const bind = (id, apply) => $(id).oninput = () => { apply($(id).value); repaint(); };
-    bind("t-concept", (v) => { spec.conceptName = v; });
-    bind("t-tagline", (v) => { spec.tagline = v; });
-    bind("t-display", (v) => { spec.type.display = v; });
-    bind("t-body", (v) => { spec.type.body = v; });
+    const root = $("tweak");
+    const repaintAfter = (el, apply) => {
+      const h = () => { apply(el.value); repaint(); };
+      el.oninput = h; el.onchange = h;
+    };
 
-    $("t-palette").querySelectorAll("[data-pal]").forEach((el) => {
-      el.oninput = () => { spec.palette[el.dataset.pal] = el.value; repaint(); };
+    root.querySelectorAll("[data-p]").forEach((el) =>
+      repaintAfter(el, (v) => { (el.dataset.p === "brandName" ? spec : target()) [el.dataset.p] = v; }));
+
+    root.querySelectorAll("[data-t]").forEach((el) =>
+      repaintAfter(el, (v) => { spec.type[el.dataset.t] = v; }));
+
+    root.querySelectorAll("[data-pal]").forEach((el) =>
+      repaintAfter(el, (v) => { spec.palette[el.dataset.pal] = v; }));
+
+    root.querySelectorAll("[data-ch]").forEach((el) => repaintAfter(el, (v) => {
+      const i = +el.dataset.ch, f = el.dataset.f;
+      // Motion is a property of the design, not of a language.
+      if (f === "motion") { spec.chapters[i].motion = v; buildTweakPanel(); return; }
+      const holder = editLang === "alt" && spec.alt ? spec.alt.chapters[i] : spec.chapters[i];
+      holder[f] = v;
+    }));
+
+    root.querySelectorAll("[data-sec]").forEach((el) => repaintAfter(el, (v) => {
+      const i = +el.dataset.sec, f = el.dataset.f;
+      const base = editLang === "alt" && spec.alt ? spec.alt.sections[i] : spec.sections[i];
+      if (el.dataset.item !== undefined) base.items[+el.dataset.item][f] = v;
+      else base[f] = v;
+    }));
+
+    root.querySelectorAll("[data-cta]").forEach((el) => repaintAfter(el, (v) => {
+      (editLang === "alt" && spec.alt ? spec.alt.cta : spec.cta)[el.dataset.cta] = v;
+    }));
+
+    root.querySelectorAll("[data-img]").forEach((el) => el.onclick = () => {
+      spec.images.splice(+el.dataset.img, 1);
+      buildTweakPanel(); repaint();
     });
 
-    $("t-chapters").querySelectorAll("[data-ch]").forEach((el) => {
-      const handler = () => { spec.chapters[+el.dataset.ch][el.dataset.field] = el.value; repaint(); };
-      el.oninput = handler;
-      el.onchange = handler;     // <select> does not fire input in every browser
+    root.querySelectorAll("[data-el]").forEach((el) => el.onclick = () => {
+      editLang = el.dataset.el;
+      buildTweakPanel();
     });
 
-    $("t-chapters").querySelectorAll("[data-move]").forEach((el) => {
-      el.onclick = () => {
-        const i = +el.dataset.i;
-        const j = el.dataset.move === "up" ? i - 1 : i + 1;
-        if (j < 0 || j >= spec.chapters.length) return;
-        [spec.chapters[i], spec.chapters[j]] = [spec.chapters[j], spec.chapters[i]];
-        buildTweakPanel();       // indices and disabled states move with them
-        repaint();
-      };
+    root.querySelectorAll("[data-move]").forEach((el) => el.onclick = () => {
+      const i = +el.dataset.i;
+      const j = el.dataset.move === "up" ? i - 1 : i + 1;
+      if (j < 0 || j >= spec.chapters.length) return;
+      // The translation has to move with it, or chapter three is suddenly
+      // narrated by chapter one.
+      [spec.chapters[i], spec.chapters[j]] = [spec.chapters[j], spec.chapters[i]];
+      if (spec.alt) [spec.alt.chapters[i], spec.alt.chapters[j]] = [spec.alt.chapters[j], spec.alt.chapters[i]];
+      buildTweakPanel(); repaint();
     });
   }
 
