@@ -125,3 +125,14 @@ revoke all on function update_site_demo(text, text, text, jsonb) from anon, auth
 grant execute on function update_site_demo(text, text, text, jsonb) to anon;
 
 commit;
+
+-- ---------------------------------------------------------------------------
+-- `create or replace` with a changed signature CREATES a second function
+-- rather than replacing the first, so the five-argument publish and the
+-- three-argument update survived alongside their successors. PostgREST picks
+-- by the arguments sent, so the right one was being called — but two
+-- overloads of a security-definer function is a resolution accident waiting
+-- to happen, and the old ones cannot store a spec.
+-- ---------------------------------------------------------------------------
+drop function if exists publish_site_demo(text, text, text, text, text);
+drop function if exists update_site_demo(text, text, text);

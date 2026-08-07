@@ -1422,7 +1422,15 @@ window.CMProgress = (function () {
     try {
       const res = await fetch(`/api/demo?spec=1&slug=${encodeURIComponent(slug)}`);
       const payload = await res.json().catch(() => null);
-      if (!res.ok) { say(payload?.error ?? "That design could not be loaded.", true); return; }
+      if (!res.ok) {
+        /* The message lives beside the build button, about 1700px down. A
+           person arriving on an edit link is looking at the top of the page,
+           so an explanation down there is the same as no explanation — which
+           is exactly how a working refusal came to look like a broken link. */
+        say(payload?.error ?? "That design could not be loaded.", true);
+        $("status").scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
 
       spec = payload.spec;
       originalSpec = JSON.parse(JSON.stringify(payload.spec));
@@ -1439,8 +1447,11 @@ window.CMProgress = (function () {
       $("demo-url").textContent = `${location.origin}/demo/${payload.slug}`;
       $("demo-note").textContent = "Editing the live version. Save when you are happy and this link updates.";
       say("");
+      // Success has the same problem: the editor is far below the fold.
+      $("result").scrollIntoView({ behavior: "smooth", block: "start" });
     } catch {
       say("That design could not be loaded.", true);
+      $("status").scrollIntoView({ behavior: "smooth", block: "center" });
     }
   })();
 
