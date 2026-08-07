@@ -154,6 +154,20 @@ if (!(await higgsfieldAvailable())) {
 }
 
 console.log("  seams: both ends pinned");
+/*
+  Say which pass this is, at the moment it matters.
+
+  480p is the default because a storyboard that does not work should cost 46
+  credits to discover rather than 271. The failure mode this guards against
+  is mastering first, hating the third chapter, and paying six times over to
+  find that out.
+*/
+if (resolution === "480p") {
+  console.log("  pass:  480p DRAFT — cheap on purpose. Approve it, then master at 1080p.");
+} else {
+  console.log(`  pass:  ${resolution} MASTER — about 6x the cost of a 480p draft.`);
+  console.log("         Only worth running on a storyboard already approved.");
+}
 if (soulId) console.log(`  look:  trained Soul reference ${soulId}`);
 else if (references.length) console.log(`  look:  ${references.length} client photograph(s) as reference`);
 else console.log("  look:  imagined from the brief — no client imagery supplied");

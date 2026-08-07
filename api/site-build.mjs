@@ -235,7 +235,7 @@ export default async function handler(req, res) {
       });
     }
     return res.status(503).json({
-      error: "Premium is built, but it does not run from this button. Each chapter is a separate generation chained from the previous chapter's last frame and checked at every seam, so a five-shot film takes minutes and costs real money — it is commissioned and reviewed, not fired off. Standard is free and available right now, and the spec it produces is exactly what the film is built from. Ask us and we will quote the Premium build.",
+      error: "Premium is built, but it does not run from this button. We draft the whole film at 480p first and send you that to approve — deliberately rough, and where you change your mind cheaply — then master at 1080p once the storyboard is right. Each shot is a separate generation pinned to the frames on both sides of it, so it takes minutes and costs real money each time, and it is commissioned and reviewed rather than fired off. Standard is free and available right now, and the spec it produces is exactly what the film is built from. Ask us and we will quote it.",
       code: "not_self_serve",
       engineConnected: true,
       next: "Build the free tier first — its spec is the storyboard.",
