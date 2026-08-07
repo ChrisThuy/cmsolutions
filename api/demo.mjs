@@ -222,7 +222,16 @@ export default async function handler(req, res) {
       // The generator inlines its own CSS and uses Google Fonts.
       "style-src 'unsafe-inline' https://fonts.googleapis.com",
       "font-src https://fonts.gstatic.com",
-      "img-src 'self' data:",
+      /* Any https image, because a rebuilt site carries the client's own
+         photographs and those live on their server. This was 'self' data:
+         when generated pages had no imagery, and it silently blocked every
+         picture the moment they did — the markup was right and the header
+         was refusing it.
+
+         Widened only for images. Scripts, styles, fonts and connections
+         stay pinned, and connect-src is still 'none', so a page still
+         cannot send anything anywhere. */
+      "img-src 'self' data: https:",
       /* Exactly the two CDNs lib/sitegen/render.mjs loads: GSAP and
          ScrollTrigger from cdnjs, Lenis from jsdelivr. Checked against the
          generator rather than guessed — the first draft of this allowed
