@@ -6,6 +6,7 @@ import {
 } from "../lib/sitegen/reference.mjs";
 import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
 import { EditOpsSchema, EDIT_SYSTEM, applyOps, describeForEditing } from "../lib/sitegen/edit.mjs";
+import { ShotListSchema, SHOTLIST_SYSTEM, shotlistRequest, toFilmSpec, faceCount } from "../lib/film/shotlist.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { SiteSpecSchema, validateSpec } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
@@ -208,6 +209,93 @@ Rules:
   if real footage is added.`;
 
 const EDIT_SCHEMA = z.toJSONSchema(EditOpsSchema, { target: "draft-7", io: "output" });
+const SHOTLIST_SCHEMA = z.toJSONSchema(ShotListSchema, { target: "draft-7", io: "output" });
+
+/*
+  Commissioning a film.
+
+  The button cannot make one — thirty-five minutes of generation against a
+  three-hundred-second ceiling — so it writes the shot list, queues the job,
+  and returns an id the page polls. The work happens on a machine with no
+  such ceiling.
+
+  The shot list is written here rather than by the worker because it is the
+  one part that belongs to the design: it is the page's own journey turned
+  into camera instructions, and it costs two cents and a minute rather than
+  thirty-five.
+*/
+async function handleFilm(req, res, body) {
+  const spec = body?.spec;
+  const slug = String(body?.slug ?? "").trim().toLowerCase();
+  const resolution = ["480p", "720p", "1080p"].includes(body?.resolution) ? body.resolution : "480p";
+
+  if (!spec?.chapters?.length) return res.status(400).json({ error: "No design to film." });
+  if (!/^[a-z0-9][a-z0-9-]{2,63}$/.test(slug)) return res.status(400).json({ error: "That demo link is not valid." });
+
+  const ip = clientIp(req);
+  if (!ip) return res.status(400).json({ error: "We could not process that request." });
+  if (!(await consumeAllowance(ip, "sitegen:film:ip", 3))) {
+    return res.status(429).json({ error: "That is three films from one connection this hour. Each one costs real money to make." });
+  }
+
+  let shotlist;
+  try {
+    const r = await artDirect({
+      system: SHOTLIST_SYSTEM,
+      user: shotlistRequest(spec),
+      zodSchema: ShotListSchema,
+      jsonSchema: SHOTLIST_SCHEMA,
+      maxTokens: 4000,
+      budgetMs: 200_000,
+    });
+    shotlist = r.spec;
+  } catch (cause) {
+    console.error("[film] shot list failed:", cause?.message);
+    return res.status(502).json({ error: "The shot list could not be written. Try again." });
+  }
+
+  /* One face, in the last shot. Six independent generations produce six
+     different people, and this is the rule that keeps that off the screen —
+     asserted rather than trusted, because it is the failure that costs a
+     whole film. */
+  if (faceCount(shotlist) > 1) {
+    console.warn(`[film] shot list showed ${faceCount(shotlist)} faces; trimming to the last`);
+    shotlist.shots.forEach((shot, i) => { shot.showsFace = i === shotlist.shots.length - 1; });
+  }
+
+  try {
+    const rows = await rpc("request_film", {
+      p_slug: slug,
+      p_spec: toFilmSpec(spec, shotlist),
+      p_resolution: resolution,
+    }, { withSecret: false });
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    return res.status(200).json({
+      jobId: row.id,
+      status: row.status,
+      alreadyRunning: row.existing === true,
+      shots: shotlist.shots.map((sh) => sh.name),
+    });
+  } catch (cause) {
+    console.error("[film] could not queue:", cause?.message);
+    return res.status(502).json({ error: "That could not be queued. Try again." });
+  }
+}
+
+async function handleFilmStatus(req, res, body) {
+  const id = String(body?.jobId ?? "").trim().toLowerCase();
+  if (!/^[a-z0-9]{16,48}$/.test(id)) return res.status(400).json({ error: "Not a job." });
+  try {
+    const rows = await rpc("film_job_status", { p_id: id }, { withSecret: false });
+    const row = Array.isArray(rows) ? rows[0] : rows;
+    if (!row) return res.status(404).json({ error: "No such job." });
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).json(row);
+  } catch (cause) {
+    console.error("[film] status failed:", cause?.message);
+    return res.status(502).json({ error: "Could not read that job." });
+  }
+}
 
 async function handleEdit(req, res, body) {
   const spec = body?.spec;
@@ -295,6 +383,8 @@ export default async function handler(req, res) {
     a design goes in, a better one comes out.
   */
   if (body?.mode === "edit") return handleEdit(req, res, body);
+  if (body?.mode === "film") return handleFilm(req, res, body);
+  if (body?.mode === "film-status") return handleFilmStatus(req, res, body);
 
   const brief = String(body?.brief ?? "").trim();
   if (brief.length < MIN_BRIEF) {
