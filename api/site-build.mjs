@@ -409,6 +409,13 @@ export default async function handler(req, res) {
     — a hallucinated digit has no route onto the page because the page never
     asks the model for one.
   */
+  if (ownSite?.images?.length) {
+    /* Hotlinked to their own server, deliberately. A thirty-day demo does
+       not justify copying somebody's photographs onto our storage, and if
+       they take the originals down the demo should go with them. */
+    spec.images = ownSite.images.slice(0, 8);
+  }
+
   if (ownSite?.business) {
     const b = ownSite.business;
     spec.contact = {
