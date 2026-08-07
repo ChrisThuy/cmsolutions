@@ -46,6 +46,8 @@ if (!args.length || has("help")) {
     --seconds <n>      length of each clip                   (default 5)
     --resolution <r>   480p | 720p | 1080p                   (default 480p)
     --frames <n>       stills extracted for scrubbing        (default 240)
+    --reference <path> a client photograph, repeatable        (up to 7)
+    --soul <id>        a trained Soul reference, if you have one
     --quote-only       print the cost and stop
     --yes              do not ask before spending
 
@@ -86,6 +88,32 @@ const seconds = Number(flag("seconds", 5));
 const resolution = flag("resolution", "480p");
 const frames = Number(flag("frames", 240));
 
+/*
+  The client's own photographs.
+
+  Repeatable, because one photograph steers a frame and several steer a
+  world. Existence is checked here rather than at the first upload — finding
+  out a path was wrong after the first clip is billed is money wasted on a
+  typo.
+*/
+const references = [];
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--reference" && args[i + 1]) references.push(args[i + 1]);
+}
+const soulId = flag("soul", null);
+
+if (references.length) {
+  const { access } = await import("node:fs/promises");
+  for (const path of references) {
+    try {
+      await access(resolve(path));
+    } catch {
+      console.error(`  Cannot read that reference: ${path}\n`);
+      process.exit(1);
+    }
+  }
+}
+
 const quote = quoteChain({ chapters: spec.chapters, seconds });
 
 console.log(`\n  ${spec.conceptName ?? "Untitled"}`);
@@ -125,6 +153,12 @@ if (!(await higgsfieldAvailable())) {
   process.exit(1);
 }
 
+console.log("  seams: both ends pinned");
+if (soulId) console.log(`  look:  trained Soul reference ${soulId}`);
+else if (references.length) console.log(`  look:  ${references.length} client photograph(s) as reference`);
+else console.log("  look:  imagined from the brief — no client imagery supplied");
+console.log("");
+
 const account = await accountStatus();
 console.log(`  engine: Higgsfield Seedance 2.0 — ${account.text}`);
 if (account.credits === 0) {
@@ -135,7 +169,6 @@ if (account.credits === 0) {
 /* Both ends of every clip are pinned, which is the reason for this engine —
    the junction is a frame both neighbours were handed, rather than a drift
    measured afterwards and hoped about. */
-console.log("  seams: both ends pinned\n");
 
 if (!has("yes")) {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -153,8 +186,11 @@ const elapsed = () => `${Math.round((Date.now() - started) / 1000)}s`;
 try {
   const manifest = await buildFilm({
     spec, outDir: resolve(outDir), seconds, resolution, frames,
+    references: references.map((r) => resolve(r)), soulId,
     onStep(step) {
       switch (step.step) {
+        case "upload":
+          console.log(`  [${elapsed()}] uploading reference ${step.index + 1}/${step.of}`); break;
         case "keyframe":
           console.log(`  [${elapsed()}] opening keyframe…`); break;
         case "clip":
