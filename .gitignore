@@ -5,3 +5,4 @@ node_modules
 # Batch audit output and prospect lists — never committed.
 reports/
 prospects.txt
+.env*

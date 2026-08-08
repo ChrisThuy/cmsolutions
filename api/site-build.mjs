@@ -8,7 +8,10 @@ import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
 import { EditOpsSchema, EDIT_SYSTEM, applyOps, describeForEditing } from "../lib/sitegen/edit.mjs";
 import { ShotListSchema, SHOTLIST_SYSTEM, shotlistRequest, toFilmSpec, faceCount, audienceFromSpec } from "../lib/film/shotlist.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
-import { SiteSpecSchema, validateSpec, SITE_SYSTEM } from "../lib/sitegen/spec.mjs";
+import {
+  SiteSpecSchema, SiteSpecDraftSchema, AltCopySchema,
+  validateSpec, SITE_SYSTEM, TRANSLATE_SYSTEM,
+} from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
 
 // Set in Vercel; falls back so a preview deployment still builds a usable link.
@@ -100,7 +103,8 @@ const BUILDS_PER_IP_HOUR = 5;
   accepting a spec the other rejects. `target: "draft-7"` because that is
   what OpenAI-compatible json_schema mode expects.
 */
-const SPEC_JSON_SCHEMA = z.toJSONSchema(SiteSpecSchema, { target: "draft-7", io: "output" });
+const SPEC_JSON_SCHEMA = z.toJSONSchema(SiteSpecDraftSchema, { target: "draft-7", io: "output" });
+const ALT_JSON_SCHEMA = z.toJSONSchema(AltCopySchema, { target: "draft-7", io: "output" });
 const MAX_BRIEF = 1500;
 const MIN_BRIEF = 30;
 
@@ -498,7 +502,7 @@ export default async function handler(req, res) {
       const result = await artDirect({
         system: SITE_SYSTEM,
         user: userMessage,
-        zodSchema: SiteSpecSchema,
+        zodSchema: SiteSpecDraftSchema,
         jsonSchema: SPEC_JSON_SCHEMA,
         maxTokens: 16000,
         budgetMs: slice,
@@ -529,6 +533,50 @@ export default async function handler(req, res) {
         ? "The studio is busy. Try again in a minute."
         : "The studio could not finish that. Try again.",
     });
+  }
+
+  /*
+    The second language, as its own call.
+
+    validateSpec rejects a spec that declares a second language and has no
+    translated copy, because a toggle that shows nothing is worse than no
+    toggle. So this runs before validation, and a translation failure
+    downgrades the site to monolingual rather than failing the build — the
+    visitor came to see a website, and a working site in one language beats
+    an error page in two.
+  */
+  spec.alt = null;
+  if (spec.language?.secondary) {
+    try {
+      const translation = await artDirect({
+        system: TRANSLATE_SYSTEM,
+        user:
+          `Second language: ${spec.language.secondary} (${spec.language.secondaryLabel}).\n\n` +
+          `The finished site, in ${spec.language.primaryLabel}:\n\n` +
+          JSON.stringify({
+            tagline: spec.tagline,
+            conceptName: spec.conceptName,
+            chapters: spec.chapters.map((c) => ({
+              name: c.name, kicker: c.kicker, headline: c.headline,
+              body: c.body, counterLabel: c.counterLabel,
+            })),
+            sections: spec.sections,
+            cta: spec.cta,
+            footerNote: spec.footerNote,
+          }, null, 1),
+        zodSchema: AltCopySchema,
+        jsonSchema: ALT_JSON_SCHEMA,
+        schemaName: "alt_copy",
+        maxTokens: 8000,
+        budgetMs: Math.max(20_000, remaining() - 20_000),
+        studio: ranOn,
+      });
+      spec.alt = translation.spec;
+    } catch (cause) {
+      console.error(`[sitegen] translation failed, shipping monolingual: ${cause?.message ?? cause}`);
+      spec.language.secondary = null;
+      spec.language.secondaryLabel = null;
+    }
   }
 
   /*
