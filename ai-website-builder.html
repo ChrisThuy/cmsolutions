@@ -1053,14 +1053,35 @@ window.CMProgress = (function () {
 
     $("run").disabled = true;
     say("");
+    /*
+      tau tracks what the build actually costs now, not what it used to.
+
+      It was 100, set when art direction was the whole wait. A measured build
+      is now around 210s: Fable 5 at high effort, then a GPT Image 2 hero at
+      roughly 140s of that. Left at 100 the bar filled at the halfway mark and
+      then sat still for nearly two minutes, which reads as a hang — the same
+      way the social planner's did before it was recalibrated.
+
+      Split into two steps so the long one is named. A visitor who knows a
+      picture is being painted waits; a visitor watching a finished bar does
+      not.
+    */
+    let heroStepTimer = null;
     const prog = CMProgress.attach("#prog", [
       { label: "Reading your brief", w: 1 },
-      { label: "Art-directing the concept and writing the page", w: 10, slow: true, tau: 100 },
+      { label: "Art-directing the concept and writing the page", w: 6, slow: true, tau: 70 },
+      { label: "Painting the hero image", w: 6, slow: true, tau: 140 },
       { label: "Assembling the HTML", w: 1 },
     ]).begin();
+    say("This one takes about three to four minutes — the hero image is generated from scratch. Leave the tab open.");
 
     try {
       prog.next();
+      /* One request, so no server signal marks the handover from art
+         direction to image. The step advances on the measured split
+         instead — honest about what is happening, and cleared in `finally`
+         so a fast failure cannot leave a timer running. */
+      heroStepTimer = setTimeout(() => prog.to(2), 70_000);
       const res = await fetch("/api/site-build", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1071,13 +1092,15 @@ window.CMProgress = (function () {
         ownSiteUrl: $("ownsite").value.trim() || undefined,
       }),
       });
-      prog.to(2);
+      clearTimeout(heroStepTimer);
+      prog.to(3);
       const payload = await res.json().catch(() => null);
       if (!res.ok) { prog.fail(payload?.error ?? "That did not work"); say(payload?.error ?? "That did not work. Try again.", true); return; }
       render(payload);
       prog.done(`${payload.summary.chapters?.length ?? ""} chapters built`.trim());
       say("");
     } catch (cause) {
+      clearTimeout(heroStepTimer);
       prog.fail(cause?.message ?? "That did not work");
       say(cause?.message ?? "That did not work. Try again.", true);
     } finally {
