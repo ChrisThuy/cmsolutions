@@ -23,6 +23,7 @@
 */
 
 import { rpc } from "../lib/audit/watch-store.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 const CACHE_SECONDS = 300;
 
@@ -114,7 +115,7 @@ async function handleUpdate(req, res) {
 
   const ip = clientIp(req);
   if (!ip) return res.status(400).json({ error: "We could not process that request." });
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({ error: "That is a lot of saves from one connection. Try again shortly." });
   }
 

@@ -5,6 +5,7 @@ import { PlanSchema, tally, validatePlan } from "../lib/workflow/plan.mjs";
 import {
   MAX_DESCRIPTION_CHARS, MIN_DESCRIPTION_CHARS, estimateSaving,
 } from "../lib/workflow/schema.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/workflow-plan  { description, cadenceId, minutesPerRun, hourlyCost }
@@ -142,7 +143,7 @@ export default async function handler(req, res) {
     console.error("[workflow] no client address on the request");
     return res.status(400).json({ error: "We could not process that request." });
   }
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: `That is ${PLANS_PER_IP_HOUR} plans from one connection this hour. This is a demonstration rather than a service — if you want the real thing designing, that is worth a conversation.`,
     });

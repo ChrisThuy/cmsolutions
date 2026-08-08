@@ -1,4 +1,5 @@
 import { sendEmail, rpc } from "../lib/audit/watch-store.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/methane-report  { email, result }
@@ -125,7 +126,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "We could not process that request." });
   }
 
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: "That is as many reports as we send from one connection each hour. The report is still on screen — print it instead.",
     });

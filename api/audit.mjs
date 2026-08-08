@@ -1,5 +1,6 @@
 import { normaliseTarget, UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
 import { crawlSite } from "../lib/audit/crawl.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/audit  { "url": "example.com" }
@@ -149,7 +150,7 @@ export default async function handler(req, res) {
     throw cause;
   }
 
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error:
         "That is as many checks as we run from one connection each hour. " +

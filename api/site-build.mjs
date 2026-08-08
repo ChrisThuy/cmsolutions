@@ -13,6 +13,7 @@ import {
   validateSpec, SITE_SYSTEM, TRANSLATE_SYSTEM,
 } from "../lib/sitegen/spec.mjs";
 import { describeSpec, renderSite } from "../lib/sitegen/render.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 // Set in Vercel; falls back so a preview deployment still builds a usable link.
 const SITE_ORIGIN = process.env.SITE_ORIGIN ?? "https://cmsolutions.tech";
@@ -166,7 +167,7 @@ async function handleFilm(req, res, body) {
 
   const ip = clientIp(req);
   if (!ip) return res.status(400).json({ error: "We could not process that request." });
-  if (!(await consumeAllowance(ip, "sitegen:film:ip", 3))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip, "sitegen:film:ip", 3))) {
     return res.status(429).json({ error: "That is three films from one connection this hour. Each one costs real money to make." });
   }
 
@@ -249,7 +250,7 @@ async function handleEdit(req, res, body) {
 
   const ip = clientIp(req);
   if (!ip) return res.status(400).json({ error: "We could not process that request." });
-  if (!(await consumeAllowance(ip, "sitegen:edit:ip", 60))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip, "sitegen:edit:ip", 60))) {
     return res.status(429).json({ error: "That is a lot of edits from one connection this hour. The fields below still work, and they are free." });
   }
 
@@ -396,7 +397,7 @@ export default async function handler(req, res) {
     console.error("[sitegen] no client address on the request");
     return res.status(400).json({ error: "We could not process that request." });
   }
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: `That is ${BUILDS_PER_IP_HOUR} sites from one connection this hour. This is a demonstration rather than a service — if you want one built properly, that is worth a conversation.`,
     });

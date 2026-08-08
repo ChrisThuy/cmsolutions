@@ -931,6 +931,54 @@
 
   begin() enters step 0, next() advances, done()/fail() end it.
 */
+/*
+  Presenter mode.
+
+  Arm the demo machine once by visiting any tool with ?presenter=KEY. The key
+  is stored locally and stripped from the address bar immediately, so it is
+  not sitting in a URL while a screen is shared, and every later request from
+  this browser carries it as a header — past the rate limits that otherwise
+  stop a demo mid-sentence.
+
+  Wraps fetch rather than editing each page's call: there are ten endpoints
+  across eight pages, and a header added in one place cannot be forgotten in
+  the ninth. Same-origin /api/ requests only — the key must never ride along
+  to a third party.
+
+  Clear it with ?presenter=off.
+*/
+(function () {
+  var STORE = "cm.presenter.key";
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.has("presenter")) {
+      var v = q.get("presenter");
+      if (!v || v === "off") localStorage.removeItem(STORE);
+      else localStorage.setItem(STORE, v);
+      q.delete("presenter");
+      var clean = location.pathname + (q.toString() ? "?" + q : "") + location.hash;
+      history.replaceState(null, "", clean);
+    }
+  } catch (e) { /* private mode: presenter mode simply stays off */ }
+
+  var key;
+  try { key = localStorage.getItem(STORE); } catch (e) { key = null; }
+  if (!key) return;
+
+  var real = window.fetch;
+  window.fetch = function (input, init) {
+    try {
+      var url = new URL(typeof input === "string" ? input : input.url, location.origin);
+      if (url.origin === location.origin && url.pathname.indexOf("/api/") === 0) {
+        init = Object.assign({}, init);
+        init.headers = new Headers((init && init.headers) || (typeof input !== "string" ? input.headers : null) || {});
+        init.headers.set("x-presenter-key", key);
+      }
+    } catch (e) { /* leave the request exactly as it was */ }
+    return real(input, init);
+  };
+})();
+
 window.CMProgress = (function () {
   function attach(mount, steps) {
     var host = typeof mount === "string" ? document.querySelector(mount) : mount;

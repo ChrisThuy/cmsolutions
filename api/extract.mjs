@@ -3,6 +3,7 @@ import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { rpc } from "../lib/audit/watch-store.mjs";
 import { MAX_FIELDS, fieldsFor } from "../lib/extract/schema.mjs";
 import { ExtractionSchema } from "../lib/extract/output.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/extract  { presetId, fields[], media: { type, data } }
@@ -164,7 +165,7 @@ export default async function handler(req, res) {
     console.error("[extract] no client address on the request");
     return res.status(400).json({ error: "We could not process that request." });
   }
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: `That is ${EXTRACTIONS_PER_IP_HOUR} documents from one connection this hour, which is as many as this free tool runs. It is a demonstration rather than a service — if you need it at volume, that is worth a conversation.`,
     });

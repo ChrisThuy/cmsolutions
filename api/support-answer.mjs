@@ -5,6 +5,7 @@ import { AnswerSchema, unsupportedQuotes, validateAnswer } from "../lib/support/
 import {
   MAX_KNOWLEDGE_CHARS, capKnowledge, normaliseQuestion,
 } from "../lib/support/knowledge.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/support-answer  { knowledge, question }
@@ -128,7 +129,7 @@ export default async function handler(req, res) {
     console.error("[support] no client address on the request");
     return res.status(400).json({ error: "We could not process that request." });
   }
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: `That is ${ANSWERS_PER_IP_HOUR} questions from one connection this hour. This is a demonstration rather than a service — if you want it answering your real queue, that is worth a conversation.`,
     });

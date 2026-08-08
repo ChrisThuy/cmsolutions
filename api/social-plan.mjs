@@ -5,6 +5,7 @@ import { ContentPlanSchema, tallyPlan, validatePlan } from "../lib/social/plan.m
 import {
   LIMITS_REVIEWED, PLATFORMS, buildSlots, checkPost, platformById, sanitiseSvg,
 } from "../lib/social/brand.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/social-plan
@@ -169,7 +170,7 @@ export default async function handler(req, res) {
     console.error("[social] no client address on the request");
     return res.status(400).json({ error: "We could not process that request." });
   }
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: `That is ${PLANS_PER_IP_HOUR} plans from one connection this hour. This is a demonstration rather than a service — if you want a month written properly every month, that is worth a conversation.`,
     });

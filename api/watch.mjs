@@ -1,5 +1,6 @@
 import { normaliseTarget, UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
 import { rpc, sendEmail, siteOrigin } from "../lib/audit/watch-store.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/watch  { "url": "example.com", "email": "you@example.com" }
@@ -82,7 +83,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "We could not process that request." });
   }
 
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error:
         "That is as many confirmations as we send from one connection each day. " +

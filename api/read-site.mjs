@@ -1,5 +1,6 @@
 import { fetchPage, normaliseTarget, UnsafeUrlError } from "../lib/audit/safe-fetch.mjs";
 import { extractBusiness } from "../lib/schema/extract.mjs";
+import { isPresenter } from "../lib/presenter.mjs";
 
 /*
   POST /api/read-site  { "url": "example.com" }
@@ -102,7 +103,7 @@ export default async function handler(req, res) {
     throw cause;
   }
 
-  if (!(await consumeAllowance(ip))) {
+  if (!isPresenter(req) && !(await consumeAllowance(ip))) {
     return res.status(429).json({
       error: "That is as many reads as we run from one connection each hour. Fill the form in by hand, or try again later.",
     });
