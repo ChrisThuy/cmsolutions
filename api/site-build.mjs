@@ -536,6 +536,30 @@ export default async function handler(req, res) {
   }
 
   /*
+    The hero starts here, not after the translation.
+
+    It only needs the finished design — the opening beat and the palette —
+    and the translation only needs the copy. Neither reads the other, so
+    running them in sequence was paying for both clocks back to back.
+
+    That sequencing is what made GPT Image 2 unaffordable. Measured on one
+    prompt through one account: 140s for GPT Image 2, against 55s for
+    gpt-5-image and 14s for Gemini Flash. Behind a bilingual build (two model
+    calls, ~124s) it could not fit the function ceiling and the hero was
+    dropped on exactly the sites that most needed one. Run concurrently, the
+    cost of the image is max(translation, image) rather than the sum, and it
+    fits either way.
+
+    Deliberately not awaited here. Errors are swallowed into null by
+    generateHero itself, and the .catch is belt and braces so an unhandled
+    rejection can never take down a build over an optional picture.
+  */
+  const wantsHero = !ownSite?.images?.length && imageGenAvailable();
+  const heroPromise = wantsHero
+    ? generateHero(spec, { timeoutMs: Math.min(170_000, remaining() - 40_000) }).catch(() => null)
+    : Promise.resolve(null);
+
+  /*
     The second language, as its own call.
 
     validateSpec rejects a spec that declares a second language and has no
@@ -614,21 +638,9 @@ export default async function handler(req, res) {
     slug before the demo exists.
   */
   let generatedHero = null;
-  if (!ownSite?.images?.length && imageGenAvailable()) {
-    /*
-      Bounded by the build's own clock, not by a constant.
-
-      GPT Image 2 takes roughly a minute where Gemini took eight seconds, so
-      an unbounded image call is now capable of pushing a bilingual build —
-      already two model calls deep — past the function ceiling. The hero is
-      the last optional step, so it gets whatever is genuinely left with a
-      margin for rendering and storing, and is skipped outright when that is
-      too little to be worth starting.
-    */
-    const imageBudget = remaining() - 30_000;
-    const image = imageBudget < 20_000
-      ? (console.warn(`[sitegen] skipping the hero — only ${Math.round(remaining() / 1000)}s left`), null)
-      : await generateHero(spec, { timeoutMs: Math.min(90_000, imageBudget) });
+  if (wantsHero) {
+    // Started before the translation; by now it has usually already landed.
+    const image = await heroPromise;
     if (image) {
       try {
         const id = await rpc("store_site_image", { p_data: image.data, p_mime: image.mime }, { withSecret: false });
