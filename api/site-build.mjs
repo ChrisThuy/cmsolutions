@@ -615,7 +615,20 @@ export default async function handler(req, res) {
   */
   let generatedHero = null;
   if (!ownSite?.images?.length && imageGenAvailable()) {
-    const image = await generateHero(spec);
+    /*
+      Bounded by the build's own clock, not by a constant.
+
+      GPT Image 2 takes roughly a minute where Gemini took eight seconds, so
+      an unbounded image call is now capable of pushing a bilingual build —
+      already two model calls deep — past the function ceiling. The hero is
+      the last optional step, so it gets whatever is genuinely left with a
+      margin for rendering and storing, and is skipped outright when that is
+      too little to be worth starting.
+    */
+    const imageBudget = remaining() - 30_000;
+    const image = imageBudget < 20_000
+      ? (console.warn(`[sitegen] skipping the hero — only ${Math.round(remaining() / 1000)}s left`), null)
+      : await generateHero(spec, { timeoutMs: Math.min(90_000, imageBudget) });
     if (image) {
       try {
         const id = await rpc("store_site_image", { p_data: image.data, p_mime: image.mime }, { withSecret: false });
