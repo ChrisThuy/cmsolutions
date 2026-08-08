@@ -38,7 +38,8 @@
       "maxDuration": 300
     },
     "api/site-build.mjs": {
-      "maxDuration": 300
+      "maxDuration": 300,
+      "includeFiles": "lib/sitegen/DESIGN.md"
     },
     "api/demo.mjs": {
       "maxDuration": 15
