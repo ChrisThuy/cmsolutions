@@ -867,13 +867,27 @@ window.CMProgress = (function () {
 
     $("run").disabled = true;
     say("");
-    /* The long one really is long — a brand kit, a logo and a month of posts
-       in a single call. tau is set from the measured run, not from hope. */
+    /*
+      The long one really is long — a brand kit, a logo and a month of posts
+      in a single call.
+
+      tau was a flat 65s, measured on a small plan, and it made a working
+      tool look broken: a week on one platform takes about 90 seconds and a
+      month across two takes about 240, so the bar filled and then sat at
+      the end for minutes while people assumed it had hung and left.
+
+      It scales with the work now, because that is what actually drives the
+      time — output tokens, which is posts, which is days times platforms.
+      Still an estimate, but an honest one.
+    */
+    const days = Number($("days").value) || 30;
+    const tau = Math.round(45 + days * platforms.length * 3.2);
     const prog = CMProgress.attach("#prog", [
       { label: "Reading your brief", w: 1 },
-      { label: "Writing the brand kit, the logo and the month", w: 11, slow: true, tau: 65 },
+      { label: "Writing the brand kit, the logo and the month", w: 11, slow: true, tau },
       { label: "Counting characters and laying out the dates", w: 1 },
     ]).begin();
+    say(`This one takes a few minutes — roughly ${Math.max(1, Math.round(tau / 60))}–${Math.round(tau / 60) + 2} minutes for ${days} days across ${platforms.length} platform${platforms.length > 1 ? "s" : ""}. Leave the tab open.`);
 
     try {
       prog.next();
@@ -883,7 +897,7 @@ window.CMProgress = (function () {
         cache: "no-store",
         body: JSON.stringify({
           brief, platforms,
-          days: Number($("days").value) || 30,
+          days,
           cadenceId: $("cadence").value,
           startDate: $("start").value,
           wantVideo: false,
