@@ -4,7 +4,7 @@ import {
   readReference, referenceBrief, referenceAvailable,
   readOwnSite, ownSiteBrief, summariseOwnSite,
 } from "../lib/sitegen/reference.mjs";
-import { generateHero, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
+import { generateScenes, imageGenAvailable } from "../lib/sitegen/imagegen.mjs";
 import { EditOpsSchema, EDIT_SYSTEM, applyOps, describeForEditing } from "../lib/sitegen/edit.mjs";
 import { ShotListSchema, SHOTLIST_SYSTEM, shotlistRequest, toFilmSpec, faceCount, audienceFromSpec } from "../lib/film/shotlist.mjs";
 import { rpc } from "../lib/audit/watch-store.mjs";
@@ -556,8 +556,8 @@ export default async function handler(req, res) {
   */
   const wantsHero = !ownSite?.images?.length && imageGenAvailable();
   const heroPromise = wantsHero
-    ? generateHero(spec, { timeoutMs: Math.min(170_000, remaining() - 40_000) }).catch(() => null)
-    : Promise.resolve(null);
+    ? generateScenes(spec, { timeoutMs: Math.min(170_000, remaining() - 40_000) }).catch(() => [])
+    : Promise.resolve([]);
 
   /*
     The second language, as its own call.
@@ -639,19 +639,33 @@ export default async function handler(req, res) {
   */
   let generatedHero = null;
   if (wantsHero) {
-    // Started before the translation; by now it has usually already landed.
-    const image = await heroPromise;
-    if (image) {
+    // Started before the translation; by now they have usually already landed.
+    const scenes = await heroPromise;
+
+    /* Stored in order. The renderer reads photos[0] as the hero and cycles
+       the rest across the chapters, so a gap would shift every scene onto
+       the wrong beat. A store that fails drops that one scene rather than
+       the build. */
+    const stored = [];
+    for (const image of scenes) {
       try {
         const id = await rpc("store_site_image", { p_data: image.data, p_mime: image.mime }, { withSecret: false });
-        if (typeof id === "string" && id) {
-          generatedHero = `${SITE_ORIGIN}/api/demo?img=${id}`;
-          spec.images = [generatedHero];
-          console.info(`[sitegen] generated hero ${id} — $${image.cost ?? "?"}`);
-        }
+        if (typeof id === "string" && id) stored.push(`${SITE_ORIGIN}/api/demo?img=${id}`);
       } catch (cause) {
-        console.error("[sitegen] could not store the generated hero:", cause?.message);
+        console.error("[sitegen] could not store a scene:", cause?.message);
       }
+    }
+
+    if (stored.length) {
+      generatedHero = stored[0];
+      spec.images = stored;
+      /* Say whether the chapters actually got imagery. Three is the
+         renderer's threshold, and "hero only" looks like a bug from the
+         outside — it is worth being able to read that off a log line. */
+      console.info(
+        `[sitegen] ${stored.length} scene(s) stored — ` +
+        (stored.length >= 3 ? "chapters have imagery" : "hero only, chapters fall back to gradients"),
+      );
     }
   }
 
