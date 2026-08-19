@@ -1,0 +1,549 @@
+/* ============================================================
+   DALA LAYER
+   Adapted from the Refero style entry "constellation floating on
+   black velvet" (dala.craftedbygc.com). Loaded AFTER the base
+   sheet, so it wins on equal specificity.
+
+   PPNeueMontreal is a commercial face from Pangram Pangram and is
+   not licensed for this site. The style entry names Inter as the
+   substitute, so Inter carries every role here at the weights the
+   spec calls for: 400 display, 200 body, 600 uppercase labels.
+   ============================================================ */
+
+:root {
+  /* ---- colour ------------------------------------------------ */
+  --color-void:           #000000;
+  --color-bone-white:     #ffffff;
+  --color-ash-gray:       #9a9a9a;
+  --color-silver-mist:    #bdbdbd;
+  --color-electric-iris:  #8052ff;
+  --color-saffron-spark:  #ffb829;
+  --color-deep-verdant:   #15846e;
+
+  /* remap the base sheet's tokens onto the Dala palette */
+  --ink:              var(--color-bone-white);
+  --ink-dim:          var(--color-ash-gray);
+  --ink-faint:        var(--color-silver-mist);
+  --void:             var(--color-void);
+  --hairline:         rgba(255, 255, 255, 0.10);
+  --hairline-strong:  rgba(255, 255, 255, 0.10);
+
+  /* one accent for action, one for emphasis. Nothing else. */
+  --c-psychart: var(--color-electric-iris);
+  --c-olive:    var(--color-electric-iris);
+  --c-huddle:   var(--color-electric-iris);
+  --c-fathers:  var(--color-electric-iris);
+  --accent:     var(--color-electric-iris);
+  --emphasis:   var(--color-saffron-spark);
+
+  --sans:  "Inter", ui-sans-serif, system-ui, -apple-system,
+           BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --serif: var(--sans);          /* single typeface across all contexts */
+
+  /* ---- type scale, exact ------------------------------------- */
+  --text-caption:     12px;   --leading-caption:     1.5;
+  --text-nav-label:   14px;   --leading-nav-label:   1.2;
+  --text-meta:        15px;   --leading-meta:        1.5;
+  --text-body:        18px;   --leading-body:        1.5;
+  --text-heading-2xs: 24px;   --leading-heading-2xs: 1.25;
+  --text-heading-xs:  27px;   --leading-heading-xs:  1;
+  --text-subheading:  36px;   --leading-subheading:  1.2;
+  --text-heading-sm:  42px;   --leading-heading-sm:  1.2;
+  --text-heading:     48px;   --leading-heading:     1.1;
+  --text-heading-lg:  78px;   --leading-heading-lg:  1.1;
+  --text-display:    113px;   --leading-display:     1.1;
+
+  --tracking-display: -0.04em;   /* every size 42px and above */
+  --tracking-nav:      0.025em;  /* uppercase labels only     */
+
+  --w-extralight: 200;
+  --w-regular:    400;
+  --w-semibold:   600;
+
+  /* ---- space and shape --------------------------------------- */
+  --spacing-6: 6px;   --spacing-12: 12px;  --spacing-18: 18px;
+  --spacing-24: 24px; --spacing-30: 30px;  --spacing-36: 36px;
+  --spacing-60: 60px; --spacing-96: 96px;  --spacing-120: 120px;
+
+  --page-max-width: 1280px;
+  --radius:      24px;
+  --radius-pill: 9999px;
+}
+
+/* ============================================================
+   1. THE VOID IS THE DESIGN
+   Pure black everywhere. No panels, no cards, no shadows.
+   ============================================================ */
+
+html, body { background: var(--color-void); }
+
+body {
+  color: var(--color-bone-white);
+  font-family: var(--sans);
+  font-weight: var(--w-extralight);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: normal;
+}
+
+::selection { background: rgba(128, 82, 255, 0.32); color: #fff; }
+
+/* the base sheet's film grain fought the pure black. Remove it. */
+.grain { display: none; }
+
+/* no element on this page carries a shadow */
+*, *::before, *::after { text-shadow: none; }
+.service, .toolcard, .band, .contact-card, .sitenav-panel,
+.chapter-visual, .visual-halo, .contact-qr {
+  box-shadow: none;
+}
+
+/* ============================================================
+   2. TYPOGRAPHY
+   Hierarchy comes from scale and tracking, never from weight.
+   ============================================================ */
+
+h1, h2, h3, .display, .hero h1, .chapter h2,
+.services-head h2, .contact h2, .kinetic .display {
+  font-family: var(--sans);
+  font-weight: var(--w-regular);
+  letter-spacing: var(--tracking-display);
+  font-style: normal;
+}
+
+.hero h1 {
+  font-size: clamp(46px, 7.8vw, var(--text-display));
+  line-height: var(--leading-display);
+}
+.hero h1 em,
+.kinetic .display em,
+.services-head h2 em,
+.contact h2 em,
+.chapter h2 .accent {
+  font-style: normal;
+  font-weight: var(--w-regular);
+  color: var(--emphasis);
+}
+
+.kinetic .display {
+  font-size: clamp(36px, 5.4vw, var(--text-heading-lg));
+  line-height: var(--leading-heading-lg);
+}
+
+.chapter h2 {
+  font-size: clamp(36px, 4.6vw, var(--text-heading));
+  line-height: var(--leading-heading);
+}
+
+.services-head h2, .contact h2 {
+  font-size: clamp(32px, 4.2vw, var(--text-heading-sm));
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-display);
+}
+
+.service h3, .toolcard h3 {
+  font-size: var(--text-heading-2xs);
+  line-height: var(--leading-heading-2xs);
+  letter-spacing: -0.02em;
+  font-weight: var(--w-regular);
+  color: var(--color-bone-white);
+}
+
+.band-name {
+  font-size: var(--text-heading-2xs);
+  line-height: var(--leading-heading-2xs);
+  letter-spacing: -0.02em;
+  font-weight: var(--w-regular);
+}
+.band-price {
+  font-family: var(--sans);
+  font-size: var(--text-heading-xs);
+  line-height: var(--leading-heading-xs);
+  font-weight: var(--w-regular);
+  letter-spacing: -0.02em;
+  color: var(--color-bone-white);
+}
+.band-price small {
+  font-size: var(--text-caption);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+}
+
+/* body copy: ultra light is the signature. Do not raise it to 400. */
+.hero-sub, .chapter-tagline, .chapter-body,
+.services-head p, .contact-sub, .service p, .toolcard p, .band p {
+  font-weight: var(--w-extralight);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  letter-spacing: normal;
+  color: var(--color-bone-white);
+}
+.chapter-body, .service p, .toolcard p, .band p {
+  color: var(--color-silver-mist);
+}
+.hero-sub strong, .chapter-body strong {
+  font-weight: var(--w-regular);
+  color: var(--color-bone-white);
+}
+
+/* uppercase labels: 600 at 14px, the one place tracking is positive */
+.kicker, .chapter-num, .contact-label, .service-num,
+.sitenav-bar a, .sitenav-toggle, .chapter-cta, .scroll-cue,
+.btn, .toolcard-go, .chapter-domain {
+  font-family: var(--sans);
+  font-weight: var(--w-semibold);
+  font-size: var(--text-nav-label);
+  line-height: var(--leading-nav-label);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+.kicker, .chapter-num, .service-num, .contact-label, .scroll-cue {
+  color: var(--color-saffron-spark);
+}
+.chapter-domain { color: var(--color-ash-gray); text-transform: none; }
+.chapter-domain:hover { color: var(--color-saffron-spark); }
+
+.chapter-meta, .bands-note, .tools-more, .contact-hint, .contact-value {
+  font-weight: var(--w-extralight);
+  font-size: var(--text-meta);
+  line-height: var(--leading-meta);
+  color: var(--color-silver-mist);
+  letter-spacing: normal;
+}
+.chapter-meta b {
+  font-weight: var(--w-semibold);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+}
+.chapter-meta span { color: var(--color-silver-mist); }
+
+/* ============================================================
+   3. COMPONENTS REDUCED TO THEIR ESSENTIAL FORM
+   One violet pill. Ghost text links. Large format text blocks.
+   ============================================================ */
+
+/* --- the single filled action ------------------------------- */
+.btn--solid,
+.contact-card--primary {
+  background: var(--color-electric-iris);
+  color: var(--color-bone-white);
+  border: 0;
+  border-radius: var(--radius-pill);
+  padding: 14px 26px;
+  font-weight: var(--w-semibold);
+  transition: opacity 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+}
+.btn--solid:hover,
+.contact-card--primary:hover {
+  background: var(--color-electric-iris);
+  color: var(--color-bone-white);
+  border: 0;
+  opacity: 0.86;
+  transform: none;
+}
+
+/* --- every other button is a ghost --------------------------- */
+.btn:not(.btn--solid) {
+  background: transparent;
+  color: var(--color-bone-white);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius-pill);
+  padding: 14px 26px;
+}
+.btn:not(.btn--solid):hover {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--color-bone-white);
+  transform: none;
+}
+
+.chapter-cta {
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0;
+  padding: 0 0 10px;
+  color: var(--color-bone-white);
+}
+.chapter-cta:hover {
+  color: var(--color-saffron-spark);
+  border-color: var(--color-saffron-spark);
+}
+
+/* --- tags are the only pill at small size -------------------- */
+.chapter-tags li {
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent;
+  color: var(--color-ash-gray);
+  font-size: var(--text-caption);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  padding: 7px 14px;
+}
+
+/* --- no card containers. Content floats on the void. --------- */
+.service,
+.toolcard,
+.band,
+.contact-card {
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: none;
+  padding: var(--spacing-24) 0;
+}
+.service:hover,
+.toolcard:hover,
+.toolcard:focus-visible,
+.band:hover,
+.contact-card:hover {
+  background: transparent;
+  border: 0;
+  transform: none;
+}
+.contact-card {
+  border-radius: var(--radius);
+  padding: var(--spacing-18) var(--spacing-24);
+}
+.contact-card:hover .contact-value { color: var(--color-saffron-spark); }
+
+/* messenger brand greens do not own the closing screen */
+.contact-card.whatsapp .contact-icon,
+.contact-card.wechat   .contact-icon,
+.contact-card.line     .contact-icon,
+.contact-card--primary .contact-icon {
+  color: var(--color-ash-gray);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+.contact-card.whatsapp:hover .contact-icon,
+.contact-card.wechat:hover   .contact-icon,
+.contact-card.line:hover     .contact-icon,
+.contact-card--primary:hover .contact-icon {
+  color: var(--color-bone-white);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.contact-card.whatsapp:hover,
+.contact-card.wechat:hover,
+.contact-card.line:hover,
+.contact-card--primary:hover { border: 0; }
+
+.contact-qr { background: transparent; border: 0; }
+.contact-qr img { border-radius: var(--radius); }
+
+/* --- nav: transparent, sitting directly on the void ---------- */
+.sitenav { background: transparent; border: 0; }
+.sitenav[data-state="up"], .sitenav[data-state="down"] {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+.sitenav-mark {
+  font-family: var(--sans);
+  font-weight: var(--w-regular);
+  font-size: var(--text-nav-label);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--color-bone-white);
+}
+.sitenav-bar a, .sitenav-toggle { color: var(--color-ash-gray); }
+.sitenav-bar a:hover, .sitenav-toggle:hover { color: var(--color-bone-white); }
+.sitenav-cta {
+  color: var(--color-bone-white) !important;
+  background: var(--color-electric-iris);
+  border-radius: var(--radius-pill);
+  padding: 10px 18px;
+}
+.sitenav-panel {
+  background: var(--color-void);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: var(--radius);
+  box-shadow: none;
+}
+.sitenav-panel li a:hover { background: rgba(255, 255, 255, 0.05); }
+.sitenav-panel li a[aria-current="page"] { color: var(--color-saffron-spark); }
+.sitenav-group h2 {
+  font-size: var(--text-caption);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+}
+
+/* --- rails and rules ----------------------------------------- */
+.rail a { border-color: rgba(255, 255, 255, 0.22); }
+.rail a.is-active {
+  background: var(--color-electric-iris);
+  border-color: var(--color-electric-iris);
+}
+.rail .rail-line { background: rgba(255, 255, 255, 0.10); }
+.scroll-progress { background: var(--color-electric-iris); }
+.chapter-rule, .contact-divider { background: rgba(255, 255, 255, 0.10); }
+.thread::before { background: rgba(255, 255, 255, 0.08); }
+
+/* ============================================================
+   4. RHYTHM
+   1280px column. 60 to 120px between bands. Nothing is dense.
+   ============================================================ */
+
+.chapter, .services, .contact, .hero, .kinetic {
+  max-width: var(--page-max-width);
+  padding-left:  var(--spacing-36);
+  padding-right: var(--spacing-36);
+  margin-inline: auto;
+}
+.chapter, .services, .contact {
+  padding-top:    var(--spacing-120);
+  padding-bottom: var(--spacing-120);
+}
+.chapter-grid { gap: var(--spacing-60); align-items: center; }
+.services-grid, .tools-grid, .bands, .contact-cards { gap: var(--spacing-36); }
+.chapter-tags { gap: var(--spacing-12); }
+
+/* ============================================================
+   5. PARTICLE CONSTELLATION
+   The project marks, rebuilt as point clouds. The canvas is
+   driven by scroll distance from the centre of the viewport,
+   so nothing moves while the page is still.
+   ============================================================ */
+
+.chapter-visual {
+  position: relative;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+.chapter-visual > svg { display: none; }   /* kept as the point source */
+.visual-halo { display: none; }            /* the void needs no halo */
+
+.particle-field {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  touch-action: pan-y;
+}
+
+/* ============================================================
+   6. SNAP THE TAIL
+   The base sheet sizes its small print in rem fractions, which
+   lands on values like 12.48px and 13.76px. Dala's scale is 12
+   whole numbers, so the tail is snapped onto it here.
+   ============================================================ */
+
+footer, footer * {
+  font-size: var(--text-nav-label);
+  line-height: var(--leading-body);
+  letter-spacing: normal;
+  border-radius: 0;
+}
+footer a { color: var(--color-ash-gray); font-weight: var(--w-extralight); }
+footer a:hover { color: var(--color-bone-white); }
+footer h2, footer .footer-head {
+  font-size: var(--text-caption);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+}
+
+.sitenav-panel li a,
+.sitenav-panel li a .blurb,
+.sitenav-group .note,
+.sitenav-lead a {
+  font-size: var(--text-nav-label);
+  line-height: var(--leading-body);
+  font-weight: var(--w-extralight);
+  letter-spacing: normal;
+  text-transform: none;
+}
+.sitenav-panel li a .blurb,
+.sitenav-group .note {
+  font-size: var(--text-caption);
+  color: var(--color-ash-gray);
+}
+
+.contact-divider,
+.contact-cards--secondary .contact-hint,
+.contact-cards--secondary .contact-value,
+.contact-qr span,
+.tools-more,
+.bands-note {
+  font-size: var(--text-caption);
+  line-height: var(--leading-body);
+  letter-spacing: normal;
+  font-weight: var(--w-extralight);
+  color: var(--color-ash-gray);
+}
+.contact-cards--secondary .contact-value {
+  font-size: var(--text-meta);
+  color: var(--color-bone-white);
+}
+
+.hero-do li {
+  font-size: var(--text-caption);
+  line-height: var(--leading-nav-label);
+  font-weight: var(--w-semibold);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  color: var(--color-ash-gray);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: transparent;
+}
+
+.service ul li {
+  font-size: var(--text-meta);
+  line-height: var(--leading-body);
+  font-weight: var(--w-extralight);
+  letter-spacing: normal;
+  color: var(--color-silver-mist);
+}
+.service ul li::before { color: var(--color-saffron-spark); }
+
+/* the QR is the last drop shadow on the page */
+.contact-qr img { box-shadow: none; }
+
+/* radii: pill, 24, or round. Nothing between. */
+.contact-card, .contact-card.line, .contact-card.whatsapp, .contact-card.wechat {
+  border-radius: var(--radius);
+}
+.sitenav-panel li a, footer a, .toolcard-go { border-radius: 0; }
+
+/* ============================================================
+   7. ACCESSIBILITY AND MOTION
+   ============================================================ */
+
+:is(a, button, summary, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-electric-iris);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .particle-field { opacity: 1; }
+}
+
+@media (max-width: 900px) {
+  .chapter, .services, .contact {
+    padding-top:    var(--spacing-60);
+    padding-bottom: var(--spacing-60);
+  }
+  .chapter-grid { gap: var(--spacing-36); }
+  .hero h1 { font-size: clamp(38px, 11vw, 62px); }
+  .kinetic .display { font-size: clamp(28px, 8vw, 44px); }
+}
+
+@media (max-width: 720px) {
+  :root { --text-body: 17px; }
+  .chapter, .services, .contact, .hero, .kinetic {
+    padding-left:  var(--spacing-24);
+    padding-right: var(--spacing-24);
+  }
+}
