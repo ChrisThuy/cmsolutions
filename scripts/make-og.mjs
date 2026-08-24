@@ -168,6 +168,151 @@ const CARDS = [
   },
 ];
 
+/*
+  The Mavridis & Co set. Rendered with the Dala template below — Inter, pure
+  black, violet and amber — because these pages carry the rebrand while the
+  tool pages above still wear the old look. Same table-not-hand-written rule.
+*/
+const MAVRIDIS_CARDS = [
+  {
+    output: "og.png",
+    section: "Business Diagnostics for UK SMEs",
+    claim: 'The evidence is already <em>public</em>.',
+    sub: 'Companies House, planning applications, rateable values, Land Registry and ONS catchment data — diagnostics for UK SMEs with <b>every finding cited to its source</b>.',
+    url: "cmsolutions.tech",
+    note: "Founding rates held for the first ten clients.",
+    dots: [[8, "violet"], [24, "violet"], [40, "amber"], [58, "violet"], [76, "white"], [92, "violet"]],
+  },
+  {
+    output: "og-diagnostic.png",
+    section: "Free Diagnostic Scorecard",
+    claim: 'How much of your business is <em>guesswork</em>?',
+    sub: 'Twelve questions, about five minutes, no sign-up. A score, four areas, and your three weakest named — with <b>the public register that settles each one</b>.',
+    url: "cmsolutions.tech/diagnostic",
+    note: "Nothing stored, nothing sent anywhere.",
+    dots: [[10, "violet"], [28, "amber"], [46, "violet"], [64, "white"], [82, "violet"]],
+  },
+  {
+    output: "og-health-check.png",
+    section: "Business Health Check",
+    claim: 'Your accounts, read the way a <em>lender</em> reads them.',
+    sub: 'Five years of your filings and three competitors&#8217;, read with the same method, every finding cited. <b>£450 at the founding rate</b>, delivered in five working days.',
+    url: "cmsolutions.tech/business-health-check",
+    note: "Not an audit — your accountant stays your accountant.",
+    dots: [[8, "violet"], [26, "violet"], [44, "amber"], [66, "violet"], [88, "white"]],
+  },
+  {
+    output: "og-location.png",
+    section: "Location & Market Intelligence",
+    claim: 'Know the site <em>before</em> you sign for it.',
+    sub: 'A drive-time catchment with its census profile, twenty-four months of planning applications, and your rates position against the units either side. <b>£1,200–£2,500, fixed before work starts</b>.',
+    url: "cmsolutions.tech/location-intelligence",
+    note: "It reads the record — it does not price the building.",
+    dots: [[12, "amber"], [30, "violet"], [48, "violet"], [66, "white"], [84, "violet"]],
+  },
+  {
+    output: "og-deep.png",
+    section: "Deep Diagnostic",
+    claim: 'The full picture, before the <em>big</em> decision.',
+    sub: 'A sale, an acquisition, a refinance or a turnaround — every register, every site, one document, <b>written so a lender can check every line</b>. £4,000–£7,500, scoped in writing first.',
+    url: "cmsolutions.tech/deep-diagnostic",
+    note: "Complements your solicitor and accountant. Replaces neither.",
+    dots: [[6, "violet"], [22, "violet"], [38, "amber"], [54, "violet"], [70, "violet"], [88, "white"]],
+  },
+  {
+    output: "og-retainer.png",
+    section: "Intelligence Retainer",
+    claim: 'The registers move. You hear about it <em>first</em>.',
+    sub: 'A monthly watch on your filings and your competitors&#8217;, planning inside your catchment, rates and title changes — <b>one short written note a month</b>. £400–£900, cancel any month.',
+    url: "cmsolutions.tech/intelligence-retainer",
+    note: "Urgent items flagged the day they are found.",
+    dots: [[14, "violet"], [32, "white"], [50, "violet"], [68, "amber"], [86, "violet"]],
+  },
+  {
+    output: "og-sample.png",
+    section: "Sample Report",
+    claim: 'A claim, a source, a date — <em>every line</em>.',
+    sub: 'A worked example of the £450 Business Health Check, for a fictitious company. <b>The figures are invented; the method is the product.</b> Read it before you spend anything.',
+    url: "cmsolutions.tech/sample-report",
+    note: "Every real finding is cited to the filing it came from.",
+    dots: [[10, "violet"], [30, "violet"], [50, "amber"], [70, "violet"], [90, "white"]],
+  },
+];
+
+const MAVRIDIS_PALETTE = {
+  violet: "#8052ff",
+  amber: "#ffb829",
+  white: "#bdbdbd",
+};
+
+function mavridisHtml(card) {
+  const dots = card.dots
+    .map(([left, tone]) => `<i style="left:${left}%;background:${MAVRIDIS_PALETTE[tone]}"></i>`)
+    .join("\n    ");
+
+  return `<!doctype html>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #ffffff; --ink-dim: #9a9a9a; --ink-faint: #bdbdbd; --void: #000000;
+    --violet: #8052ff; --amber: #ffb829;
+    --sans: "Inter", -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: ${WIDTH}px; height: ${HEIGHT}px;
+    background: var(--void); color: var(--ink); font-family: var(--sans);
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 168px; position: relative; overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before, body::after { content: ""; position: absolute; border-radius: 50%; filter: blur(220px); }
+  body::before { width: 1500px; height: 1000px; top: -540px; left: -400px; background: rgba(128,82,255,0.13); }
+  body::after  { width: 1400px; height: 950px; bottom: -560px; right: -420px; background: rgba(255,184,41,0.05); }
+  .inner { position: relative; z-index: 1; }
+  .eyebrow {
+    font-size: 30px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--violet); margin-bottom: 58px;
+  }
+  .eyebrow span { color: var(--ink-dim); }
+  h1 {
+    font-weight: 400;
+    font-size: 118px; line-height: 1.1; letter-spacing: -0.04em; max-width: 1900px;
+  }
+  h1 em { font-style: normal; color: var(--amber); }
+  .sub { margin-top: 56px; font-size: 40px; font-weight: 200; line-height: 1.5; color: var(--ink-dim); max-width: 1760px; }
+  .sub b { color: var(--ink); font-weight: 400; }
+  .track { margin-top: 80px; width: 1580px; height: 10px; border-radius: 5px; background: rgba(255,255,255,0.10); position: relative; }
+  .track i { position: absolute; top: -9px; width: 28px; height: 28px; border-radius: 50%; border: 5px solid var(--void); }
+  .track .t { left: 0; width: 10px; height: 28px; border-radius: 3px; border: 0; background: var(--ink); }
+  .foot {
+    position: absolute; left: 168px; right: 168px; bottom: 92px;
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 32px; color: var(--ink-dim);
+  }
+  .foot .url { color: var(--violet); font-weight: 600; letter-spacing: 0.02em; }
+</style>
+
+<div class="inner">
+  <p class="eyebrow">Mavridis &amp; Co <span>— ${card.section}</span></p>
+  <h1>${card.claim}</h1>
+  <p class="sub">${card.sub}</p>
+  <div class="track">
+    <i class="t"></i>
+    ${dots}
+  </div>
+</div>
+
+<div class="foot">
+  <span>${card.note}</span>
+  <span class="url">${card.url}</span>
+</div>
+`;
+}
+
 const PALETTE = {
   gap: "#d98b6a",
   unsure: "#d4af6a",
@@ -247,7 +392,7 @@ function cardHtml(card) {
 async function render(card) {
   const source = resolve(root, `.og-${card.output.replace(/\.png$/, "")}.tmp.html`);
   const to = resolve(root, card.output);
-  await writeFile(source, cardHtml(card));
+  await writeFile(source, (card.brand === "mavridis" ? mavridisHtml : cardHtml)(card));
 
   try {
     await run(CHROME, [
@@ -278,6 +423,14 @@ try {
   process.exit(1);
 }
 
-for (const card of CARDS) await render(card);
+/* --only mavridis / --only legacy renders one set; default renders both. */
+const only = (process.argv.find((x) => x.startsWith("--only")) ?? "").split("=")[1]
+  ?? process.argv[process.argv.indexOf("--only") + 1];
+MAVRIDIS_CARDS.forEach((c) => { c.brand = "mavridis"; });
+const ALL = [
+  ...(only === "mavridis" ? [] : CARDS),
+  ...(only === "legacy" ? [] : MAVRIDIS_CARDS),
+];
+for (const card of ALL) await render(card);
 
-console.log(`\n${CARDS.length} cards rendered. Look at them before deploying — a share card is\nthe first thing a stranger sees and the last thing anyone reviews.\n`);
+console.log(`\n${ALL.length} cards rendered. Look at them before deploying — a share card is\nthe first thing a stranger sees and the last thing anyone reviews.\n`);
