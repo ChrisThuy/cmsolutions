@@ -903,6 +903,56 @@
       align-items: center;
     }
   }
+
+  /* ============================================================
+     CHAPTER FIGURES — the chart takes the place the prose held.
+     NOTE: this lives in the page's own sheet. Never move it below
+     into the nav:css region — build-nav regenerates that block.
+     ============================================================ */
+  .chapter-fig {
+    margin-top: 1.6rem;
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    padding: 1.4rem 1.5rem 1.1rem;
+  }
+  .fig-head { display: flex; align-items: baseline; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+  .fig-hero-num {
+    font-size: clamp(1.9rem, 3.4vw, 2.6rem);
+    font-weight: 400; letter-spacing: -0.04em; line-height: 1;
+    color: var(--emphasis, #ffb829);
+  }
+  .fig-hero-lab { font-size: 0.82rem; color: var(--ink-dim); max-width: 26ch; line-height: 1.4; }
+  .chart { width: 100%; height: auto; display: block; }
+  .chart text { font-family: var(--sans); }
+  .chart .ax   { font-size: 12px; fill: var(--ink-dim); }
+  .chart .val  { font-size: 13px; font-weight: 600; fill: var(--ink); }
+  .chart .val-dim { font-size: 12px; fill: var(--ink-dim); }
+  .chart .grid { stroke: rgba(255,255,255,0.08); }
+  .chart .base { stroke: rgba(255,255,255,0.18); }
+  .fig-cap {
+    margin-top: 0.8rem; font-size: 0.72rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-faint);
+  }
+
+  .fact-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .fact-table th {
+    text-align: left; font-weight: 600; font-size: 0.72rem;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim);
+    padding: 0.65rem 0.2rem; border-bottom: 1px solid var(--hairline);
+    white-space: nowrap; width: 38%;
+  }
+  .fact-table td { padding: 0.65rem 0.2rem; border-bottom: 1px solid var(--hairline); color: var(--ink); }
+  .fact-table tr:last-child th, .fact-table tr:last-child td { border-bottom: 0; }
+  .fact-table td b { color: var(--emphasis, #ffb829); font-weight: 600; }
+
+  .stat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; }
+  .stat-tiles .tile { padding: 0.4rem 0.2rem; }
+  .stat-tiles .tile-num {
+    font-size: clamp(1.5rem, 2.8vw, 2.2rem); font-weight: 400;
+    letter-spacing: -0.04em; line-height: 1.1; color: var(--ink);
+  }
+  .stat-tiles .tile-lab { margin-top: 0.4rem; font-size: 0.78rem; color: var(--ink-dim); line-height: 1.4; }
+  @media (max-width: 560px) { .stat-tiles { grid-template-columns: 1fr; } }
 </style>
 <!-- nav:css — generated, do not edit by hand -->
 <style>
@@ -1147,11 +1197,9 @@
       <span class="hero-line" aria-hidden="true"><span>already <em>public</em>.</span></span>
     </h1>
     <p class="hero-sub hero-fade">
-      I'm Chris. I diagnose UK small and medium businesses using
-      <strong>the public record</strong> — Companies House filings, planning
-      applications, rateable values, Land Registry titles and ONS catchment
-      data. Every finding is cited to the document it came from, so you can
-      check the work rather than take my word for it.
+      I'm Chris. I diagnose UK businesses from <strong>the public
+      record</strong> — and every finding is cited to the document it came
+      from, so you can check the work.
     </p>
     <ul class="hero-do hero-fade" aria-label="What I read">
       <li>Companies House</li>
@@ -1188,20 +1236,34 @@
           <p class="kicker reveal">Accounts · Charges · Filing history</p>
           <h2 class="reveal" style="--d: 0.08s">Companies <span class="accent">House</span></h2>
           <p class="chapter-tagline reveal" style="--d: 0.14s">Nine years of filings tell you more about a business than nine hours of meetings.</p>
-          <p class="chapter-body reveal" style="--d: 0.2s">
-            Every UK limited company files, and every filing is <strong>public,
-            statutory and free to read</strong>. Accounts, secured charges,
-            director appointments, share allotments, and the date each one
-            landed. Read as a single document set they show margin drift,
-            borrowing taken against assets, and whether filing discipline is
-            tightening or slipping.
-          </p>
-          <p class="chapter-body reveal" style="--d: 0.26s">
-            I read yours and your competitors' the same way — <strong>same
-            registers, same method, same dates</strong>. A charge registered
-            last March is a fact. What it means for your next twelve months is
-            the diagnosis, and it is cited to the filing it came from.
-          </p>
+          <div class="chapter-fig reveal" style="--d: 0.2s">
+            <div class="fig-head">
+              <span class="fig-hero-num">−4.2 pts</span>
+              <span class="fig-hero-lab">gross margin over three filed years — visible in the accounts, mentioned in none of them</span>
+            </div>
+            <svg class="chart" viewBox="0 0 560 240" role="img" aria-label="Gross margin falling from 31.8 per cent in FY2022 to 27.6 per cent in FY2025">
+              <g class="grid"><line x1="60" y1="52.9" x2="540" y2="52.9"/><line x1="60" y1="91.4" x2="540" y2="91.4"/><line x1="60" y1="144.3" x2="540" y2="144.3"/></g>
+              <text class="ax" x="52" y="57" text-anchor="end">32%</text>
+              <text class="ax" x="52" y="95" text-anchor="end">30%</text>
+              <text class="ax" x="52" y="148" text-anchor="end">28%</text>
+              <line class="base" x1="60" y1="190" x2="540" y2="190"/>
+              <path d="M100 57.4 L240 89.4 L380 123.7 L520 153.4 L520 190 L100 190 Z" fill="rgba(128,82,255,0.10)"/>
+              <polyline points="100,57.4 240,89.4 380,123.7 520,153.4" fill="none" stroke="#8052ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <g fill="#8052ff" stroke="#000000" stroke-width="2">
+                <circle cx="100" cy="57.4" r="4.5"/><circle cx="240" cy="89.4" r="4.5"/>
+                <circle cx="380" cy="123.7" r="4.5"/><circle cx="520" cy="153.4" r="4.5"/>
+              </g>
+              <text class="val" x="100" y="40">31.8%</text>
+              <text class="val-dim" x="240" y="72" text-anchor="middle">30.4%</text>
+              <text class="val-dim" x="380" y="107" text-anchor="middle">28.9%</text>
+              <text class="val" x="520" y="136" text-anchor="end">27.6%</text>
+              <text class="ax" x="100" y="212">FY22</text>
+              <text class="ax" x="240" y="212" text-anchor="middle">FY23</text>
+              <text class="ax" x="380" y="212" text-anchor="middle">FY24</text>
+              <text class="ax" x="520" y="212" text-anchor="end">FY25</text>
+            </svg>
+            <p class="fig-cap">Illustrative sample — the real report reads your filings</p>
+          </div>
           <ul class="chapter-tags reveal" style="--d: 0.32s">
             <li>Annual accounts</li><li>Charges (MR01)</li><li>Filing history</li><li>PSC register</li><li>SIC drift</li>
           </ul>
@@ -1277,20 +1339,34 @@
           <p class="kicker reveal">Planning portals · Rateable values · Licensing</p>
           <h2 class="reveal" style="--d: 0.08s">Planning <span class="accent">&amp; VOA</span></h2>
           <p class="chapter-tagline reveal" style="--d: 0.14s">What is being built near you is public twelve to twenty-four months before it opens.</p>
-          <p class="chapter-body reveal" style="--d: 0.2s">
-            Every local authority publishes <strong>every planning
-            application</strong> — the applicant, the drawings, the use class,
-            the objections and the decision. A competitor's fit-out, a new
-            anchor tenant, a road closure, a change of use two doors down: all
-            of it is on the portal long before it is on the street.
-          </p>
-          <p class="chapter-body reveal" style="--d: 0.26s">
-            The Valuation Office holds the <strong>rateable value of every
-            commercial property</strong> in England and Wales. Set beside the
-            planning record it shows who is expanding, who is quietly
-            shrinking, and whether the rates bill you are paying is defensible
-            against the units either side of you.
-          </p>
+          <div class="chapter-fig reveal" style="--d: 0.2s">
+            <div class="fig-head">
+              <span class="fig-hero-num">+23%</span>
+              <span class="fig-hero-lab">above the average rateable value of the four units either side — grounds to check, on the record</span>
+            </div>
+            <svg class="chart" viewBox="0 0 560 240" role="img" aria-label="Rateable value per square metre: yours 186 pounds against neighbouring units between 143 and 158 pounds">
+              <g font-size="13">
+                <text class="val" x="0" y="44">Yours</text>
+                <text class="ax" x="0" y="84">Unit 2</text>
+                <text class="ax" x="0" y="124">Unit 6</text>
+                <text class="ax" x="0" y="164">Unit 9</text>
+                <text class="ax" x="0" y="204">Average</text>
+              </g>
+              <g>
+                <rect x="150" y="30" width="353" height="18" rx="4" fill="#8052ff"/>
+                <rect x="150" y="70" width="272" height="18" rx="4" fill="rgba(255,255,255,0.18)"/>
+                <rect x="150" y="110" width="287" height="18" rx="4" fill="rgba(255,255,255,0.18)"/>
+                <rect x="150" y="150" width="300" height="18" rx="4" fill="rgba(255,255,255,0.18)"/>
+                <rect x="150" y="190" width="283" height="18" rx="4" fill="rgba(255,255,255,0.10)"/>
+              </g>
+              <text class="val" x="495" y="44" text-anchor="end" fill="#ffffff">£186/m²</text>
+              <text class="val-dim" x="430" y="84">£143</text>
+              <text class="val-dim" x="445" y="124">£151</text>
+              <text class="val-dim" x="458" y="164">£158</text>
+              <text class="val-dim" x="441" y="204">£149</text>
+            </svg>
+            <p class="fig-cap">Illustrative sample — the real report compares your VOA entry</p>
+          </div>
           <ul class="chapter-tags reveal" style="--d: 0.32s">
             <li>Planning applications</li><li>VOA rating list</li><li>Use class</li><li>Licensing register</li><li>Decision notices</li>
           </ul>
@@ -1358,20 +1434,19 @@
           <p class="kicker reveal">Title · Price paid · Tenure</p>
           <h2 class="reveal" style="--d: 0.08s">Land <span class="accent">Registry</span></h2>
           <p class="chapter-tagline reveal" style="--d: 0.14s">Who owns the building, what they paid for it, and when the lease turns.</p>
-          <p class="chapter-body reveal" style="--d: 0.2s">
-            A title register costs a few pounds and settles arguments that
-            otherwise run for months. <strong>Registered owner, tenure, price
-            paid, and every charge secured against the title</strong> — for
-            your premises, your landlord's other holdings, or the site a
-            competitor just took.
-          </p>
-          <p class="chapter-body reveal" style="--d: 0.26s">
-            The useful part is rarely the single title. It is the pattern:
-            <strong>a landlord who bought in 2007 and has not refinanced since
-            behaves differently at renewal</strong> from one who completed last
-            year on a fresh facility. That is a negotiating position, and it is
-            a matter of public record.
-          </p>
+          <div class="chapter-fig reveal" style="--d: 0.2s">
+            <div class="fig-head">
+              <span class="fig-hero-num">£7</span>
+              <span class="fig-hero-lab">the cost of reading who owns your building, what they paid, and what they owe on it</span>
+            </div>
+            <table class="fact-table">
+              <tr><th scope="row">Registered owner</th><td>Fenwick Estates Ltd</td></tr>
+              <tr><th scope="row">Price paid</th><td>£412,000 — July 2007</td></tr>
+              <tr><th scope="row">Tenure</th><td>Freehold</td></tr>
+              <tr><th scope="row">Charges</th><td><b>1 — "all monies", 2007, undischarged</b></td></tr>
+            </table>
+            <p class="fig-cap">Illustrative sample — the real report reads your landlord's titles</p>
+          </div>
           <ul class="chapter-tags reveal" style="--d: 0.32s">
             <li>Title register</li><li>Price paid data</li><li>Leasehold terms</li><li>Registered charges</li><li>Title plan</li>
           </ul>
@@ -1441,19 +1516,23 @@
           <p class="kicker reveal">Census · Spend · Competitor density</p>
           <h2 class="reveal" style="--d: 0.08s">Catchment <span class="accent">&amp; demand</span></h2>
           <p class="chapter-tagline reveal" style="--d: 0.14s">How many people can reach your door, and what they have left to spend.</p>
-          <p class="chapter-body reveal" style="--d: 0.2s">
-            Census 2021 is published down to <strong>output area — a few hundred
-            households at a time</strong>. Age, tenure, occupation, car access,
-            household composition. Drawn against a real drive-time rather than a
-            circle on a map, it answers whether the customers you are pricing
-            for actually live within reach.
-          </p>
-          <p class="chapter-body reveal" style="--d: 0.26s">
-            Set that against <strong>household spend by category and the density
-            of businesses already serving it</strong>, and a site either has
-            room or it does not. This is the difference between "the area feels
-            busy" and a number you can put in front of a lender.
-          </p>
+          <div class="chapter-fig reveal" style="--d: 0.2s">
+            <div class="stat-tiles">
+              <div class="tile">
+                <p class="tile-num">24,400</p>
+                <p class="tile-lab">households within a 10-minute drive</p>
+              </div>
+              <div class="tile">
+                <p class="tile-num">£9.2m</p>
+                <p class="tile-lab">annual spend in your category, inside that catchment</p>
+              </div>
+              <div class="tile">
+                <p class="tile-num">14</p>
+                <p class="tile-lab">competitors already serving it</p>
+              </div>
+            </div>
+            <p class="fig-cap">Illustrative sample — the real report measures your catchment</p>
+          </div>
           <ul class="chapter-tags reveal" style="--d: 0.32s">
             <li>Census 2021</li><li>Output areas &amp; LSOA</li><li>Household spend</li><li>Drive-time isochrones</li><li>Competitor density</li>
           </ul>
@@ -1523,11 +1602,8 @@
       <p class="kicker reveal">Free tools, no sign-up</p>
       <h2 class="reveal" style="--d: 0.08s">Six tools you can <em>use right now</em>.</h2>
       <p class="reveal" style="--d: 0.16s">
-        These are free utilities I built and left running. They are not the
-        diagnostics practice, and they are not a sales funnel — nothing is
-        stored and nothing asks for your email. They are here because they are
-        built on the same rule the reports are: <strong>say what you do not
-        know rather than guess it</strong>.
+        Free utilities, no email gate, nothing stored — built on the same rule
+        as the reports: <strong>say what you do not know rather than guess it</strong>.
       </p>
     </div>
 
@@ -1585,9 +1661,8 @@
       <p class="kicker reveal">What I do</p>
       <h2 class="reveal" style="--d: 0.08s">Five ways to <em>use the record</em>.</h2>
       <p class="reveal" style="--d: 0.16s">
-        Every engagement works the same way: public data, read properly, and
-        cited to the document it came from. You can check any number I give
-        you. Start free, and go deeper only if the free one finds something.
+        Public data, read properly, cited to its source. <strong>Start free —
+        go deeper only if the free one finds something.</strong>
       </p>
     </div>
 
@@ -1595,11 +1670,8 @@
       <article class="service reveal" style="--s-accent: var(--c-psychart); --d: 0.06s">
         <span class="service-num">01</span>
         <h3>Diagnostic Scorecard</h3>
-        <p>
-          <strong>Free.</strong> A short set of questions about your business
-          and your site. It returns a score, the three weakest areas, and which
-          public registers would settle them.
-        </p>
+        <p><strong>Free.</strong> Twelve questions. A score, your three weakest
+          areas, and the registers that settle them.</p>
         <ul>
           <li>Roughly five minutes, no sign-up</li>
           <li>Scored against comparable UK SMEs</li>
@@ -1614,11 +1686,8 @@
       <article class="service reveal" style="--s-accent: var(--c-olive); --d: 0.12s">
         <span class="service-num">02</span>
         <h3>Business Health Check</h3>
-        <p>
-          <strong>£450</strong> — founding rate. Your filed accounts and those
-          of your closest competitors, read side by side, with the findings
-          written in plain English and cited to each filing.
-        </p>
+        <p><strong>£450</strong> — founding rate. Your accounts and three
+          competitors', read side by side, every finding cited.</p>
         <ul>
           <li>Companies House filings, five years</li>
           <li>Three named competitors, same method</li>
@@ -1633,11 +1702,8 @@
       <article class="service reveal" style="--s-accent: var(--c-huddle); --d: 0.18s">
         <span class="service-num">03</span>
         <h3>Location &amp; Market Intelligence</h3>
-        <p>
-          <strong>£1,200 – £2,500.</strong> For a move, a second site, or a
-          lease you are about to sign. Catchment, competitor density, rateable
-          values and every planning application in the area.
-        </p>
+        <p><strong>£1,200 – £2,500.</strong> For a move or a lease. Catchment,
+          competition, rates and the planning pipeline.</p>
         <ul>
           <li>Drive-time catchment and Census profile</li>
           <li>Planning pipeline, 24 months back</li>
@@ -1652,11 +1718,8 @@
       <article class="service reveal" style="--s-accent: var(--c-fathers); --d: 0.24s">
         <span class="service-num">04</span>
         <h3>Deep Diagnostic</h3>
-        <p>
-          <strong>£4,000 – £7,500.</strong> The full picture, across every
-          register, for a business at a decision point — a sale, an
-          acquisition, a refinance, or a turnaround someone has to justify.
-        </p>
+        <p><strong>£4,000 – £7,500.</strong> Every register, every site, one
+          document — for a sale, purchase, refinance or turnaround.</p>
         <ul>
           <li>All six registers, all sites in scope</li>
           <li>Ownership, charges and lease exposure</li>
@@ -1671,11 +1734,8 @@
       <article class="service reveal" style="--s-accent: var(--c-psychart); --d: 0.3s">
         <span class="service-num">05</span>
         <h3>Intelligence Retainer</h3>
-        <p>
-          <strong>£400 – £900 / month.</strong> The registers do not stand
-          still. I watch yours and your competitors' and tell you when
-          something moves — before it is on the street.
-        </p>
+        <p><strong>£400 – £900 / month.</strong> I watch the registers and tell
+          you when something moves — before it is on the street.</p>
         <ul>
           <li>New filings, charges and appointments</li>
           <li>Planning applications inside your catchment</li>
@@ -1728,10 +1788,8 @@
     <p class="kicker reveal">Get in touch</p>
     <h2 class="reveal" style="--d: 0.08s">Tell me what <em>you're</em> trying to decide.</h2>
     <p class="contact-sub reveal" style="--d: 0.16s">
-      A site move. A competitor you cannot read. A lender asking questions you
-      would rather answer with evidence. A business you are thinking of buying.
-      Tell me the decision, and I will tell you straight what the public record
-      can and cannot settle — before you commit to anything.
+      Tell me the decision — a move, a rival, a lender, a purchase — and I will
+      tell you straight what the record can and cannot settle.
     </p>
 
     <div class="contact-cards">
