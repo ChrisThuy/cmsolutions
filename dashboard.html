@@ -401,6 +401,42 @@
   #tip.on { opacity: 1; transform: none; }
   [data-tip] { cursor: pointer; }
 
+  /* This page has no scroll engine, so nothing ever adds .is-in —
+     markup extracted from the scroll pages must simply be visible. */
+  .reveal { opacity: 1 !important; transform: none !important; }
+
+  /* ── typeform-style stepper: one question on screen, no scrolling ── */
+  .stepper {
+    border: 1px solid var(--hairline); border-radius: 18px;
+    padding: clamp(1.4rem, 3vw, 2.4rem);
+    min-height: 430px; display: flex; flex-direction: column;
+  }
+  .qbar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.10); overflow: hidden; margin-bottom: 1.6rem; }
+  .qbar span { display: block; height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s var(--ease-out); }
+  .step-meta {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1.1rem;
+  }
+  .step-meta b { color: var(--ink-dim); font-weight: 600; }
+  .stepper .q { display: none; margin: 0; }
+  .stepper .q.is-current { display: block; animation: panelIn 0.3s var(--ease-out); }
+  .stepper .q > p.q-text { font-size: clamp(1.15rem, 2.2vw, 1.5rem); font-weight: 400; letter-spacing: -0.02em; }
+  .stepper .q-opts { max-width: 560px; }
+  .stepper .opt kbd {
+    flex: none; width: 1.5rem; height: 1.5rem; border: 1px solid var(--hairline);
+    border-radius: 6px; display: inline-flex; align-items: center; justify-content: center;
+    font-family: inherit; font-size: 0.72rem; color: var(--ink-dim); margin-top: 0.05rem;
+  }
+  .stepper .opt:has(input:checked) kbd { border-color: var(--accent); color: var(--accent); }
+  .stepper .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .step-nav { margin-top: auto; padding-top: 1.6rem; display: flex; align-items: center; gap: 0.9rem; }
+  .step-nav .spacer { flex: 1; }
+  .step-hint { font-size: 0.75rem; color: var(--ink-faint); }
+  .stepper[hidden] { display: none; }
+  /* .btn's inline-flex beats the UA [hidden] rule — make hidden win */
+  .step-nav [hidden] { display: none !important; }
+  .areas-src { display: none; }
+
   @media (max-width: 860px) {
     .app { grid-template-columns: 1fr; }
     .side {
@@ -753,7 +789,20 @@
       </div>
 
       <form id="scorecard" novalidate>
-        <div class="areas" style="display: grid; gap: 2.4rem; padding-bottom: 2rem">
+        <div class="stepper" id="stepper">
+          <div class="qbar" aria-hidden="true"><span id="qbarFill" style="width: 0%"></span></div>
+          <p class="step-meta" id="stepMeta"></p>
+          <div id="stepHost"></div>
+          <div class="step-nav">
+            <button class="btn" type="button" id="stepBack">← Back</button>
+            <span class="spacer"></span>
+            <p class="step-hint" id="stepHint">Press 1–4 to answer · Enter to continue</p>
+            <p class="progress-note" id="progressNote" role="status">0 of 12 answered</p>
+            <button class="btn" type="button" id="stepNext">Skip →</button>
+            <button class="btn btn--solid" type="submit" id="stepScore" hidden>Score my business</button>
+          </div>
+        </div>
+        <div class="areas areas-src" aria-hidden="true">
 <fieldset data-area="filings" id="area-filings" data-theme="psychart">
           <div class="area-head reveal">
             <span class="area-num">Area 01</span>
@@ -897,11 +946,6 @@
           </div>
         </fieldset>
         </div>
-        <div class="actions">
-          <button class="btn btn--solid" type="submit">Score my business</button>
-          <button class="btn" type="reset">Start again</button>
-          <p class="progress-note" id="progressNote" role="status">0 of 12 answered</p>
-        </div>
       </form>
 
       <section id="result" hidden aria-live="polite">
@@ -946,6 +990,7 @@
         <a class="btn btn--solid" href="#services" data-nav>See what a full diagnostic covers</a>
         <a class="btn" href="#contact" data-nav>Talk it through — 30 minutes, free</a>
         <button class="btn" type="button" id="printBtn">Print or save as PDF</button>
+        <button class="btn" type="button" id="retakeBtn">Start again</button>
       </div>
     </section>
     </section>
@@ -1268,8 +1313,9 @@
   function scoreAreas() {
     const out = {};
     for (const key of Object.keys(AREAS)) {
-      const set = form.querySelector('fieldset[data-area="' + key + '"]');
-      const qs = [...set.querySelectorAll(".q-opts")];
+      /* the stepper moves each .q out of its fieldset, so questions are
+         found by the data-area stamp it leaves, not by their old parent */
+      const qs = [...form.querySelectorAll('.q[data-area="' + key + '"] .q-opts')];
       let got = 0;
       for (const q of qs) {
         const picked = q.querySelector("input:checked");
@@ -1344,6 +1390,113 @@
   });
 
   document.getElementById("printBtn").addEventListener("click", () => window.print());
+})();
+</script>
+
+<script>
+/* ── the stepper: one question on screen, typeform-style ──
+   The scoring engine above reads the same inputs regardless of where they
+   sit in the DOM, so the stepper only moves each .q into the visible host
+   and back — presentation changes, the arithmetic does not. */
+(() => {
+  "use strict";
+
+  const form    = document.getElementById("scorecard");
+  const stepper = document.getElementById("stepper");
+  const host    = document.getElementById("stepHost");
+  const meta    = document.getElementById("stepMeta");
+  const fill    = document.getElementById("qbarFill");
+  const back    = document.getElementById("stepBack");
+  const next    = document.getElementById("stepNext");
+  const score   = document.getElementById("stepScore");
+  const result  = document.getElementById("result");
+
+  /* pull every question out of the hidden source, remembering its area */
+  const qs = [];
+  form.querySelectorAll("fieldset").forEach((set) => {
+    const areaNum  = set.querySelector(".area-num")?.textContent ?? "";
+    const areaName = set.querySelector(".area-head h2")?.textContent ?? "";
+    set.querySelectorAll(".q").forEach((q) => {
+      q.dataset.area = set.dataset.area;   /* the engine scores by this */
+      host.appendChild(q);
+      qs.push({ q, areaNum, areaName });
+    });
+  });
+
+  /* keyboard chips on every option */
+  qs.forEach(({ q }) => {
+    q.querySelectorAll(".opt").forEach((opt, i) => {
+      const kbd = document.createElement("kbd");
+      kbd.textContent = String(i + 1);
+      opt.insertBefore(kbd, opt.firstChild);
+    });
+  });
+
+  let idx = 0;
+
+  const answered = (i) => Boolean(qs[i].q.querySelector("input:checked"));
+
+  function render() {
+    qs.forEach(({ q }, i) => q.classList.toggle("is-current", i === idx));
+    const { areaNum, areaName } = qs[idx];
+    meta.innerHTML = areaNum + " · " + areaName + " <b>— question " + (idx + 1) + " of " + qs.length + "</b>";
+    fill.style.width = ((idx) / qs.length * 100).toFixed(1) + "%";
+    back.disabled = idx === 0;
+    back.style.visibility = idx === 0 ? "hidden" : "visible";
+    const last = idx === qs.length - 1;
+    next.hidden = last;
+    score.hidden = !last;
+    next.textContent = answered(idx) ? "Next →" : "Skip →";
+  }
+
+  function go(delta) {
+    idx = Math.max(0, Math.min(qs.length - 1, idx + delta));
+    render();
+  }
+
+  back.addEventListener("click", () => go(-1));
+  next.addEventListener("click", () => go(1));
+
+  /* choosing an answer advances on its own, like a typeform */
+  host.addEventListener("change", () => {
+    render();
+    if (idx < qs.length - 1) setTimeout(() => { go(1); }, 260);
+  });
+
+  /* keyboard: 1–9 answers, arrows and Enter move */
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("panel-scorecard").classList.contains("is-active")) return;
+    if (stepper.hidden) return;
+    if (e.target.matches("input, textarea, select")) e.target.blur();
+    const n = Number(e.key);
+    if (n >= 1 && n <= 9) {
+      const inputs = qs[idx].q.querySelectorAll("input");
+      if (inputs[n - 1]) {
+        inputs[n - 1].checked = true;
+        inputs[n - 1].dispatchEvent(new Event("change", { bubbles: true }));
+        e.preventDefault();
+      }
+    }
+    else if (e.key === "ArrowRight") { go(1); e.preventDefault(); }
+    else if (e.key === "ArrowLeft")  { go(-1); e.preventDefault(); }
+    else if (e.key === "Enter") {
+      if (idx < qs.length - 1) go(1);
+      else form.requestSubmit();
+      e.preventDefault();
+    }
+  });
+
+  /* scoring hides the stepper; retake brings it back at question one */
+  form.addEventListener("submit", () => { stepper.hidden = true; });
+  document.getElementById("retakeBtn").addEventListener("click", () => {
+    form.reset();                    /* the engine hides #result on reset */
+    stepper.hidden = false;
+    idx = 0;
+    render();
+    window.scrollTo({ top: 0, behavior: "instant" });
+  });
+
+  render();
 })();
 </script>
 
