@@ -4,27 +4,22 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<title>Free Business Diagnostic Scorecard for UK SMEs | Mavridis &amp; Co</title>
-<meta name="description" content="Twelve questions, five minutes, no sign-up. Score how well evidenced your business decisions are, and see which public registers would close each gap. Runs entirely in your browser." />
-<link rel="canonical" href="https://cmsolutions.tech/diagnostic" />
+<title>The Diagnostic Dashboard | Mavridis &amp; Co</title>
+<meta name="description" content="Everything in one place: the free scorecard, the sample report with live charts, the five diagnostics and their prices, and the four public registers behind them. Interactive, no sign-up." />
+<link rel="canonical" href="https://cmsolutions.tech/dashboard" />
 
-<meta property="og:title" content="Free Business Diagnostic Scorecard | Mavridis &amp; Co" />
-<meta property="og:description" content="Twelve questions, five minutes, no sign-up. Score how well evidenced your decisions are, and see which public registers close each gap." />
+<meta property="og:title" content="The Diagnostic Dashboard | Mavridis &amp; Co" />
+<meta property="og:description" content="The free scorecard, the sample report, the five diagnostics and the four registers — consolidated in one interactive dashboard." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://cmsolutions.tech/diagnostic" />
+<meta property="og:url" content="https://cmsolutions.tech/dashboard" />
 <meta property="og:site_name" content="Mavridis &amp; Co" />
 <meta property="og:locale" content="en_GB" />
 <meta property="og:image" content="https://cmsolutions.tech/og-diagnostic.png" />
-<meta property="og:image:secure_url" content="https://cmsolutions.tech/og-diagnostic.png" />
-<meta property="og:image:type" content="image/png" />
 <meta property="og:image:width" content="2400" />
 <meta property="og:image:height" content="1260" />
-<meta property="og:image:alt" content="A free diagnostic scorecard for UK small and medium businesses, scored against the public record." />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Free Business Diagnostic Scorecard | Mavridis &amp; Co" />
-<meta name="twitter:description" content="Twelve questions, five minutes, no sign-up. Nothing is stored and nothing is sent anywhere." />
+<meta name="twitter:title" content="The Diagnostic Dashboard | Mavridis &amp; Co" />
 <meta name="twitter:image" content="https://cmsolutions.tech/og-diagnostic.png" />
-<meta name="twitter:image:alt" content="A free diagnostic scorecard for UK small and medium businesses, scored against the public record." />
 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 <link rel="icon" href="/favicon-32.png" sizes="32x32" />
@@ -35,26 +30,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet" />
-
-<!--
-  ═══════════════════════════════════════════════════════════════════════════
-  DIAGNOSTIC SCORECARD
-
-  Twelve questions in four areas, one area per public register the practice
-  reads. Every question is answerable from memory: if it needs research it
-  belongs in a paid report, not in a free scorecard.
-
-  It runs entirely in this file. No fetch, no analytics call, no storage — not
-  as a privacy feature bolted on afterwards but because the page has nothing to
-  send. That is also why there is no email gate: a scorecard that holds your
-  result hostage is a lead form wearing a diagnosis.
-
-  The scoring is deliberately modest about itself. This is self-reported, so it
-  measures how well evidenced the owner's decisions are, not how the business is
-  performing. The result says so in as many words, because the whole practice
-  rests on the difference between a cited fact and a confident guess.
-  ═══════════════════════════════════════════════════════════════════════════
--->
 
 <style>
   :root {
@@ -316,6 +291,129 @@
     form, .assurance, .next, .skip, footer nav { display: none; }
     .gap, .score-top, .area-row { break-inside: avoid; }
   }
+
+.dash { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); margin-bottom: 1.6rem; }
+  .dash .tile {
+    border: 1px solid var(--hairline); border-radius: 18px; padding: 1.3rem 1.4rem;
+  }
+  .dash .tile-num {
+    font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 400;
+    letter-spacing: -0.04em; line-height: 1.05; color: var(--ink);
+  }
+  .dash .tile-num.warn { color: var(--emphasis); }
+  .dash .tile-lab { margin-top: 0.5rem; font-size: 0.8rem; color: var(--ink-dim); line-height: 1.45; }
+  .dash .tile-src { margin-top: 0.7rem; font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-faint); }
+
+  .fig { border: 1px solid var(--hairline); border-radius: 18px; padding: 1.4rem 1.5rem 1.1rem; }
+  .fig h3 { font-size: 1rem; font-weight: 400; margin-bottom: 1rem; }
+  .fig h3 small { display: block; margin-top: 0.25rem; font-size: 0.76rem; color: var(--ink-dim); }
+  .chart { width: 100%; height: auto; display: block; }
+  .chart text { font-family: var(--sans); }
+  .chart .ax   { font-size: 12px; fill: var(--ink-dim); }
+  .chart .val  { font-size: 13px; font-weight: 600; fill: var(--ink); }
+  .chart .val-dim { font-size: 12px; fill: var(--ink-dim); }
+  .chart .grid { stroke: rgba(255,255,255,0.08); }
+  .chart .base { stroke: rgba(255,255,255,0.18); }
+  .legend { display: flex; gap: 1.4rem; flex-wrap: wrap; margin: 0.9rem 0 0; list-style: none; font-size: 0.8rem; color: var(--ink-dim); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 0.45rem; vertical-align: baseline; }
+  .fig-cap { margin-top: 0.8rem; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); }
+  .fig-grid { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); margin-bottom: 1.6rem; }
+
+  
+
+  /* ============================================================
+     DASHBOARD SHELL — sidebar + panels. This page has no scroll
+     film on purpose: it is the app view of the practice.
+     ============================================================ */
+  body { overflow-y: scroll; }
+  .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100svh; max-width: 1440px; margin: 0 auto; }
+  .side {
+    border-right: 1px solid var(--hairline);
+    padding: calc(var(--sitenav-h, 3.75rem) + 2rem) 1.2rem 2rem 1.6rem;
+    position: sticky; top: 0; align-self: start; height: 100svh; overflow-y: auto;
+  }
+  .side-brand { font-size: 0.95rem; font-weight: 600; letter-spacing: 0.02em; margin-bottom: 0.3rem; }
+  .side-sub { font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 2rem; }
+  .side nav { display: flex; flex-direction: column; gap: 0.25rem; }
+  .side nav a {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 0.85rem; border-radius: 10px;
+    font-size: 0.88rem; text-decoration: none; color: var(--ink-faint);
+    border: 1px solid transparent;
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+  }
+  .side nav a:hover { color: var(--ink); background: rgba(255,255,255,0.04); }
+  .side nav a[aria-current="true"] {
+    color: var(--ink); background: rgba(128,82,255,0.14);
+    border-color: rgba(128,82,255,0.4);
+  }
+  .side nav a .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.5; flex: none; }
+  .side nav a[aria-current="true"] .dot { background: var(--accent); opacity: 1; }
+  .side nav .side-gap { height: 1rem; }
+  .side-foot { margin-top: 2rem; font-size: 0.72rem; color: var(--ink-dim); line-height: 1.6; }
+  .side-foot a { color: var(--accent); text-decoration: none; }
+
+  .content { padding: calc(var(--sitenav-h, 3.75rem) + 2rem) clamp(1.2rem, 3.5vw, 3rem) 4rem; }
+  .panel { display: none; }
+  .panel.is-active { display: block; animation: panelIn 0.35s var(--ease-out); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  .panel-head { margin-bottom: 1.8rem; }
+  .panel-head .kicker { margin-bottom: 0.6rem; }
+  .panel-head h1 { font-size: clamp(1.6rem, 3.4vw, 2.4rem); font-weight: 400; letter-spacing: -0.04em; margin-bottom: 0.6rem; }
+  .panel-head h1 em { font-style: normal; color: var(--emphasis); }
+  .panel-head p { color: var(--ink-faint); max-width: 60ch; font-size: 0.95rem; }
+
+  /* overview quick cards */
+  .quick { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); margin-bottom: 1.6rem; }
+  .quick a {
+    border: 1px solid var(--hairline); border-radius: 18px; padding: 1.3rem 1.4rem;
+    text-decoration: none; display: block;
+    transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
+  }
+  .quick a:hover { border-color: rgba(128,82,255,0.55); background: rgba(128,82,255,0.06); }
+  .quick .q-kick { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .quick h3 { font-size: 1.05rem; font-weight: 400; margin: 0.5rem 0 0.4rem; }
+  .quick p { font-size: 0.85rem; color: var(--ink-dim); }
+  .quick .q-price { margin-top: 0.7rem; font-size: 0.8rem; font-weight: 600; color: var(--emphasis); }
+
+  /* services comparison table */
+  .compare-wrap { overflow-x: auto; border: 1px solid var(--hairline); border-radius: 18px; }
+  table.compare { width: 100%; min-width: 860px; border-collapse: collapse; font-size: 0.88rem; }
+  table.compare th, table.compare td { padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--hairline); text-align: left; vertical-align: top; }
+  table.compare thead th { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); }
+  table.compare tbody th { font-weight: 400; color: var(--ink); white-space: nowrap; }
+  table.compare td { color: var(--ink-faint); }
+  table.compare tr:last-child th, table.compare tr:last-child td { border-bottom: 0; }
+  table.compare tbody tr { transition: background 0.15s; }
+  table.compare tbody tr:hover { background: rgba(128,82,255,0.06); }
+  table.compare .price { color: var(--emphasis); font-weight: 600; white-space: nowrap; }
+  table.compare a { color: var(--accent); text-decoration: none; font-weight: 600; }
+
+  /* chart tooltip */
+  #tip {
+    position: fixed; z-index: 90; pointer-events: none;
+    background: #16121f; border: 1px solid rgba(128,82,255,0.5); border-radius: 8px;
+    padding: 0.4rem 0.7rem; font-size: 0.78rem; color: var(--ink);
+    opacity: 0; transform: translateY(4px); transition: opacity 0.12s, transform 0.12s;
+    white-space: nowrap;
+  }
+  #tip.on { opacity: 1; transform: none; }
+  [data-tip] { cursor: pointer; }
+
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .side {
+      position: static; height: auto; border-right: 0;
+      border-bottom: 1px solid var(--hairline);
+      padding: calc(var(--sitenav-h, 3.75rem) + 1rem) 1.2rem 0.8rem;
+    }
+    .side nav { flex-direction: row; overflow-x: auto; padding-bottom: 0.8rem; }
+    .side nav a { white-space: nowrap; }
+    .side nav .side-gap { display: none; }
+    .side-foot { display: none; }
+    .content { padding-top: 1.6rem; }
+  }
 </style>
 <!-- nav:css — generated, do not edit by hand -->
 <style>
@@ -473,22 +571,14 @@
 </style>
 <!-- /nav:css -->
 <link rel="stylesheet" href="/dala.css" />
+<style>
+  /* after dala.css so the hairline card look survives the flattening pass */
+  .quick a, .compare-wrap, .side nav a[aria-current="true"] { box-shadow: none; }
+</style>
 </head>
 <body>
 
-<a class="skip" href="#top">Skip to content</a>
-
-<canvas id="sky" aria-hidden="true"></canvas>
-<div class="scroll-progress" aria-hidden="true"></div>
-
-<nav class="rail" aria-label="Sections">
-  <a href="#top" data-rail="top" aria-label="Top"></a>
-  <span class="rail-line"></span>
-  <a href="#area-filings" data-rail="area-filings" aria-label="Filings and finances"></a>
-  <a href="#area-premises" data-rail="area-premises" aria-label="Premises and pipeline"></a>
-  <a href="#area-property" data-rail="area-property" aria-label="Property and tenure"></a>
-  <a href="#area-market" data-rail="area-market" aria-label="Market and catchment"></a>
-</nav>
+<a class="skip" href="#main">Skip to content</a>
 <!-- nav:start — generated by scripts/build-nav.mjs, do not edit by hand -->
 <header class="sitenav" data-state="top">
   <div class="sitenav-in">
@@ -501,8 +591,8 @@
           <h2>Diagnostics</h2>
           <span class="note">Free, about five minutes</span>
           <ul>
-          <li class="sitenav-lead"><a href="/dashboard">The dashboard<span class="blurb">Everything in one place</span></a></li>
-          <li><a href="/diagnostic" aria-current="page">Diagnostic scorecard<span class="blurb">Twelve questions, no sign-up</span></a></li>
+          <li class="sitenav-lead"><a href="/dashboard" aria-current="page">The dashboard<span class="blurb">Everything in one place</span></a></li>
+          <li><a href="/diagnostic">Diagnostic scorecard<span class="blurb">Twelve questions, no sign-up</span></a></li>
           <li><a href="/sample-report">Sample report<span class="blurb">A worked example, free to read</span></a></li>
           <li><a href="/business-health-check">Business Health Check<span class="blurb">£450 — five years of filings, cited</span></a></li>
           <li><a href="/location-intelligence">Location &amp; Market Intelligence<span class="blurb">Know the site before you sign</span></a></li>
@@ -546,40 +636,125 @@
 <div class="sitenav-gap" aria-hidden="true"></div>
 <!-- nav:end -->
 
-<main id="top">
-  <div class="wrap">
+<div id="tip" role="status" aria-hidden="true"></div>
 
-    <header class="page-head">
-      <p class="kicker">Free diagnostic scorecard</p>
-      <h1>How much of your business is <em>guesswork</em>?</h1>
-      <p class="lede">
-        Twelve questions, answered from memory — not how the business is performing, but <strong>how much of what you believe is evidenced</strong>.
-      </p>
-      <p class="lede">
-        You get a score, four area bars, and your three weakest named — each with the register that settles it.
-      </p>
-      <ul class="assurance">
-        <li>About five minutes</li>
-        <li>No sign-up</li>
-        <li>Nothing stored</li>
-        <li>Nothing sent anywhere</li>
-      </ul>
-      <div class="scroll-cue" aria-hidden="true">
-        <span class="cue-line"></span>
-        <span>Scroll</span>
+<div class="app">
+  <aside class="side">
+    <p class="side-brand">Mavridis &amp; Co</p>
+    <p class="side-sub">The diagnostic dashboard</p>
+    <nav aria-label="Dashboard sections">
+      <a href="#overview" data-nav aria-current="true"><span class="dot"></span>Overview</a>
+      <a href="#scorecard" data-nav><span class="dot"></span>Free scorecard</a>
+      <a href="#sample" data-nav><span class="dot"></span>Sample report</a>
+      <a href="#services" data-nav><span class="dot"></span>Services &amp; prices</a>
+      <a href="#registers" data-nav><span class="dot"></span>The registers</a>
+      <span class="side-gap"></span>
+      <a href="#contact" data-nav><span class="dot"></span>Contact</a>
+    </nav>
+    <p class="side-foot">
+      Every figure marked <em>sample</em> is invented for demonstration.
+      Real reports read your registers and cite every finding.<br /><br />
+      <a href="/">← Back to the site</a>
+    </p>
+  </aside>
+
+  <main class="content" id="main">
+
+    <!-- ══════════════ OVERVIEW ══════════════ -->
+    <section class="panel is-active" id="panel-overview" aria-labelledby="nav-overview">
+      <div class="panel-head">
+        <p class="kicker">Business diagnostics for UK SMEs</p>
+        <h1>The evidence is already <em>public</em>.</h1>
+        <p>I read the public record — Companies House, planning, rateable values,
+           Land Registry, ONS — and cite every finding to its source. Start with
+           the free scorecard, or read the sample report first.</p>
       </div>
-    </header>
 
-    <form id="scorecard" novalidate>
-      <div class="areas">
+      <div class="quick">
+        <a href="#scorecard" data-nav>
+          <span class="q-kick">Start here · free</span>
+          <h3>Score your business</h3>
+          <p>Twelve questions, from memory. Your three weakest areas, named.</p>
+          <p class="q-price">Free · no sign-up</p>
+        </a>
+        <a href="#sample" data-nav>
+          <span class="q-kick">See the deliverable</span>
+          <h3>Read the sample report</h3>
+          <p>A worked Health Check — tiles, charts and the findings register.</p>
+          <p class="q-price">Free · 5 minutes</p>
+        </a>
+        <a href="#services" data-nav>
+          <span class="q-kick">The practice</span>
+          <h3>Five diagnostics, priced</h3>
+          <p>From the £450 Health Check to the monthly intelligence watch.</p>
+          <p class="q-price">£450 – £7,500</p>
+        </a>
+      </div>
 
-        <!-- ══════════════════ KINETIC 1 ══════════════════ -->
-        <section class="kinetic" data-theme="psychart">
-          <p class="display" data-kinetic>First, what you filed —<br /><em>and what your rivals filed too.</em></p>
-        </section>
+      <div class="fig-grid">
+        <div class="fig">
+          <h3>What one register shows <small>gross margin from filed accounts · illustrative sample</small></h3>
+          <svg class="chart" viewBox="0 0 560 240" role="img" aria-label="Gross margin falling from 31.8 per cent in FY2022 to 27.6 per cent in FY2025">
+              <g class="grid"><line x1="60" y1="52.9" x2="540" y2="52.9"/><line x1="60" y1="91.4" x2="540" y2="91.4"/><line x1="60" y1="144.3" x2="540" y2="144.3"/></g>
+              <text class="ax" x="52" y="57" text-anchor="end">32%</text>
+              <text class="ax" x="52" y="95" text-anchor="end">30%</text>
+              <text class="ax" x="52" y="148" text-anchor="end">28%</text>
+              <line class="base" x1="60" y1="190" x2="540" y2="190"/>
+              <path d="M100 57.4 L240 89.4 L380 123.7 L520 153.4 L520 190 L100 190 Z" fill="rgba(128,82,255,0.10)"/>
+              <polyline points="100,57.4 240,89.4 380,123.7 520,153.4" fill="none" stroke="#8052ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <g fill="#8052ff" stroke="#000000" stroke-width="2">
+                <circle cx="100" cy="57.4" r="4.5" data-tip="FY2022 · 31.8%"/><circle cx="240" cy="89.4" r="4.5" data-tip="FY2023 · 30.4%"/>
+                <circle cx="380" cy="123.7" r="4.5" data-tip="FY2024 · 28.9%"/><circle cx="520" cy="153.4" r="4.5" data-tip="FY2025 · 27.6%"/>
+              </g>
+              <text class="val" x="100" y="40">31.8%</text>
+              <text class="val" x="520" y="136" text-anchor="end">27.6%</text>
+              <text class="ax" x="100" y="212">FY22</text>
+              <text class="ax" x="240" y="212" text-anchor="middle">FY23</text>
+              <text class="ax" x="380" y="212" text-anchor="middle">FY24</text>
+              <text class="ax" x="520" y="212" text-anchor="end">FY25</text>
+            </svg>
+          <p class="fig-cap">Companies House · hover the points</p>
+        </div>
+        <div class="fig">
+          <h3>What another shows <small>rateable value vs the units either side · illustrative sample</small></h3>
+          <svg class="chart" viewBox="0 0 560 240" role="img" aria-label="Rateable value per square metre: yours 186 pounds against neighbouring units between 143 and 158 pounds">
+              <g font-size="13">
+                <text class="val" x="0" y="44">Yours</text>
+                <text class="ax" x="0" y="84">Unit 2</text>
+                <text class="ax" x="0" y="124">Unit 6</text>
+                <text class="ax" x="0" y="164">Unit 9</text>
+                <text class="ax" x="0" y="204">Average</text>
+              </g>
+              <g>
+                <rect x="150" y="30" width="353" height="18" rx="4" fill="#8052ff" data-tip="Your unit · £186/m²"/>
+                <rect x="150" y="70" width="272" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 2 · £143/m²"/>
+                <rect x="150" y="110" width="287" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 6 · £151/m²"/>
+                <rect x="150" y="150" width="300" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 9 · £158/m²"/>
+                <rect x="150" y="190" width="283" height="18" rx="4" fill="rgba(255,255,255,0.10)" data-tip="Local average · £149/m²"/>
+              </g>
+              <text class="val" x="495" y="44" text-anchor="end" fill="#ffffff">£186/m²</text>
+              <text class="val-dim" x="430" y="84">£143</text>
+              <text class="val-dim" x="445" y="124">£151</text>
+              <text class="val-dim" x="458" y="164">£158</text>
+              <text class="val-dim" x="441" y="204">£149</text>
+            </svg>
+          <p class="fig-cap">VOA rating list · hover the bars</p>
+        </div>
+      </div>
+    </section>
 
-        <!-- ─────────── A · COMPANIES HOUSE ─────────── -->
-        <fieldset data-area="filings" id="area-filings" data-theme="psychart">
+    <!-- ══════════════ SCORECARD ══════════════ -->
+    <section class="panel" id="panel-scorecard">
+      <div class="panel-head">
+        <p class="kicker">Free diagnostic scorecard</p>
+        <h1>How much of your business is <em>guesswork</em>?</h1>
+        <p>Twelve questions, answered from memory. Nothing stored, nothing sent
+           anywhere — the scoring runs entirely on this page.</p>
+      </div>
+
+      <form id="scorecard" novalidate>
+        <div class="areas" style="display: grid; gap: 2.4rem; padding-bottom: 2rem">
+<fieldset data-area="filings" id="area-filings" data-theme="psychart">
           <div class="area-head reveal">
             <span class="area-num">Area 01</span>
             <h2>Filings and finances</h2>
@@ -616,14 +791,7 @@
             </div>
           </div>
         </fieldset>
-
-        <!-- ══════════════════ KINETIC 2 ══════════════════ -->
-        <section class="kinetic" data-theme="olive">
-          <p class="display" data-kinetic>Then the ground around you —<br /><em>what is coming before it opens.</em></p>
-        </section>
-
-        <!-- ─────────── B · PLANNING & VOA ─────────── -->
-        <fieldset data-area="premises" id="area-premises" data-theme="olive">
+<fieldset data-area="premises" id="area-premises" data-theme="olive">
           <div class="area-head reveal">
             <span class="area-num">Area 02</span>
             <h2>Premises and pipeline</h2>
@@ -658,14 +826,7 @@
             </div>
           </div>
         </fieldset>
-
-        <!-- ══════════════════ KINETIC 3 ══════════════════ -->
-        <section class="kinetic" data-theme="huddle">
-          <p class="display" data-kinetic>Then the walls themselves —<br /><em>who owns them, and on what terms.</em></p>
-        </section>
-
-        <!-- ─────────── C · LAND REGISTRY ─────────── -->
-        <fieldset data-area="property" id="area-property" data-theme="huddle">
+<fieldset data-area="property" id="area-property" data-theme="huddle">
           <div class="area-head reveal">
             <span class="area-num">Area 03</span>
             <h2>Property and tenure</h2>
@@ -701,14 +862,7 @@
             </div>
           </div>
         </fieldset>
-
-        <!-- ══════════════════ KINETIC 4 ══════════════════ -->
-        <section class="kinetic" data-theme="fathers">
-          <p class="display" data-kinetic>Last, the people at your door —<br /><em>and what they have left to spend.</em></p>
-        </section>
-
-        <!-- ─────────── D · CATCHMENT ─────────── -->
-        <fieldset data-area="market" id="area-market" data-theme="fathers">
+<fieldset data-area="market" id="area-market" data-theme="fathers">
           <div class="area-head reveal">
             <span class="area-num">Area 04</span>
             <h2>Market and catchment</h2>
@@ -742,17 +896,15 @@
             </div>
           </div>
         </fieldset>
+        </div>
+        <div class="actions">
+          <button class="btn btn--solid" type="submit">Score my business</button>
+          <button class="btn" type="reset">Start again</button>
+          <p class="progress-note" id="progressNote" role="status">0 of 12 answered</p>
+        </div>
+      </form>
 
-      </div>
-
-      <div class="actions reveal">
-        <button class="btn btn--solid" type="submit">Score my business</button>
-        <button class="btn" type="reset">Start again</button>
-        <p class="progress-note" id="progressNote" role="status">0 of 12 answered</p>
-      </div>
-    </form>
-
-    <section id="result" hidden aria-live="polite">
+      <section id="result" hidden aria-live="polite">
       <div class="score-top">
         <div class="score-dial">
           <svg width="112" height="112" viewBox="0 0 112 112" role="img" aria-labelledby="dialTitle">
@@ -791,33 +943,273 @@
       </p>
 
       <div class="next">
-        <a class="btn btn--solid" href="/#services">See what a full diagnostic covers</a>
-        <a class="btn" href="/#contact">Talk it through — 30 minutes, free</a>
+        <a class="btn btn--solid" href="#services" data-nav>See what a full diagnostic covers</a>
+        <a class="btn" href="#contact" data-nav>Talk it through — 30 minutes, free</a>
         <button class="btn" type="button" id="printBtn">Print or save as PDF</button>
       </div>
     </section>
+    </section>
 
-    <footer>
-      <span>© <span id="year"></span> Mavridis &amp; Co — Business diagnostics for UK SMEs · Every finding cited to the public record.</span>
-      <nav aria-label="Sections">
-        <a href="/#companies-house">Companies House</a>
-        <a href="/#planning-voa">Planning &amp; VOA</a>
-        <a href="/#land-registry">Land Registry</a>
-        <a href="/#catchment">Catchment</a>
-        <a href="/#services">What I do</a>
-        <a href="/ai-tools">Free tools</a>
-        <a href="mailto:contact@cmsolutions.tech">Email</a>
-      </nav>
-    </footer>
+    <!-- ══════════════ SAMPLE ══════════════ -->
+    <section class="panel" id="panel-sample">
+      <div class="panel-head">
+        <p class="kicker">Sample report — Business Health Check</p>
+        <h1>Wrenfield Joinery Ltd, <em>worked through</em>.</h1>
+        <p><strong>Wrenfield is fictitious</strong> — every figure is invented.
+           The structure, method and citation format are exactly what the £450
+           report delivers.</p>
+      </div>
 
-  </div>
-</main>
+      <div class="dash">
+        <div class="tile">
+          <p class="tile-num warn">−4.2 pts</p>
+          <p class="tile-lab">gross margin over three filed years</p>
+          <p class="tile-src">Accounts FY22–FY25</p>
+        </div>
+        <div class="tile">
+          <p class="tile-num warn">1 new</p>
+          <p class="tile-lab">all-monies charge over the only freehold, Mar 2025</p>
+          <p class="tile-src">MR01 · 0482 7719 0003</p>
+        </div>
+        <div class="tile">
+          <p class="tile-num">5 → 12 mo</p>
+          <p class="tile-lab">accounts filed ever later after year end</p>
+          <p class="tile-src">Filing history 2022–25</p>
+        </div>
+        <div class="tile">
+          <p class="tile-num">0</p>
+          <p class="tile-lab">charges at the nearest competitor, five years running</p>
+          <p class="tile-src">Hollowbeck charges register</p>
+        </div>
+      </div>
+
+      <div class="fig-grid">
+        <div class="fig">
+          <h3>Gross margin, side by side <small>Wrenfield vs Hollowbeck Interiors · %</small></h3>
+          <svg class="chart" viewBox="0 0 560 250" role="img" aria-label="Wrenfield's gross margin falls from 31.8 to 27.6 per cent while Hollowbeck's rises from 32.9 to 34.1 per cent">
+            <g class="grid"><line x1="60" y1="50" x2="540" y2="50"/><line x1="60" y1="105" x2="540" y2="105"/><line x1="60" y1="160" x2="540" y2="160"/></g>
+            <text class="ax" x="52" y="54" text-anchor="end">34%</text>
+            <text class="ax" x="52" y="109" text-anchor="end">31%</text>
+            <text class="ax" x="52" y="164" text-anchor="end">28%</text>
+            <line class="base" x1="60" y1="200" x2="540" y2="200"/>
+            <polyline points="100,70.2 240,79.3 380,86.7 520,64.4" fill="none" stroke="#b8821e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+            <polyline points="100,90.3 240,115.9 380,143.4 520,167.3" fill="none" stroke="#8052ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+            <g fill="#b8821e" stroke="#000000" stroke-width="2">
+              <circle cx="100" cy="70.2" r="4.5"/><circle cx="240" cy="79.3" r="4.5"/>
+              <circle cx="380" cy="86.7" r="4.5"/><circle cx="520" cy="64.4" r="4.5"/>
+            </g>
+            <g fill="#8052ff" stroke="#000000" stroke-width="2">
+              <circle cx="100" cy="90.3" r="4.5"/><circle cx="240" cy="115.9" r="4.5"/>
+              <circle cx="380" cy="143.4" r="4.5"/><circle cx="520" cy="167.3" r="4.5"/>
+            </g>
+            <text class="val" x="520" y="50" text-anchor="end">34.1%</text>
+            <text class="val" x="520" y="190" text-anchor="end">27.6%</text>
+            <text class="ax" x="100" y="222">FY22</text>
+            <text class="ax" x="240" y="222" text-anchor="middle">FY23</text>
+            <text class="ax" x="380" y="222" text-anchor="middle">FY24</text>
+            <text class="ax" x="520" y="222" text-anchor="end">FY25</text>
+          </svg>
+          <ul class="legend">
+            <li><i style="background:#8052ff"></i>Wrenfield Joinery</li>
+            <li><i style="background:#b8821e"></i>Hollowbeck Interiors</li>
+          </ul>
+        </div>
+
+        <div class="fig">
+          <h3>Months from year end to filing <small>later every year — discipline slips before the numbers do</small></h3>
+          <svg class="chart" viewBox="0 0 560 250" role="img" aria-label="Accounts filed 5, 7, 8 then 12 months after year end across four years">
+            <g class="grid"><line x1="60" y1="56" x2="540" y2="56"/><line x1="60" y1="104" x2="540" y2="104"/><line x1="60" y1="152" x2="540" y2="152"/></g>
+            <text class="ax" x="52" y="60" text-anchor="end">12</text>
+            <text class="ax" x="52" y="108" text-anchor="end">8</text>
+            <text class="ax" x="52" y="156" text-anchor="end">4</text>
+            <line class="base" x1="60" y1="200" x2="540" y2="200"/>
+            <g fill="#8052ff">
+              <rect x="86"  y="140" width="58" height="60"  rx="4"/>
+              <rect x="206" y="116" width="58" height="84"  rx="4"/>
+              <rect x="326" y="104" width="58" height="96"  rx="4"/>
+            </g>
+            <rect x="446" y="56" width="58" height="144" rx="4" fill="#b8821e"/>
+            <text class="val-dim" x="115" y="130" text-anchor="middle">5</text>
+            <text class="val-dim" x="235" y="106" text-anchor="middle">7</text>
+            <text class="val-dim" x="355" y="94" text-anchor="middle">8</text>
+            <text class="val" x="475" y="46" text-anchor="middle">12</text>
+            <text class="ax" x="115" y="222" text-anchor="middle">FY22</text>
+            <text class="ax" x="235" y="222" text-anchor="middle">FY23</text>
+            <text class="ax" x="355" y="222" text-anchor="middle">FY24</text>
+            <text class="ax" x="475" y="222" text-anchor="middle">FY25</text>
+          </svg>
+          <p class="fig-cap">FY25 filed twelve days before the statutory deadline</p>
+        </div>
+      </div>
+
+      
+
+      <div class="area-head" style="margin-top: 1.5rem">
+        <span class="area-num">·</span>
+        <h2 style="font-size: 1.3rem">The findings register</h2>
+        <span class="area-source">Claim · source · date read</span>
+      </div>
+      <div class="register-wrap reveal">
+        <table class="register">
+          <thead>
+            <tr><th scope="col">No.</th><th scope="col">Claim</th><th scope="col">Source</th><th scope="col">Date read</th></tr>
+          </thead>
+          <tbody>
+          <tr><td>01</td><td class="claim">Gross margin fell 31.8% → 27.6% over FY2022–FY2025</td><td>Full accounts ×4, Companies House</td><td class="date">24 Aug 2026</td></tr>
+          <tr><td>02</td><td class="claim">All-monies fixed charge over 4 Fenwick Trading Estate</td><td>MR01, charge 0482 7719 0003</td><td class="date">24 Aug 2026</td></tr>
+          <tr><td>03</td><td class="claim">Accounts filed 5 → 12 months after year end, worsening yearly</td><td>Filing history 2022–2025</td><td class="date">24 Aug 2026</td></tr>
+          <tr><td>04</td><td class="claim">Hollowbeck Interiors: rising cash, nil charges, five years</td><td>Hollowbeck full accounts FY2021–FY2025</td><td class="date">24 Aug 2026</td></tr>
+          <tr><td>05</td><td class="claim">Gable End Fit-Out unreadable beyond officers and charges</td><td>Micro-entity accounts FY2023–FY2025</td><td class="date">24 Aug 2026</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="fig-cap" style="margin-top: 1rem">The full sample, with the written findings, is at <a href="/sample-report" style="color: var(--accent)">/sample-report</a></p>
+    </section>
+
+    <!-- ══════════════ SERVICES ══════════════ -->
+    <section class="panel" id="panel-services">
+      <div class="panel-head">
+        <p class="kicker">Services &amp; prices</p>
+        <h1>Five ways in, <em>priced straight</em>.</h1>
+        <p>Fixed quotes before any money moves. Founding rates held for the
+           first ten clients.</p>
+      </div>
+
+      <div class="compare-wrap">
+        <table class="compare">
+          <thead>
+            <tr>
+              <th scope="col">Diagnostic</th>
+              <th scope="col">Price</th>
+              <th scope="col">Turnaround</th>
+              <th scope="col">Registers read</th>
+              <th scope="col">Best for</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Diagnostic Scorecard</th>
+              <td class="price">Free</td>
+              <td>5 minutes</td>
+              <td>None — self-assessed</td>
+              <td>Finding out where to look first</td>
+              <td><a href="#scorecard" data-nav>Take it →</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Business Health Check</th>
+              <td class="price">£450</td>
+              <td>5 working days</td>
+              <td>Companies House, 5 years, you + 3 rivals</td>
+              <td>A fast, cited read of the filings</td>
+              <td><a href="/business-health-check">Details →</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Location &amp; Market Intelligence</th>
+              <td class="price">£1,200 – £2,500</td>
+              <td>2–3 weeks</td>
+              <td>Planning, VOA, ONS, open registers</td>
+              <td>A move, a second site, a lease</td>
+              <td><a href="/location-intelligence">Details →</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Deep Diagnostic</th>
+              <td class="price">£4,000 – £7,500</td>
+              <td>3–4 weeks</td>
+              <td>All six, every site in scope</td>
+              <td>A sale, purchase, refinance or turnaround</td>
+              <td><a href="/deep-diagnostic">Details →</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Intelligence Retainer</th>
+              <td class="price">£400 – £900 / mo</td>
+              <td>Monthly note</td>
+              <td>Your watchlist, read monthly</td>
+              <td>Hearing about changes first</td>
+              <td><a href="/intelligence-retainer">Details →</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="caveat" style="margin-top: 1.8rem">
+        <strong>Every engagement, the same rule.</strong> If a finding cannot be
+        cited to a public document with the date it was read, it does not go in
+        the report.
+      </p>
+    </section>
+
+    <!-- ══════════════ REGISTERS ══════════════ -->
+    <section class="panel" id="panel-registers">
+      <div class="panel-head">
+        <p class="kicker">The evidence base</p>
+        <h1>Four registers, <em>one method</em>.</h1>
+        <p>All public. Most free. You are welcome to read them yourself — the
+           practice is knowing what to look for.</p>
+      </div>
+
+      <div class="gap-list">
+        <article class="gap">
+          <span class="gap-reg">Companies House</span>
+          <h3>Filings &amp; finances</h3>
+          <p>Accounts, charges, officers, filing dates — statutory, free, nine
+             years deep. Margin drift and borrowing behaviour live here.</p>
+          <p style="margin-top: 0.9rem"><a href="/#companies-house" style="color: var(--accent); text-decoration: none; font-weight: 600">On the site →</a></p>
+        </article>
+        <article class="gap">
+          <span class="gap-reg">Planning &amp; VOA</span>
+          <h3>Premises &amp; pipeline</h3>
+          <p>Every planning application, published months before the street
+             changes — and the rateable value of every commercial unit.</p>
+          <p style="margin-top: 0.9rem"><a href="/#planning-voa" style="color: var(--accent); text-decoration: none; font-weight: 600">On the site →</a></p>
+        </article>
+        <article class="gap">
+          <span class="gap-reg">HM Land Registry</span>
+          <h3>Property &amp; tenure</h3>
+          <p>Owner, price paid, tenure and every charge — £7 a title. Your
+             landlord's position at renewal is a matter of record.</p>
+          <p style="margin-top: 0.9rem"><a href="/#land-registry" style="color: var(--accent); text-decoration: none; font-weight: 600">On the site →</a></p>
+        </article>
+        <article class="gap">
+          <span class="gap-reg">ONS &amp; open registers</span>
+          <h3>Market &amp; catchment</h3>
+          <p>Census households, spend by category, competitor density — a
+             number where "the area feels busy" used to be.</p>
+          <p style="margin-top: 0.9rem"><a href="/#catchment" style="color: var(--accent); text-decoration: none; font-weight: 600">On the site →</a></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ══════════════ CONTACT ══════════════ -->
+    <section class="panel" id="panel-contact">
+      <div class="panel-head">
+        <p class="kicker">Get in touch</p>
+        <h1>Tell me what <em>you're</em> trying to decide.</h1>
+        <p>A move, a rival, a lender, a purchase. I will tell you straight what
+           the record can and cannot settle — before you commit to anything.</p>
+      </div>
+      <div class="next">
+        <a class="btn btn--solid" href="mailto:contact@cmsolutions.tech?subject=Diagnostic%20enquiry%20—%20Mavridis%20%26%20Co">Email me</a>
+        <a class="btn" href="https://wa.me/447737534232?text=Hi%20Chris%2C%20I%20saw%20the%20dashboard%20—" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn" href="#scorecard" data-nav>Take the scorecard first</a>
+      </div>
+      <p class="caveat" style="margin-top: 2rem">
+        <strong>30 minutes, free.</strong> Email two or three times that suit
+        you and what you are deciding; you get a straight answer on whether the
+        record can settle it, and a fixed quote if it can.
+      </p>
+    </section>
+
+  </main>
+</div>
 
 <script>
 (() => {
   "use strict";
 
-  document.getElementById("year").textContent = new Date().getFullYear();
+  /* this page has no #year footer — the engine came from diagnostic.html */
+  const yearEl = document.getElementById("year");
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   const AREAS = {
     filings: {
@@ -956,211 +1348,71 @@
 </script>
 
 <script>
-/* The scroll engine, carried over from the front page so the two pages move
-   as one site: the same sky, the same palette drift between themed sections,
-   the same reveals, kinetics, progress hairline and rail. */
+/* ── panel router + chart tooltips ── */
 (() => {
   "use strict";
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const panels = [...document.querySelectorAll(".panel")];
+  const links  = [...document.querySelectorAll("[data-nav]")];
+  const sideLinks = [...document.querySelectorAll(".side nav a")];
 
-  /* ── reveal on scroll ────────────────────────────────────── */
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) {
-        e.target.classList.add("is-in");
-        io.unobserve(e.target);
-      }
-    }
-  }, { threshold: 0.18, rootMargin: "0px 0px -6% 0px" });
-  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-
-  /* ── section themes → canvas palette + active rail dot ───── */
-  const PALETTES = {
-    psychart: { a: [212, 175, 106], b: [24, 28, 58],  c: [60, 44, 92]  },
-    olive:    { a: [168, 184, 120], b: [22, 32, 20],  c: [64, 74, 40]  },
-    huddle:   { a: [122, 184, 212], b: [14, 26, 38],  c: [34, 66, 92]  },
-    fathers:  { a: [212, 154, 122], b: [38, 24, 18],  c: [92, 52, 38]  },
-  };
-  const themedSections = [...document.querySelectorAll("[data-theme]")];
-  let targetPalette  = PALETTES.psychart;
-  let currentPalette = JSON.parse(JSON.stringify(PALETTES.psychart));
-
-  const railDots = [...document.querySelectorAll(".rail a")];
-  const railTargets = railDots
-    .map((d) => ({ dot: d, el: document.getElementById(d.dataset.rail) }))
-    .filter((r) => r.el);
-
-  /* ── canvas sky: drifting stars + colour-shifting nebulae ── */
-  const canvas = document.getElementById("sky");
-  const ctx = canvas.getContext("2d");
-  let W = 0, H = 0, DPR = 1;
-  let stars = [];
-
-  function sizeCanvas() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W * DPR;
-    canvas.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    seedStars();
+  function show(id, push) {
+    const panel = document.getElementById("panel-" + id);
+    if (!panel) return;
+    panels.forEach((p) => p.classList.toggle("is-active", p === panel));
+    sideLinks.forEach((a) => {
+      const on = a.getAttribute("href") === "#" + id;
+      if (on) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+    if (push) history.replaceState(null, "", "#" + id);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
-  function mulberry32(seed) {
-    return () => {
-      seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
-      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  function seedStars() {
-    const rnd = mulberry32(88);
-    const n = Math.min(240, Math.floor((W * H) / 6500));
-    stars = Array.from({ length: n }, () => ({
-      x: rnd() * W,
-      y: rnd() * H,
-      r: 0.4 + rnd() * 1.3,
-      tw: rnd() * Math.PI * 2,
-      ts: 0.4 + rnd() * 1.2,
-      depth: 0.15 + rnd() * 0.85,
-    }));
-  }
-
-  const lerp = (a, b, t) => a + (b - a) * t;
-
-  function drawSky(t, scrollY) {
-    for (const k of ["a", "b", "c"]) {
-      for (let i = 0; i < 3; i++) {
-        currentPalette[k][i] = lerp(currentPalette[k][i], targetPalette[k][i], 0.035);
-      }
+  links.forEach((a) => a.addEventListener("click", (e) => {
+    const id = a.getAttribute("href").slice(1);
+    if (document.getElementById("panel-" + id)) {
+      e.preventDefault();
+      show(id, true);
     }
-    const [ar, ag, ab] = currentPalette.a;
-    const [br, bg, bb] = currentPalette.b;
-    const [cr, cg, cb] = currentPalette.c;
+  }));
+  window.addEventListener("hashchange", () => show(location.hash.slice(1) || "overview", false));
+  if (location.hash) show(location.hash.slice(1), false);
 
-    ctx.clearRect(0, 0, W, H);
+  /* the result section lives inside the scorecard panel; after scoring,
+     the scroll lands on it because the panel is the only thing on screen */
 
-    const base = ctx.createLinearGradient(0, 0, 0, H);
-    base.addColorStop(0, `rgba(${br},${bg},${bb},0.85)`);
-    base.addColorStop(1, "rgba(7,8,12,0)");
-    ctx.fillStyle = base;
-    ctx.fillRect(0, 0, W, H);
-
-    const nx = W * 0.72 + Math.sin(t * 0.00006) * W * 0.06;
-    const ny = H * 0.28 + Math.cos(t * 0.00005) * H * 0.05;
-    let neb = ctx.createRadialGradient(nx, ny, 0, nx, ny, Math.max(W, H) * 0.5);
-    neb.addColorStop(0, `rgba(${cr},${cg},${cb},0.34)`);
-    neb.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = neb;
-    ctx.fillRect(0, 0, W, H);
-
-    const mx = W * 0.18 - Math.cos(t * 0.00004) * W * 0.05;
-    const my = H * 0.78;
-    neb = ctx.createRadialGradient(mx, my, 0, mx, my, Math.max(W, H) * 0.42);
-    neb.addColorStop(0, `rgba(${ar},${ag},${ab},0.10)`);
-    neb.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = neb;
-    ctx.fillRect(0, 0, W, H);
-
-    for (const s of stars) {
-      const y = (((s.y - scrollY * s.depth * 0.12) % H) + H) % H;
-      const tw = reduceMotion ? 0.75 : 0.55 + 0.45 * Math.sin(s.tw + t * 0.001 * s.ts);
-      ctx.globalAlpha = tw * 0.85;
-      ctx.fillStyle = `rgb(${lerp(232, ar, 0.25)|0},${lerp(230, ag, 0.25)|0},${lerp(223, ab, 0.25)|0})`;
-      ctx.beginPath();
-      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-  }
-
-  /* ── scroll-driven effects ───────────────────────────────── */
-  const progressBar = document.querySelector(".scroll-progress");
-  const kinetics = [...document.querySelectorAll("[data-kinetic]")];
-
-  function updateScrollEffects(scrollY) {
-    const vh = window.innerHeight;
-    const total = document.documentElement.scrollHeight - vh;
-    progressBar.style.transform = `scaleX(${total > 0 ? scrollY / total : 0})`;
-
-    let active = themedSections[0];
-    for (const sec of themedSections) {
-      const r = sec.getBoundingClientRect();
-      if (r.top <= vh * 0.5 && r.bottom >= vh * 0.5) { active = sec; break; }
-    }
-    if (active) targetPalette = PALETTES[active.dataset.theme] || PALETTES.psychart;
-
-    let activeRail = railTargets[0];
-    for (const r of railTargets) {
-      if (r.el.getBoundingClientRect().top <= vh * 0.55) activeRail = r;
-    }
-    for (const r of railTargets) {
-      r.dot.classList.toggle("is-active", r === activeRail);
-    }
-
-    if (reduceMotion) return;
-
-    for (const el of kinetics) {
-      const r = el.getBoundingClientRect();
-      const mid = r.top + r.height / 2;
-      const dist = Math.abs(mid - vh / 2) / (vh * 0.75);
-      const k = Math.max(0, 1 - dist);
-      const eased = k * k * (3 - 2 * k);
-      el.style.opacity = (0.05 + eased * 0.95).toFixed(3);
-      el.style.transform = `scale(${(0.86 + eased * 0.14).toFixed(4)}) translateY(${((1 - eased) * 26).toFixed(1)}px)`;
-    }
-  }
-
-  /* ── main loop ───────────────────────────────────────────── */
-  let lastScrollY = -1;
-  function frame(t) {
-    const scrollY = window.scrollY;
-    drawSky(t, scrollY);
-    if (scrollY !== lastScrollY) {
-      updateScrollEffects(scrollY);
-      lastScrollY = scrollY;
-    }
-    requestAnimationFrame(frame);
-  }
-
-  window.addEventListener("resize", () => { sizeCanvas(); lastScrollY = -1; });
-  sizeCanvas();
-  updateScrollEffects(window.scrollY);
-  requestAnimationFrame(frame);
+  /* ── tooltips ── */
+  const tip = document.getElementById("tip");
+  let tipOn = false;
+  document.addEventListener("pointerover", (e) => {
+    const el = e.target.closest("[data-tip]");
+    if (!el) { if (tipOn) { tip.classList.remove("on"); tipOn = false; } return; }
+    tip.textContent = el.getAttribute("data-tip");
+    tip.classList.add("on"); tipOn = true;
+  });
+  document.addEventListener("pointermove", (e) => {
+    if (!tipOn) return;
+    const pad = 14;
+    let x = e.clientX + pad, y = e.clientY - 34;
+    const r = tip.getBoundingClientRect();
+    if (x + r.width > innerWidth - 8) x = e.clientX - r.width - pad;
+    if (y < 8) y = e.clientY + pad;
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  });
 })();
 </script>
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebApplication",
-      "@id": "https://cmsolutions.tech/diagnostic#app",
-      "name": "Business Diagnostic Scorecard",
-      "url": "https://cmsolutions.tech/diagnostic",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "Any browser",
-      "browserRequirements": "Requires JavaScript",
-      "description": "A free twelve-question scorecard for UK small and medium businesses. Scores how well evidenced the owner's decisions are and names the public registers that would close each gap. Runs entirely in the browser; nothing is stored or transmitted.",
-      "inLanguage": "en-GB",
-      "isAccessibleForFree": true,
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
-      "publisher": { "@id": "https://cmsolutions.tech/#organization" }
-    },
-    {
-      "@type": "WebPage",
-      "@id": "https://cmsolutions.tech/diagnostic#webpage",
-      "url": "https://cmsolutions.tech/diagnostic",
-      "name": "Free Business Diagnostic Scorecard for UK SMEs",
-      "about": { "@id": "https://cmsolutions.tech/diagnostic#app" },
-      "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
-      "inLanguage": "en-GB"
-    }
-  ]
+  "@type": "WebPage",
+  "@id": "https://cmsolutions.tech/dashboard#webpage",
+  "url": "https://cmsolutions.tech/dashboard",
+  "name": "The Diagnostic Dashboard",
+  "description": "The free scorecard, the sample report, the five diagnostics and the four registers, consolidated in one interactive dashboard.",
+  "isPartOf": { "@id": "https://cmsolutions.tech/#website" },
+  "inLanguage": "en-GB"
 }
 </script>
 <!-- nav:js — generated, do not edit by hand -->
