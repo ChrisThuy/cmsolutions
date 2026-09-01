@@ -547,3 +547,88 @@ footer h2, footer .footer-head {
     padding-right: var(--spacing-24);
   }
 }
+
+/* ============================================================
+   CHART HELPER CLASSES
+   Marks that must re-skin per theme carry classes, not inline
+   colour attributes. Dark values here; light block below flips.
+   ============================================================ */
+.chart .ctx        { fill: rgba(255, 255, 255, 0.18); }
+.chart .ctx--avg   { fill: rgba(255, 255, 255, 0.10); }
+.chart .pt-ring    { stroke: #000000; }
+.dial-track        { stroke: rgba(255, 255, 255, 0.10); }
+
+/* ============================================================
+   LIGHT THEME
+   The same Dala discipline on paper instead of velvet: one
+   violet, a darkened amber for emphasis (the brand #ffb829
+   fails contrast on paper), hairlines in ink. The sky canvas
+   and halos are creatures of the dark — hidden, not repainted.
+   Applied via html[data-theme="light"], set by the nav toggle.
+   ============================================================ */
+html[data-theme="light"] {
+  --color-void:       #f7f6f3;
+  --color-bone-white: #14131a;
+  --color-ash-gray:   #6d6a75;
+  --color-silver-mist:#403d49;
+
+  --ink:       #14131a;
+  --ink-dim:   #6d6a75;
+  --ink-faint: #403d49;
+  --void:      #f7f6f3;
+  --hairline:        rgba(20, 19, 26, 0.13);
+  --hairline-strong: rgba(20, 19, 26, 0.25);
+  --emphasis: #8a6210;
+}
+
+html[data-theme="light"] body { background: var(--void); color: var(--ink); }
+
+/* the dark-only atmospherics */
+html[data-theme="light"] #sky,
+html[data-theme="light"] .visual-halo { display: none; }
+
+/* marks drawn for black get their paper equivalents */
+html[data-theme="light"] .chart .ctx      { fill: rgba(20, 19, 26, 0.16); }
+html[data-theme="light"] .chart .ctx--avg { fill: rgba(20, 19, 26, 0.09); }
+html[data-theme="light"] .chart .pt-ring  { stroke: #f7f6f3; }
+html[data-theme="light"] .dial-track      { stroke: rgba(20, 19, 26, 0.12); }
+html[data-theme="light"] .chart .grid { stroke: rgba(20, 19, 26, 0.09); }
+html[data-theme="light"] .chart .base { stroke: rgba(20, 19, 26, 0.22); }
+html[data-theme="light"] .chart .ax      { fill: var(--ink-dim); }
+html[data-theme="light"] .chart .val     { fill: var(--ink); }
+html[data-theme="light"] .chart .val-dim { fill: var(--ink-dim); }
+
+/* hairlines hard-coded as white in the dark sheets */
+html[data-theme="light"] .rail a { border-color: rgba(20, 19, 26, 0.25); }
+html[data-theme="light"] .rail .rail-line { background: var(--hairline); }
+html[data-theme="light"] .chapter-rule,
+html[data-theme="light"] .contact-divider { background: var(--hairline); }
+html[data-theme="light"] .thread::before { background: rgba(20, 19, 26, 0.08); }
+html[data-theme="light"] .chapter-cta { border-bottom-color: rgba(20, 19, 26, 0.28); color: var(--ink); }
+html[data-theme="light"] .chapter-cta:hover { color: var(--emphasis); border-color: var(--emphasis); }
+
+/* surfaces that used a faint bone wash on black */
+html[data-theme="light"] .service,
+html[data-theme="light"] .toolcard,
+html[data-theme="light"] .band,
+html[data-theme="light"] .contact-card { background: #ffffff; border-color: var(--hairline); }
+html[data-theme="light"] .sitenav-panel { background: #ffffff; }
+
+/* the fixed bar: dark glass becomes paper glass */
+html[data-theme="light"] .sitenav[data-state="up"],
+html[data-theme="light"] .sitenav[data-state="down"] {
+  background: rgba(247, 246, 243, 0.88);
+  border-bottom-color: var(--hairline);
+}
+html[data-theme="light"] .sitenav-theme { border-color: rgba(20, 19, 26, 0.2); }
+html[data-theme="light"] .sitenav-theme:hover { border-color: rgba(20, 19, 26, 0.5); }
+
+/* dashboard shell */
+html[data-theme="light"] .side nav a:hover { background: rgba(20, 19, 26, 0.05); }
+html[data-theme="light"] #tip { background: #ffffff; color: var(--ink); border-color: rgba(128, 82, 255, 0.5); box-shadow: 0 6px 24px rgba(20, 19, 26, 0.12); }
+html[data-theme="light"] .qbar { background: rgba(20, 19, 26, 0.10); }
+html[data-theme="light"] .bar { background: rgba(20, 19, 26, 0.10); }
+html[data-theme="light"] .stepper .opt kbd { border-color: var(--hairline); color: var(--ink-dim); }
+
+/* selection stays violet, readable on paper */
+html[data-theme="light"] ::selection { background: rgba(128, 82, 255, 0.25); color: #14131a; }

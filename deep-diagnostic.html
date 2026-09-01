@@ -298,6 +298,20 @@
 </style>
 <!-- nav:css — generated, do not edit by hand -->
 <style>
+
+  .sitenav-theme {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent; color: inherit; cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .sitenav-theme:hover { border-color: rgba(255, 255, 255, 0.45); }
+  .sitenav-theme[hidden] { display: none; }
+  .sitenav-theme .ic-sun  { display: block; }
+  .sitenav-theme .ic-moon { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-sun  { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-moon { display: block; }
   /* ══ site navigation ══════════════════════════════════════════ */
   :root { --sitenav-h: 3.75rem; }
 
@@ -518,6 +532,10 @@
       </details>
       <a href="/#services" class="desktop-only">What I do</a>
       <a href="/#contact" class="sitenav-cta">Contact</a>
+      <button class="sitenav-theme" type="button" aria-label="Switch between dark and light" title="Switch theme" hidden>
+        <svg class="ic-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+        <svg class="ic-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z"/></svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -838,6 +856,31 @@
   var bar = document.querySelector('.sitenav');
   if (!bar) return;
   var tools = bar.querySelector('.sitenav-tools');
+
+  /* ── theme ──
+     The light skin lives in dala.css, so the toggle only appears on pages
+     that load it; on the legacy tool pages a control that did nothing would
+     be worse than none. Preference persists; ?theme= wins for one visit. */
+  var themeBtn = bar.querySelector('.sitenav-theme');
+  if (themeBtn && document.querySelector('link[href="/dala.css"]')) {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var apply = function (t) {
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+      if (meta) meta.setAttribute('content', t === 'light' ? '#f7f6f3' : '#000000');
+    };
+    var stored = null;
+    try { stored = localStorage.getItem('mavridis-theme'); } catch (e) {}
+    var fromUrl = new URLSearchParams(location.search).get('theme');
+    var theme = fromUrl === 'light' || fromUrl === 'dark' ? fromUrl : (stored === 'light' ? 'light' : 'dark');
+    apply(theme);
+    themeBtn.hidden = false;
+    themeBtn.addEventListener('click', function () {
+      theme = theme === 'light' ? 'dark' : 'light';
+      apply(theme);
+      try { localStorage.setItem('mavridis-theme', theme); } catch (e) {}
+    });
+  }
 
   /* ── show on the way up, hide on the way down ── */
   var last = window.pageYOffset || 0, ticking = false;

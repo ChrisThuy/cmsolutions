@@ -453,6 +453,20 @@
 </style>
 <!-- nav:css — generated, do not edit by hand -->
 <style>
+
+  .sitenav-theme {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent; color: inherit; cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .sitenav-theme:hover { border-color: rgba(255, 255, 255, 0.45); }
+  .sitenav-theme[hidden] { display: none; }
+  .sitenav-theme .ic-sun  { display: block; }
+  .sitenav-theme .ic-moon { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-sun  { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-moon { display: block; }
   /* ══ site navigation ══════════════════════════════════════════ */
   :root { --sitenav-h: 3.75rem; }
 
@@ -666,6 +680,10 @@
       </details>
       <a href="/#services" class="desktop-only">What I do</a>
       <a href="/#contact" class="sitenav-cta">Contact</a>
+      <button class="sitenav-theme" type="button" aria-label="Switch between dark and light" title="Switch theme" hidden>
+        <svg class="ic-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+        <svg class="ic-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z"/></svg>
+      </button>
     </nav>
   </div>
 </header>
@@ -738,7 +756,7 @@
               <line class="base" x1="60" y1="190" x2="540" y2="190"/>
               <path d="M100 57.4 L240 89.4 L380 123.7 L520 153.4 L520 190 L100 190 Z" fill="rgba(128,82,255,0.10)"/>
               <polyline points="100,57.4 240,89.4 380,123.7 520,153.4" fill="none" stroke="#8052ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-              <g fill="#8052ff" stroke="#000000" stroke-width="2">
+              <g class="pt-ring" fill="#8052ff" stroke-width="2">
                 <circle cx="100" cy="57.4" r="4.5" data-tip="FY2022 · 31.8%"/><circle cx="240" cy="89.4" r="4.5" data-tip="FY2023 · 30.4%"/>
                 <circle cx="380" cy="123.7" r="4.5" data-tip="FY2024 · 28.9%"/><circle cx="520" cy="153.4" r="4.5" data-tip="FY2025 · 27.6%"/>
               </g>
@@ -763,10 +781,10 @@
               </g>
               <g>
                 <rect x="150" y="30" width="353" height="18" rx="4" fill="#8052ff" data-tip="Your unit · £186/m²"/>
-                <rect x="150" y="70" width="272" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 2 · £143/m²"/>
-                <rect x="150" y="110" width="287" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 6 · £151/m²"/>
-                <rect x="150" y="150" width="300" height="18" rx="4" fill="rgba(255,255,255,0.18)" data-tip="Unit 9 · £158/m²"/>
-                <rect x="150" y="190" width="283" height="18" rx="4" fill="rgba(255,255,255,0.10)" data-tip="Local average · £149/m²"/>
+                <rect x="150" y="70" width="272" height="18" rx="4" class="ctx" data-tip="Unit 2 · £143/m²"/>
+                <rect x="150" y="110" width="287" height="18" rx="4" class="ctx" data-tip="Unit 6 · £151/m²"/>
+                <rect x="150" y="150" width="300" height="18" rx="4" class="ctx" data-tip="Unit 9 · £158/m²"/>
+                <rect x="150" y="190" width="283" height="18" rx="4" class="ctx ctx--avg" data-tip="Local average · £149/m²"/>
               </g>
               <text class="val" x="495" y="44" text-anchor="end" fill="#ffffff">£186/m²</text>
               <text class="val-dim" x="430" y="84">£143</text>
@@ -953,7 +971,7 @@
         <div class="score-dial">
           <svg width="112" height="112" viewBox="0 0 112 112" role="img" aria-labelledby="dialTitle">
             <title id="dialTitle">Your evidence score, out of one hundred</title>
-            <circle cx="56" cy="56" r="48" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="7" />
+            <circle class="dial-track" cx="56" cy="56" r="48" fill="none" stroke-width="7" />
             <circle id="dialArc" cx="56" cy="56" r="48" fill="none" stroke="#8052ff" stroke-width="7"
                     stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6"
                     transform="rotate(-90 56 56)" />
@@ -1039,11 +1057,11 @@
             <line class="base" x1="60" y1="200" x2="540" y2="200"/>
             <polyline points="100,70.2 240,79.3 380,86.7 520,64.4" fill="none" stroke="#b8821e" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
             <polyline points="100,90.3 240,115.9 380,143.4 520,167.3" fill="none" stroke="#8052ff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-            <g fill="#b8821e" stroke="#000000" stroke-width="2">
+            <g class="pt-ring" fill="#b8821e" stroke-width="2">
               <circle cx="100" cy="70.2" r="4.5"/><circle cx="240" cy="79.3" r="4.5"/>
               <circle cx="380" cy="86.7" r="4.5"/><circle cx="520" cy="64.4" r="4.5"/>
             </g>
-            <g fill="#8052ff" stroke="#000000" stroke-width="2">
+            <g class="pt-ring" fill="#8052ff" stroke-width="2">
               <circle cx="100" cy="90.3" r="4.5"/><circle cx="240" cy="115.9" r="4.5"/>
               <circle cx="380" cy="143.4" r="4.5"/><circle cx="520" cy="167.3" r="4.5"/>
             </g>
@@ -1574,6 +1592,31 @@
   var bar = document.querySelector('.sitenav');
   if (!bar) return;
   var tools = bar.querySelector('.sitenav-tools');
+
+  /* ── theme ──
+     The light skin lives in dala.css, so the toggle only appears on pages
+     that load it; on the legacy tool pages a control that did nothing would
+     be worse than none. Preference persists; ?theme= wins for one visit. */
+  var themeBtn = bar.querySelector('.sitenav-theme');
+  if (themeBtn && document.querySelector('link[href="/dala.css"]')) {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var apply = function (t) {
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+      if (meta) meta.setAttribute('content', t === 'light' ? '#f7f6f3' : '#000000');
+    };
+    var stored = null;
+    try { stored = localStorage.getItem('mavridis-theme'); } catch (e) {}
+    var fromUrl = new URLSearchParams(location.search).get('theme');
+    var theme = fromUrl === 'light' || fromUrl === 'dark' ? fromUrl : (stored === 'light' ? 'light' : 'dark');
+    apply(theme);
+    themeBtn.hidden = false;
+    themeBtn.addEventListener('click', function () {
+      theme = theme === 'light' ? 'dark' : 'light';
+      apply(theme);
+      try { localStorage.setItem('mavridis-theme', theme); } catch (e) {}
+    });
+  }
 
   /* ── show on the way up, hide on the way down ── */
   var last = window.pageYOffset || 0, ticking = false;
