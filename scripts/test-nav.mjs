@@ -110,7 +110,9 @@ for (const p of PAGES) {
 // Exactly one current marker inside the nav, or "you are here" means nothing.
 for (const [file, source] of block) {
   const marks = (source.match(/aria-current="page"/g) ?? []).length;
-  const expected = PAGES.find((p) => p.file === file)?.group ? 1 : 0;
+  const page = PAGES.find((p) => p.file === file);
+  // A page that is also a bar item is marked in both places.
+  const expected = (page?.group ? 1 : 0) + (page && BAR.some((b) => b.href === page.href) ? 1 : 0);
   check(`${file}: ${expected} current marker(s) in the nav`, marks === expected, `found ${marks}`);
 }
 

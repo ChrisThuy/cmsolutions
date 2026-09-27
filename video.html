@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Explainer Videos &amp; Show Reels — CM Solutions</title>
+<meta name="description" content="Explainer videos, show reels and product trailers for your product or service. Script, voice, edit and music done for you. From £195." />
+<link rel="canonical" href="https://cmsolutions.tech/video" />
+<meta property="og:title" content="Explainer Videos &amp; Show Reels — CM Solutions" />
+<meta property="og:description" content="Your product, explained on film. Script, voice, edit and music done for you. From £195." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://cmsolutions.tech/video" />
+<meta property="og:site_name" content="CM Solutions" />
+<meta property="og:image" content="https://cmsolutions.tech/reel/showreel-poster.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://cmsolutions.tech/reel/showreel-poster.jpg" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#000000" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap" rel="stylesheet" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Explainer videos and show reels",
+  "provider": { "@type": "Organization", "name": "CM Solutions", "url": "https://cmsolutions.tech" },
+  "areaServed": "Worldwide",
+  "offers": [
+    { "@type": "Offer", "name": "Reel", "price": "195", "priceCurrency": "GBP" },
+    { "@type": "Offer", "name": "Explainer", "price": "495", "priceCurrency": "GBP" },
+    { "@type": "Offer", "name": "Film", "price": "995", "priceCurrency": "GBP" }
+  ]
+}
+</script>
+<style>
+  :root {
+    --ink:        #ffffff;
+    --ink-dim:    #9a9a9a;
+    --ink-faint:  #bdbdbd;
+    --void:       #000000;
+    --panel:      #0b0b10;
+    --hairline:   rgba(255, 255, 255, 0.10);
+    --accent:     #8052ff;
+    --emphasis:   #ffb829;
+    --sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --page: 1120px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body {
+    background: var(--void); color: var(--ink);
+    font-family: var(--sans); font-weight: 200; line-height: 1.55;
+    font-size: 18px; -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0; z-index: 100;
+    background: var(--accent); color: #fff; padding: 0.7rem 1.1rem; border-radius: 0 0 10px 0;
+  }
+  .skip:focus { left: 0; }
+
+  .wrap { max-width: var(--page); margin: 0 auto; padding: 0 clamp(1rem, 5vw, 3rem); }
+
+  .kicker {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.025em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem;
+  }
+  h1 {
+    font-weight: 400; letter-spacing: -0.04em; line-height: 1.08;
+    font-size: clamp(2.3rem, 6.4vw, 4.6rem); margin-bottom: 1.4rem;
+  }
+  h1 em, h2 em { font-style: normal; color: var(--emphasis); }
+  h2 {
+    font-weight: 400; letter-spacing: -0.035em; line-height: 1.15;
+    font-size: clamp(1.7rem, 4vw, 2.6rem); margin-bottom: 1rem;
+  }
+  .lede { color: var(--ink-faint); max-width: 60ch; }
+  .lede strong { font-weight: 600; color: var(--ink); }
+
+  section { padding: clamp(3.5rem, 9vh, 6rem) 0; border-top: 1px solid var(--hairline); }
+  .page-head { padding: clamp(6rem, 14vh, 9rem) 0 clamp(2.5rem, 6vh, 4rem); border-top: 0; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: 1px solid var(--hairline); border-radius: 9999px;
+    padding: 0.9rem 1.7rem; font: inherit; font-size: 0.95rem; font-weight: 600;
+    letter-spacing: 0.025em; background: transparent; color: var(--ink);
+    cursor: pointer; text-decoration: none;
+    transition: border-color 0.25s var(--ease-out), background 0.25s var(--ease-out);
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn--solid { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn--solid:hover { background: #6f3fff; }
+
+  .reel {
+    margin-top: clamp(2.2rem, 5vh, 3.4rem);
+    border-radius: 18px; overflow: hidden; border: 1px solid var(--hairline);
+    background: var(--panel); aspect-ratio: 16 / 9;
+  }
+  .reel video { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+  .assurance { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; margin-top: 1.6rem; }
+  .assurance li {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase;
+    color: var(--ink-faint); border: 1px solid var(--hairline);
+    border-radius: 9999px; padding: 0.5rem 1rem;
+  }
+
+  /* ── work ─────────────────────────────────────────────── */
+  .work { display: grid; gap: 1.4rem; margin-top: 2.4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+  .work-card {
+    border: 1px solid var(--hairline); border-radius: 16px; overflow: hidden;
+    background: var(--panel); display: flex; flex-direction: column;
+  }
+  .work-card video { width: 100%; aspect-ratio: 16 / 9; display: block; background: #000; }
+  .work-body { padding: 1.2rem 1.3rem 1.4rem; display: grid; gap: 0.45rem; }
+  .work-type { font-size: 12px; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; color: var(--accent); }
+  .work-body h3 { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; }
+  .work-body p { font-size: 0.95rem; color: var(--ink-faint); }
+  .work-meta { font-size: 0.85rem; color: var(--ink-dim); }
+  .note { font-size: 0.9rem; color: var(--ink-dim); margin-top: 1.4rem; max-width: 70ch; }
+
+  /* ── packages ─────────────────────────────────────────── */
+  .plans { display: grid; gap: 1.2rem; margin-top: 2.4rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+  .plan {
+    border: 1px solid var(--hairline); border-radius: 16px; padding: 1.6rem 1.5rem 1.7rem;
+    background: var(--panel); display: flex; flex-direction: column; gap: 0.9rem;
+  }
+  .plan--pick { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  .plan-tag { font-size: 12px; font-weight: 600; letter-spacing: 0.025em; text-transform: uppercase; color: var(--ink-dim); }
+  .plan--pick .plan-tag { color: var(--emphasis); }
+  .plan h3 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
+  .price { font-size: 2.4rem; font-weight: 400; letter-spacing: -0.04em; line-height: 1; }
+  .price small { font-size: 0.9rem; color: var(--ink-dim); letter-spacing: 0; }
+  .plan p { font-size: 0.95rem; color: var(--ink-faint); }
+  .plan ul { list-style: none; display: grid; gap: 0.45rem; font-size: 0.93rem; color: var(--ink-faint); flex: 1; }
+  .plan li::before { content: "✓"; color: var(--accent); font-weight: 700; margin-right: 0.6rem; }
+  .plan .btn { justify-content: center; }
+
+  /* ── steps ────────────────────────────────────────────── */
+  .steps { list-style: none; display: grid; gap: 1.2rem; margin-top: 2.2rem; counter-reset: s;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); }
+  .steps li { border-top: 1px solid var(--hairline); padding-top: 1.1rem; counter-increment: s; }
+  .steps li::before { content: "0" counter(s); display: block; font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 0.5rem; }
+  .steps h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .steps p { font-size: 0.93rem; color: var(--ink-faint); }
+
+  /* ── faq ──────────────────────────────────────────────── */
+  .faq { margin-top: 2rem; display: grid; gap: 0.6rem; max-width: 820px; }
+  .faq details { border: 1px solid var(--hairline); border-radius: 14px; padding: 1rem 1.2rem; background: var(--panel); }
+  .faq summary { cursor: pointer; font-weight: 600; font-size: 1rem; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: "+"; float: right; color: var(--accent); }
+  .faq details[open] summary::after { content: "–"; }
+  .faq p { margin-top: 0.7rem; font-size: 0.95rem; color: var(--ink-faint); }
+
+  .cta-band { text-align: center; }
+  .cta-band .lede { margin: 0 auto; }
+  .cta-band .actions { justify-content: center; }
+
+  footer { border-top: 1px solid var(--hairline); padding: 2rem 0 3rem; font-size: 0.85rem; color: var(--ink-dim); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 1.6rem; justify-content: space-between; }
+  footer a { text-decoration: none; }
+  footer a:hover { color: var(--ink); }
+</style>
+<!-- nav:css — generated, do not edit by hand -->
+<style>
+
+  .sitenav-theme {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.1rem; height: 2.1rem; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent; color: inherit; cursor: pointer;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+  .sitenav-theme:hover { border-color: rgba(255, 255, 255, 0.45); }
+  .sitenav-theme[hidden] { display: none; }
+  .sitenav-theme .ic-sun  { display: block; }
+  .sitenav-theme .ic-moon { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-sun  { display: none; }
+  html[data-theme="light"] .sitenav-theme .ic-moon { display: block; }
+  /* ══ site navigation ══════════════════════════════════════════ */
+  :root { --sitenav-h: 3.75rem; }
+
+  .sitenav {
+    position: fixed; inset-inline: 0; top: 0; z-index: 50;
+    font-family: var(--sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+    font-weight: 300;
+    transition: transform 0.45s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+                background 0.35s ease, border-color 0.35s ease;
+    border-bottom: 1px solid transparent;
+  }
+  /* Over the hero it is a few words on the film; once you have scrolled past
+     it needs its own ground so the links stay legible on any frame. */
+  .sitenav[data-state="up"], .sitenav[data-state="down"] {
+    background: color-mix(in srgb, var(--void, #07080c) 82%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--hairline, rgba(232, 230, 223, 0.12));
+  }
+  @supports not (backdrop-filter: blur(2px)) {
+    .sitenav[data-state="up"], .sitenav[data-state="down"] { background: var(--void, #07080c); }
+  }
+  /* Reading downward is reading; the bar gets out of the way until you look
+     for it. It never hides while the panel is open or focus is inside it. */
+  .sitenav[data-state="down"] { transform: translateY(-100%); }
+  .sitenav:focus-within, .sitenav:has([open]) { transform: none !important; }
+
+  .sitenav-gap { height: var(--sitenav-h); }
+
+  .sitenav-in {
+    width: min(1080px, 100% - 3rem); margin-inline: auto;
+    height: var(--sitenav-h);
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+
+  .sitenav-mark {
+    font-family: var(--serif, Georgia, "Times New Roman", serif);
+    font-size: 1.05rem; letter-spacing: -0.01em;
+    text-decoration: none; white-space: nowrap;
+    color: var(--ink, #e8e6df); margin-inline-end: auto;
+  }
+
+  .sitenav-bar { display: flex; align-items: center; gap: 1.5rem; }
+
+  .sitenav-bar a, .sitenav-toggle {
+    color: var(--ink-dim, #a09d93); text-decoration: none; white-space: nowrap;
+    font-size: 0.9rem; font-family: inherit; font-weight: inherit;
+    transition: color 0.3s var(--ease-out, ease);
+    /* 2.5.8 floor without making a text link look like a button */
+    display: inline-flex; align-items: center; min-height: 1.5rem;
+  }
+  .sitenav-bar a:hover, .sitenav-toggle:hover { color: var(--ink, #e8e6df); }
+  .sitenav-cta { color: var(--ink, #e8e6df) !important; }
+
+  /* ── the disclosure ── */
+  .sitenav-tools { position: relative; }
+  .sitenav-toggle {
+    list-style: none; cursor: pointer; gap: 0.4rem;
+    background: none; border: 0; padding: 0;
+  }
+  .sitenav-toggle::-webkit-details-marker { display: none; }
+  .sitenav-toggle .chev {
+    width: 0.55rem; height: 0.55rem; flex: none;
+    border-right: 1px solid currentColor; border-bottom: 1px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.3s var(--ease-out, ease);
+  }
+  .sitenav-tools[open] > .sitenav-toggle { color: var(--ink, #e8e6df); }
+  .sitenav-tools[open] > .sitenav-toggle .chev { transform: translateY(1px) rotate(-135deg); }
+
+  .sitenav-panel {
+    position: absolute; top: calc(100% + 0.9rem); right: 0;
+    width: min(41rem, calc(100vw - 3rem));
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+    padding: 1.6rem;
+    /* Thirteen destinations need 640px of viewport. That fits a laptop but
+       not a short window, and a panel whose last three tools are simply
+       unreachable is worse than one that scrolls. */
+    max-height: calc(100dvh - var(--sitenav-h) - 2rem); overflow-y: auto;
+    background: color-mix(in srgb, var(--void, #07080c) 96%, transparent);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border: 1px solid var(--hairline, rgba(232, 230, 223, 0.12));
+    border-radius: 4px;
+    box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+  }
+  @supports not (backdrop-filter: blur(2px)) { .sitenav-panel { background: #0b0d12; } }
+  .sitenav-tools[open] > .sitenav-panel { animation: sitenav-in 0.32s var(--ease-out, ease) both; }
+  @keyframes sitenav-in { from { opacity: 0; transform: translateY(-0.5rem); } }
+
+  .sitenav-group h2 {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.13em;
+    color: var(--ink-faint, #6b6960); font-weight: 400; margin-bottom: 0.15rem;
+  }
+  .sitenav-group .note {
+    font-size: 0.72rem; color: var(--ink-faint, #6b6960);
+    margin-bottom: 0.9rem; display: block;
+  }
+  .sitenav-group ul { list-style: none; margin: 0; padding: 0; }
+
+  .sitenav-panel li a {
+    display: block; padding: 0.5rem 0.6rem; margin-inline: -0.6rem;
+    border-radius: 3px; text-decoration: none;
+    color: var(--ink, #e8e6df); font-size: 0.88rem; line-height: 1.35;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .sitenav-panel li a .blurb {
+    display: block; font-size: 0.76rem; color: var(--ink-faint, #6b6960);
+    margin-top: 0.1rem;
+  }
+  .sitenav-panel li a:hover { background: rgba(232, 230, 223, 0.05); }
+  .sitenav-panel li a:hover .blurb { color: var(--ink-dim, #a09d93); }
+  .sitenav-panel li a[aria-current="page"] { color: var(--accent, #d4af6a); }
+  .sitenav-panel li a[aria-current="page"] .blurb { color: var(--ink-dim, #a09d93); }
+  .sitenav-lead a { border-bottom: 1px solid var(--hairline, rgba(232,230,223,0.12)); padding-bottom: 0.7rem; margin-bottom: 0.3rem; }
+
+  .sitenav-panel .in-panel { display: none; }
+
+  .sitenav :is(a, summary, button):focus-visible {
+    outline: 2px solid var(--accent, #7ab8d4); outline-offset: 3px; border-radius: 2px;
+  }
+
+  /* ── narrow ── */
+  @media (max-width: 46rem) {
+    .sitenav-in { width: min(1080px, 100% - 2.5rem); gap: 1.1rem; }
+    .sitenav-bar { gap: 1.1rem; }
+    .sitenav-bar .desktop-only { display: none; }
+    .sitenav-tools { position: static; }
+    .sitenav-panel {
+      position: fixed; inset: var(--sitenav-h) 0 auto 0;
+      width: auto; max-height: calc(100dvh - var(--sitenav-h)); overflow-y: auto;
+      grid-template-columns: 1fr; gap: 1.5rem;
+      padding: 1.4rem clamp(1.25rem, 6vw, 2rem) 2rem;
+      border-inline: 0; border-radius: 0;
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.8);
+      /* Solid, not translucent. A sheet this size lets enough of the page
+         through that the headline behind it competes with the links — on
+         desktop the panel is small enough for the blur to carry it. */
+      background: var(--void, #07080c);
+      overscroll-behavior: contain;
+    }
+    .sitenav-panel .in-panel { display: block; }
+    .sitenav-panel li a { padding-block: 0.6rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sitenav, .sitenav-toggle .chev, .sitenav-panel li a { transition: none; }
+    .sitenav-tools[open] > .sitenav-panel { animation: none; }
+    .sitenav[data-state="down"] { transform: none; }
+  }
+
+  @media print { .sitenav, .sitenav-gap { display: none; } }
+</style>
+<!-- /nav:css -->
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+
+<!-- nav:start — generated by scripts/build-nav.mjs, do not edit by hand -->
+<header class="sitenav" data-state="top">
+  <div class="sitenav-in">
+    <a class="sitenav-mark" href="/">Mavridis &amp; Co</a>
+    <nav class="sitenav-bar" aria-label="Primary">
+      <details class="sitenav-tools">
+        <summary class="sitenav-toggle" aria-label="Tools and pages">Tools<span class="chev" aria-hidden="true"></span></summary>
+        <div class="sitenav-panel">
+        <div class="sitenav-group">
+          <h2>Diagnostics</h2>
+          <span class="note">Free, about five minutes</span>
+          <ul>
+          <li class="sitenav-lead"><a href="/dashboard">The dashboard<span class="blurb">Everything in one place</span></a></li>
+          <li><a href="/diagnostic">Diagnostic scorecard<span class="blurb">Twelve questions, no sign-up</span></a></li>
+          <li><a href="/sample-report">Sample report<span class="blurb">A worked example, free to read</span></a></li>
+          <li><a href="/business-health-check">Business Health Check<span class="blurb">£450 — five years of filings, cited</span></a></li>
+          <li><a href="/location-intelligence">Location &amp; Market Intelligence<span class="blurb">Know the site before you sign</span></a></li>
+          <li><a href="/deep-diagnostic">Deep Diagnostic<span class="blurb">Every register, one document</span></a></li>
+          <li><a href="/intelligence-retainer">Intelligence Retainer<span class="blurb">The registers, watched monthly</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group">
+          <h2>Studio</h2>
+          <span class="note">Done for you</span>
+          <ul>
+          <li class="sitenav-lead"><a href="/video" aria-current="page">Explainer videos<span class="blurb">Show reels and trailers, from £195</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group">
+          <h2>Tools</h2>
+          <span class="note">Free, no sign-up</span>
+          <ul>
+          <li class="sitenav-lead"><a href="/ai-tools">All tools<span class="blurb">Every tool in one place</span></a></li>
+          <li><a href="/ai-proposal-generator">Proposal generator<span class="blurb">Scoped proposals from a brief</span></a></li>
+          <li><a href="/free-website-audit-tool">Website check<span class="blurb">SEO and accessibility, measured</span></a></li>
+          <li><a href="/schema-generator">Schema generator<span class="blurb">Valid JSON-LD, no invention</span></a></li>
+          <li><a href="/ai-document-data-extraction">Document extraction<span class="blurb">Invoices and forms into fields</span></a></li>
+          <li><a href="/ai-customer-service-software">Support agent<span class="blurb">Answers only from your policy</span></a></li>
+          <li><a href="/ai-workflow-automation">Workflow planner<span class="blurb">What to automate, and what not to</span></a></li>
+          <li><a href="/ai-website-builder">Website builder<span class="blurb">A scroll-film site from a prompt</span></a></li>
+          <li><a href="/ai-social-media-content-planner">Social planner<span class="blurb">Posts, captions and a schedule</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group">
+          <h2>Industry</h2>
+          <span class="note">Built for a sector</span>
+          <ul>
+          <li><a href="/oil-gas">Oil &amp; gas playbooks<span class="blurb">135 prompts across the value chain</span></a></li>
+          <li><a href="/methane-readiness">Methane readiness<span class="blurb">EU 2024/1787, cargo and contracts</span></a></li>
+          <li><a href="/fueleu-calculator">FuelEU calculator<span class="blurb">Compliance balance and penalties</span></a></li>
+          <li><a href="/agent-map">Agent playbooks<span class="blurb">137 prompts, ready to copy</span></a></li>
+          </ul>
+        </div>
+        <div class="sitenav-group in-panel"><ul><li><a href="/#services">What I do</a></li></ul></div>
+        <div class="sitenav-group in-panel"><ul><li><a href="/video">Video</a></li></ul></div>
+        </div>
+      </details>
+      <a href="/#services" class="desktop-only">What I do</a>
+      <a href="/video" class="desktop-only" aria-current="page">Video</a>
+      <a href="/#contact" class="sitenav-cta">Contact</a>
+      <button class="sitenav-theme" type="button" aria-label="Switch between dark and light" title="Switch theme" hidden>
+        <svg class="ic-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.4"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+        <svg class="ic-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6a8.6 8.6 0 1 0 10.6 10.6Z"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+<div class="sitenav-gap" aria-hidden="true"></div>
+<!-- nav:end -->
+
+<main id="top">
+  <header class="page-head">
+    <div class="wrap">
+      <p class="kicker">Video studio · CM Solutions</p>
+      <h1>Your product, <em>explained on film.</em></h1>
+      <p class="lede">Explainer videos, show reels and product trailers for apps, shops and services.
+        <strong>You send a link. We write the script, record the voice, edit the film and add the music.</strong>
+        You approve each step before we go on.</p>
+      <div class="actions">
+        <a class="btn btn--solid" href="https://wa.me/447737534232?text=Hi%2C%20I%27d%20like%20a%20video%20for%20my%20product%3A%20" target="_blank" rel="noopener">Start on WhatsApp</a>
+        <a class="btn" href="mailto:contact@cmsolutions.tech?subject=Video%20brief&body=Product%20or%20website%20link%3A%0A%0AWhich%20package%20(Reel%20%2F%20Explainer%20%2F%20Film)%3A%0A%0AWhen%20you%20need%20it%3A%0A">Email a brief</a>
+        <a class="btn" href="#packages">See prices</a>
+      </div>
+      <div class="reel">
+        <video controls playsinline preload="metadata" poster="/reel/showreel-poster.jpg">
+          <source src="/reel/showreel.mp4" type="video/mp4" />
+        </video>
+      </div>
+      <ul class="assurance">
+        <li>Script included</li>
+        <li>Voice and music included</li>
+        <li>16:9 and 9:16 versions</li>
+        <li>You own the final video</li>
+      </ul>
+    </div>
+  </header>
+
+  <section id="work">
+    <div class="wrap">
+      <p class="kicker">Recent work</p>
+      <h2>Three films, <em>three jobs.</em></h2>
+      <p class="lede">A luxury product trailer, an app explainer for new users, and a full product walkthrough. Press play on any of them.</p>
+      <div class="work">
+        <article class="work-card">
+          <video controls playsinline preload="none" poster="/portfolio/video-nailbox.jpg">
+            <source src="https://jcnailbox.com/film/trailer-16x9.mp4" type="video/mp4" />
+          </video>
+          <div class="work-body">
+            <span class="work-type">Product trailer · 1:33</span>
+            <h3>JC Nailbox</h3>
+            <p>Hand-painted press-on nails, from the blank nail to the evening out. Cinematic shots, sound design, voice-over and a 9:16 cut for Instagram.</p>
+            <span class="work-meta">Best for: shops, physical products, launches</span>
+          </div>
+        </article>
+        <article class="work-card">
+          <video controls playsinline preload="none" poster="/portfolio/video-huddle-artists.jpg">
+            <source src="https://gethuddle.org/huddle-artist-explainer.mp4" type="video/mp4" />
+          </video>
+          <div class="work-body">
+            <span class="work-type">App explainer · 8:00</span>
+            <h3>Huddle for artists</h3>
+            <p>Takes a new artist from "paste your link" to reading their results, one screen at a time. Real app screens, animated charts, voice-over and b-roll.</p>
+            <span class="work-meta">Best for: SaaS onboarding, sales pages</span>
+          </div>
+        </article>
+        <article class="work-card">
+          <video controls playsinline preload="none" poster="/portfolio/video-huddle-walkthrough.jpg">
+            <source src="https://gethuddle.org/huddle-explainer-atoz.mp4" type="video/mp4" />
+          </video>
+          <div class="work-body">
+            <span class="work-type">Product walkthrough · 9:12</span>
+            <h3>Huddle, A to Z</h3>
+            <p>Every feature of a playlist-curation app in one film. Screen capture, zooms that follow the cursor, music cut to the beat.</p>
+            <span class="work-meta">Best for: feature tours, help centres, demos</span>
+          </div>
+        </article>
+      </div>
+      <p class="note">These are brands we built and run ourselves. A short cut of a long film works too: every package can include a 30–60 second version for ads and social.</p>
+    </div>
+  </section>
+
+  <section id="packages">
+    <div class="wrap">
+      <p class="kicker">Packages</p>
+      <h2>Clear prices. <em>No surprises.</em></h2>
+      <p class="lede">Each package includes the script, the voice-over, royalty-free music and the edit. Prices are fixed before we start.</p>
+      <div class="plans">
+        <article class="plan">
+          <span class="plan-tag">Show reel</span>
+          <h3>Reel</h3>
+          <div class="price">£195</div>
+          <p>A 30-second reel for social media or an ad.</p>
+          <ul>
+            <li>Up to 30 seconds</li>
+            <li>Script, voice and music</li>
+            <li>9:16 for Reels / TikTok, plus 16:9</li>
+            <li>Captions burned in</li>
+            <li>1 round of changes</li>
+            <li>Delivery in 5 days</li>
+          </ul>
+          <a class="btn" href="https://wa.me/447737534232?text=Hi%2C%20I%27d%20like%20the%20Reel%20package%20for%3A%20" target="_blank" rel="noopener">Choose Reel</a>
+        </article>
+        <article class="plan plan--pick">
+          <span class="plan-tag">Best value</span>
+          <h3>Explainer</h3>
+          <div class="price">£495</div>
+          <p>A 60–90-second explainer for your home page or sales page.</p>
+          <ul>
+            <li>60–90 seconds</li>
+            <li>Script, voice and music</li>
+            <li>Screen capture or product footage</li>
+            <li>16:9 plus a 30-second 9:16 cut</li>
+            <li>2 rounds of changes</li>
+            <li>Delivery in 7 days</li>
+          </ul>
+          <a class="btn btn--solid" href="https://wa.me/447737534232?text=Hi%2C%20I%27d%20like%20the%20Explainer%20package%20for%3A%20" target="_blank" rel="noopener">Choose Explainer</a>
+        </article>
+        <article class="plan">
+          <span class="plan-tag">Full story</span>
+          <h3>Film</h3>
+          <div class="price">£995</div>
+          <p>A 2–3-minute trailer or product walkthrough.</p>
+          <ul>
+            <li>2–3 minutes</li>
+            <li>Script, voice, music and sound design</li>
+            <li>Cinematic AI shots or full screen tour</li>
+            <li>16:9 plus two 9:16 cuts</li>
+            <li>3 rounds of changes</li>
+            <li>Delivery in 10 days</li>
+          </ul>
+          <a class="btn" href="https://wa.me/447737534232?text=Hi%2C%20I%27d%20like%20the%20Film%20package%20for%3A%20" target="_blank" rel="noopener">Choose Film</a>
+        </article>
+      </div>
+      <p class="note">Longer films, like the 8-minute Huddle explainer, are priced on a quote. Extra languages: £95 per language.</p>
+    </div>
+  </section>
+
+  <section id="process">
+    <div class="wrap">
+      <p class="kicker">How it works</p>
+      <h2>Four steps. <em>You approve each one.</em></h2>
+      <ol class="steps">
+        <li><h3>Send a link</h3><p>Your website, app or product page. Tell us who the video is for.</p></li>
+        <li><h3>Approve the script</h3><p>You get the script and the shot list in 1–2 days. Change anything you want.</p></li>
+        <li><h3>See the first cut</h3><p>We record the voice, capture or generate the shots, and edit to music.</p></li>
+        <li><h3>Get your files</h3><p>Final MP4 files in every size you ordered. The video is yours to use anywhere.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <p class="kicker">Questions</p>
+      <h2>Before you ask</h2>
+      <div class="faq">
+        <details><summary>What do you need from me?</summary><p>A link to your product, and a login to a test account if we record app screens. Photos or footage you already have help, but we do not need them.</p></details>
+        <details><summary>Is the voice a real person?</summary><p>We use high-quality AI voices. You hear samples and pick the voice before we record. Many languages and accents are available.</p></details>
+        <details><summary>Where do the shots come from?</summary><p>For apps, we record your real screens. For products, we use your photos and AI-generated cinematic shots built from them. We do not invent features your product does not have.</p></details>
+        <details><summary>Who owns the video?</summary><p>You do. When the final payment is made, you can use the video on your site, in ads and on social media, with no extra fees.</p></details>
+        <details><summary>How do I pay?</summary><p>50% when you approve the script, 50% before we send the final files. We send an invoice.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band" id="start">
+    <div class="wrap">
+      <h2>Tell us what you sell. <em>We'll show it.</em></h2>
+      <p class="lede">Send a link and the package you want. We reply within one working day.</p>
+      <div class="actions">
+        <a class="btn btn--solid" href="https://wa.me/447737534232?text=Hi%2C%20I%27d%20like%20a%20video%20for%20my%20product%3A%20" target="_blank" rel="noopener">Start on WhatsApp</a>
+        <a class="btn" href="mailto:contact@cmsolutions.tech?subject=Video%20brief">contact@cmsolutions.tech</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 CM Solutions · Video studio</span>
+    <span><a href="/">Home</a> · <a href="/#work">Web work</a> · <a href="mailto:contact@cmsolutions.tech">Email</a></span>
+  </div>
+</footer>
+
+<!-- nav:js — generated, do not edit by hand -->
+<script>
+(function () {
+  var bar = document.querySelector('.sitenav');
+  if (!bar) return;
+  var tools = bar.querySelector('.sitenav-tools');
+
+  /* ── theme ──
+     The light skin lives in dala.css, so the toggle only appears on pages
+     that load it; on the legacy tool pages a control that did nothing would
+     be worse than none. Preference persists; ?theme= wins for one visit. */
+  var themeBtn = bar.querySelector('.sitenav-theme');
+  if (themeBtn && document.querySelector('link[href="/dala.css"]')) {
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var apply = function (t) {
+      if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+      else document.documentElement.removeAttribute('data-theme');
+      if (meta) meta.setAttribute('content', t === 'light' ? '#f7f6f3' : '#000000');
+    };
+    var stored = null;
+    try { stored = localStorage.getItem('mavridis-theme'); } catch (e) {}
+    var fromUrl = new URLSearchParams(location.search).get('theme');
+    var theme = fromUrl === 'light' || fromUrl === 'dark' ? fromUrl : (stored === 'light' ? 'light' : 'dark');
+    apply(theme);
+    themeBtn.hidden = false;
+    themeBtn.addEventListener('click', function () {
+      theme = theme === 'light' ? 'dark' : 'light';
+      apply(theme);
+      try { localStorage.setItem('mavridis-theme', theme); } catch (e) {}
+    });
+  }
+
+  /* ── show on the way up, hide on the way down ── */
+  var last = window.pageYOffset || 0, ticking = false;
+  function apply() {
+    ticking = false;
+    var y = window.pageYOffset || 0;
+    if (tools && tools.open) { bar.dataset.state = 'up'; last = y; return; }
+    if (y < 24) bar.dataset.state = 'top';
+    else if (y > last + 6 && y > 160) bar.dataset.state = 'down';
+    else if (y < last - 6) bar.dataset.state = 'up';
+    last = y;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(apply); }
+  }, { passive: true });
+  apply();
+
+  if (!tools) return;
+
+  /* ── closing ──
+     A disclosure that only closes by clicking its own summary is a trap on a
+     phone, where the panel covers the page it is navigating. */
+  function close() { tools.open = false; }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && tools.open) { close(); tools.querySelector('summary').focus(); }
+  });
+  document.addEventListener('click', function (e) {
+    if (tools.open && !tools.contains(e.target)) close();
+  });
+  // Same-page anchors do not navigate, so the panel would stay over the target.
+  tools.addEventListener('click', function (e) {
+    if (e.target.closest('a')) close();
+  });
+  // A panel left open across a back-navigation restores in the wrong state.
+  window.addEventListener('pageshow', function (e) { if (e.persisted) close(); });
+})();
+</script>
+<!-- /nav:js -->
+</body>
+</html>
