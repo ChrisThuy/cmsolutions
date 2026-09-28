@@ -169,7 +169,7 @@ const CARDS = [
 ];
 
 /*
-  The Mavridis & Co set. Rendered with the Dala template below — Inter, pure
+  The CM Solutions set. Rendered with the Dala template below — Inter, pure
   black, violet and amber — because these pages carry the rebrand while the
   tool pages above still wear the old look. Same table-not-hand-written rule.
 */
@@ -297,7 +297,7 @@ function mavridisHtml(card) {
 </style>
 
 <div class="inner">
-  <p class="eyebrow">Mavridis &amp; Co <span>— ${card.section}</span></p>
+  <p class="eyebrow">CM Solutions <span>— ${card.section}</span></p>
   <h1>${card.claim}</h1>
   <p class="sub">${card.sub}</p>
   <div class="track">
